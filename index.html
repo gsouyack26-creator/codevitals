@@ -473,6 +473,34 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .sync-status{margin-top:10px;font-size:13px;color:var(--tx2,#64748b);min-height:18px}
 .sync-status.ok{color:var(--ok,#16a34a);font-weight:600}
 .sync-status.bad{color:var(--er,#dc2626);font-weight:600}
+/* sync pill */
+.syncpill{display:inline-flex;align-items:center;gap:6px;position:relative;padding-left:24px!important}
+.syncpill::before{content:"";position:absolute;left:10px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:var(--tx2,#94a3b8)}
+.syncpill.ok::before{background:var(--ok,#16a34a);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok,#16a34a) 25%,transparent)}
+.syncpill.bad::before{background:var(--er,#dc2626);box-shadow:0 0 0 3px color-mix(in srgb,var(--er,#dc2626) 25%,transparent)}
+.syncpill.off::before{background:var(--tx2,#94a3b8)}
+.syncpill.sync::before{background:var(--wn,#d97706);animation:syncpulse 1s ease-in-out infinite}
+@keyframes syncpulse{0%,100%{opacity:1;transform:translateY(-50%) scale(1)}50%{opacity:.35;transform:translateY(-50%) scale(1.5)}}
+#syncpill-txt{font-size:.78rem}
+/* welcome overlay */
+.wc-ov{position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:18px;animation:wcfade .25s ease}
+@keyframes wcfade{from{opacity:0}to{opacity:1}}
+.wc-card{background:var(--card,#fff);color:var(--tx,#1e293b);max-width:440px;width:100%;border-radius:20px;padding:30px 28px 22px;box-shadow:0 24px 60px rgba(0,0,0,.35);text-align:center;animation:wcpop .3s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes wcpop{from{transform:translateY(16px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+.wc-emoji{font-size:44px;line-height:1;margin-bottom:6px}
+.wc-title{margin:6px 0 4px;font-size:1.5rem}
+.wc-sub{color:var(--tx2,#64748b);font-size:.95rem;line-height:1.5;margin:0 0 18px}
+.wc-sync{text-align:left;background:color-mix(in srgb,var(--ac) 8%,transparent);border:1px solid color-mix(in srgb,var(--ac) 22%,transparent);border-radius:14px;padding:14px;margin-bottom:18px}
+.wc-synlab{font-weight:700;margin-bottom:4px}
+.wc-synhint{font-size:.82rem;color:var(--tx2,#64748b);line-height:1.45;margin-bottom:10px}
+.wc-btns{display:flex;gap:10px}
+.wc-go{flex:1;font-size:1.02rem;padding:13px}
+.wc-skip{margin-top:12px;background:none;border:none;color:var(--tx2,#94a3b8);font-size:.85rem;cursor:pointer;text-decoration:underline;font-family:inherit}
+/* exam timer bar */
+.etimebar{height:6px;border-radius:6px;background:color-mix(in srgb,var(--ac) 15%,transparent);overflow:hidden;margin:8px 0 2px}
+#etimefill{height:100%;width:100%;background:var(--ac);border-radius:6px;transition:width 1s linear}
+#etimefill.low{background:var(--er,#dc2626)}
+
 </style>
 <body>
 <div id="hdr">
@@ -481,7 +509,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 <input id="srch" type="search" placeholder="Search topics..." oninput="doSearch(this.value)" autocomplete="off">
 <div id="srch-res"></div>
 </div>
-<button class="hbtn" id="sndbtn" onclick="toggleSound()" title="Sound effects on/off">&#128266;</button>
+<button class="hbtn syncpill off" id="syncpill" onclick="cloudSync(true)" title="Cloud sync status"><span id="syncpill-txt">☁️</span></button>
+    <button class="hbtn" id="sndbtn" onclick="toggleSound()" title="Sound effects on/off">&#128266;</button>
 <button class="hbtn" onclick="settingsView()" title="Settings">&#9881;</button>
 <button class="hbtn" onclick="toggleTheme()" title="Toggle dark/light mode">🌓</button>
 <button class="hbtn" onclick="dashboard()" title="Your readiness dashboard">📊 Dashboard</button>
@@ -1396,6 +1425,8 @@ function init(){
   if(typeof _initSoundBtn==='function')_initSoundBtn();
   showMod(MODULES[0].id);
   if(typeof cloudSync==='function')setTimeout(function(){cloudSync(false);},600);
+  if(typeof _initSyncPill==='function')_initSyncPill();
+  if(typeof showWelcome==='function')setTimeout(showWelcome,400);
   if(typeof pwaInit==='function')pwaInit();
 }
 
@@ -1822,6 +1853,7 @@ function examTick(){
   if(left<=0){clearInterval(ex.timer);examSubmit(true);return;}
   const t=document.getElementById('etimer');
   if(t){const s=Math.floor(left/1000);const mm=String(Math.floor(s/60)).padStart(2,'0');const ss=String(s%60).padStart(2,'0');t.textContent=`\u23F1\uFE0F ${mm}:${ss}`;t.className='etimer'+(left<60000?' low':'');}
+  var _f=document.getElementById('etimefill');if(_f){_f.style.width=Math.max(0,Math.min(100,left/(ex.def.min*60000)*100))+'%';_f.className=left<60000?'low':'';}
 }
 
 function examRender(){
@@ -1832,6 +1864,7 @@ function examRender(){
   const pal=ex.qs.map((_,i)=>`<button class="pdot${i===ex.i?' cur':''}${ex.ans[i]!==null?' ans':''}${ex.flags[i]?' flg':''}" onclick="examGo(${i})">${i+1}</button>`).join('');
   el.innerHTML=`<div class="ewrap">
     <div class="ebar"><span id="etimer" class="etimer">\u23F1\uFE0F</span><span class="ecount">${answered}/${ex.qs.length} answered</span></div>
+    <div class="etimebar"><div id="etimefill"></div></div>
     <div class="qprog">Question ${ex.i+1} of ${ex.qs.length} &bull; ${esc(q.mod||'')}</div>
     <div class="qcard"><div class="qq">${esc(q.q)}</div>${opts}</div>
     <div class="enav">
@@ -2896,7 +2929,7 @@ function cloudEnabled(){ return !!(FIREBASE.projectId && FIREBASE.apiKey); }
 function syncCode(){ return (localStorage.getItem('mc_sync')||'').trim(); }
 function _fsUrl(code){ return 'https://firestore.googleapis.com/v1/projects/'+FIREBASE.projectId+'/databases/(default)/documents/codevitals/'+encodeURIComponent(code)+'?key='+FIREBASE.apiKey; }
 function _timeStr(ts){ try{ return new Date(ts||Date.now()).toLocaleString(); }catch(e){ return ''; } }
-function _syncStatus(msg,cls){ const el=document.getElementById('sync-status'); if(el){ el.textContent=msg; el.className='sync-status'+(cls?' '+cls:''); } }
+function _syncStatus(msg,cls){ const el=document.getElementById('sync-status'); if(el){ el.textContent=msg; el.className='sync-status'+(cls?' '+cls:''); } if(typeof updateSyncPill==='function'){var st=cls||'sync';var lbl=cls==='ok'?'Synced':cls==='bad'?'Error':'Sync…';updateSyncPill(st,lbl);} }
 
 async function cloudPull(silent){
   if(!cloudEnabled()) return null;
@@ -2916,6 +2949,7 @@ async function cloudPull(silent){
 async function cloudPush(silent){
   if(!cloudEnabled()){ if(!silent)_syncStatus('Cloud sync is off (add Firebase keys)','bad'); return false; }
   const code=syncCode(); if(!code){ if(!silent)_syncStatus('Enter a Sync Code first','bad'); return false; }
+  if(typeof updateSyncPill==='function')updateSyncPill('sync','Saving');
   const ts=Date.now();
   const body={fields:{data:{stringValue:JSON.stringify(PROG)},ts:{integerValue:String(ts)}}};
   if(!silent)_syncStatus('Saving\u2026','');
@@ -2923,9 +2957,10 @@ async function cloudPush(silent){
     const r=await fetch(_fsUrl(code),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     if(!r.ok) throw new Error('HTTP '+r.status);
     PROG._ts=ts; localStorage.setItem('mc_prog',JSON.stringify(PROG));
+    if(typeof updateSyncPill==='function')updateSyncPill('ok','Synced');
     if(!silent)_syncStatus('Saved to cloud \u2713  '+_timeStr(ts),'ok');
     return true;
-  }catch(e){ if(!silent)_syncStatus('Save failed: '+e.message,'bad'); return false; }
+  }catch(e){ if(typeof updateSyncPill==='function')updateSyncPill('bad','Error'); if(!silent)_syncStatus('Save failed: '+e.message,'bad'); return false; }
 }
 
 function _adoptRemote(data){
@@ -3006,6 +3041,55 @@ function cloudSyncCardHTML(){
         :'')
     +'</div>'
   +'</div>';
+}
+
+
+/* ===== feat11: SYNC PILL + WELCOME + EXAM TIMER BAR ===== */
+function updateSyncPill(state,txt){
+  const p=document.getElementById('syncpill'); if(!p)return;
+  const t=document.getElementById('syncpill-txt');
+  p.className='hbtn syncpill '+state;
+  if(t)t.textContent=txt||'';
+  p.title=({ok:'Progress synced to the cloud \u2014 click to sync now',sync:'Syncing\u2026',bad:'Sync problem \u2014 click to retry',off:'Cloud sync is off \u2014 open Settings to turn it on'}[state]||'');
+}
+function _initSyncPill(){
+  if(typeof cloudEnabled!=='function'||!cloudEnabled()){ updateSyncPill('off','Local'); return; }
+  if(!syncCode()){ updateSyncPill('off','Set code'); return; }
+  updateSyncPill('ok', PROG._ts?'Synced':'Cloud');
+}
+
+function welcomeSeen(){ return localStorage.getItem('mc_welcome')==='1'; }
+function _closeWelcome(){ const o=document.getElementById('welcome-ov'); if(o)o.remove(); }
+function _welcomeStart(){
+  const inp=document.getElementById('wc-code');
+  if(inp){ const v=(inp.value||'').trim(); if(v){ localStorage.setItem('mc_sync',v); } }
+  localStorage.setItem('mc_welcome','1');
+  _closeWelcome();
+  if(typeof dashboard==='function')dashboard();
+  if(typeof cloudEnabled==='function'&&cloudEnabled()&&syncCode()){ setTimeout(function(){ cloudSync(true); },300); }
+  _initSyncPill();
+}
+function showWelcome(){
+  if(welcomeSeen())return;
+  const cloud=(typeof cloudEnabled==='function'&&cloudEnabled());
+  const ov=document.createElement('div');
+  ov.id='welcome-ov'; ov.className='wc-ov';
+  ov.innerHTML='<div class="wc-card">'
+    +'<div class="wc-emoji">\uD83E\uDE7A</div>'
+    +'<h2 class="wc-title">Welcome to CodeVitals</h2>'
+    +'<p class="wc-sub">Your personal medical-coding coach \u2014 16 modules, 300+ practice questions, real exams, flashcards, and boss battles. Study a little every day and watch your readiness climb.</p>'
+    +(cloud
+      ?'<div class="wc-sync"><div class="wc-synlab">\u2601\uFE0F Keep your progress on every device</div>'
+        +'<div class="wc-synhint">Pick a private <b>Sync Code</b> and type the same one on your phone, tablet, and laptop. That\u2019s the only thing you need to remember.</div>'
+        +'<input id="wc-code" class="sync-inp" placeholder="e.g. my-cpc-2026" value="'+esc(syncCode())+'"></div>'
+      :'')
+    +'<div class="wc-btns">'
+      +'<button class="qbtn wc-go" onclick="_welcomeStart()">'+(cloud?'Start studying \u2192':'Let\u2019s go \u2192')+'</button>'
+    +'</div>'
+    +'<button class="wc-skip" onclick="localStorage.setItem(\'mc_welcome\',\'1\');_closeWelcome()">Skip for now</button>'
+  +'</div>';
+  document.body.appendChild(ov);
+  const c=document.getElementById('wc-code'); if(c)setTimeout(function(){c.focus();},200);
 }
 
 
