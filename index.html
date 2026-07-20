@@ -507,6 +507,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .certgrid{display:grid;gap:12px;grid-template-columns:1fr}@media(min-width:680px){.certgrid{grid-template-columns:1fr 1fr}}.certcard{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px}.certtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}.certcode{font-weight:800;font-size:1.05rem;color:var(--ac);letter-spacing:.03em}.certbody{font-size:.7rem;font-weight:700;color:var(--tx2);border:1px solid var(--bd);border-radius:20px;padding:1px 8px}.certtag{font-size:.66rem;font-weight:700;border-radius:20px;padding:2px 9px;margin-left:auto;color:#fff}.certtag.start{background:var(--ok)}.certtag.pop{background:var(--ac)}.certtag.adv{background:color-mix(in srgb,var(--tx2) 70%,transparent)}.certname{font-weight:600;font-size:.92rem;margin-bottom:8px;color:var(--tx)}.certrow{font-size:.82rem;line-height:1.5;color:var(--tx);margin-bottom:5px}.certrow b{color:var(--tx2);font-weight:700}.certlink{display:inline-block;margin-top:6px;font-size:.82rem;font-weight:700;color:var(--ac);text-decoration:none}.certlink:hover{text-decoration:underline}
 .resume-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;background:color-mix(in srgb,var(--ac) 12%,var(--card));border:1px solid var(--ac);border-radius:14px;padding:12px 16px;margin-bottom:16px}.rb-txt b{font-size:.95rem;color:var(--tx)}.rb-sub{font-size:.8rem;color:var(--tx2);margin-top:2px}.rb-btns{display:flex;gap:8px}.rb-btns .qbtn{margin:0;padding:8px 16px}
 .jumpback{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:0 0 16px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--c2);cursor:pointer;transition:transform .12s,box-shadow .12s}.jumpback:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18)}.jumpback.exam{border-left-color:var(--wn)}.jb-ic{font-size:1.6rem;line-height:1}.jb-tx{flex:1}.jb-t{font-weight:700}.jb-s{color:var(--tx2);font-size:.85rem;margin-top:2px}.jb-go{margin-left:auto;color:var(--ac);font-weight:600;white-space:nowrap}
+.mod-cat{font-weight:700;margin:18px 0 6px;color:var(--ac);font-size:.95rem;border-bottom:1px solid var(--bd);padding-bottom:4px}.mod-tbl{width:100%;border-collapse:collapse;margin-bottom:4px}.mod-tbl td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}.mod-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:var(--ac);white-space:nowrap;width:1%}.mod-mean b{font-weight:600}.mod-ex{color:var(--tx2);font-size:.85rem;margin-top:3px}
 </style>
 <body>
 <div id="hdr">
@@ -540,6 +541,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 <div class="navrow"><button class="abtn" onclick="adaptiveQuiz()">&#127919; Adaptive</button><button class="abtn" onclick="personalBests()">&#127942; Personal Bests</button></div>
 <div class="navrow"><button class="abtn" onclick="dailyGoal()">&#128293; Daily Goal</button><button class="abtn" onclick="chartSim()">&#129513; Chart Sim</button></div>
 <div class="navrow"><button class="abtn" onclick="analyticsView()">&#128202; Analytics</button><button class="abtn" onclick="certGuide()">&#127941; Certifications</button></div>
+<div class="navrow"><button class="abtn" onclick="modifierRef()">&#127991;&#65039; Modifiers</button></div>
 <div class="navrow"><button class="abtn" onclick="trendChart()">&#128200; Progress</button><button class="abtn" onclick="srReview()">&#129504; Spaced Review</button></div>
 <div class="navrow"><button class="abtn" onclick="bookmarksView()">&#128278; Bookmarks</button><button class="abtn" onclick="settingsView()">&#9881; Settings</button></div>
 </div>
@@ -3275,6 +3277,62 @@ const CERTS=[
    best:"Coders moving into the fast-growing risk-adjustment / HCC niche.",
    url:"https://www.aapc.com/certification/crc"}
 ];
+const MODIFIERS=[
+ {cat:"Evaluation & Management",items:[
+  {m:"24",n:"Unrelated E/M during a postoperative period",ex:"Patient in the 90-day global for knee surgery is seen for unrelated sinusitis."},
+  {m:"25",n:"Significant, separately identifiable E/M on the same day as a procedure",ex:"Office visit for a new problem plus a minor procedure performed the same day."},
+  {m:"57",n:"Decision for surgery (E/M that led to the decision for major surgery)",ex:"E/M the day before/day of a major (90-day global) operation where the decision to operate was made."},
+  {m:"27",n:"Multiple outpatient hospital E/M encounters on the same date (facility use)",ex:"Patient seen in two different hospital outpatient clinics on one day."}]},
+ {cat:"Global Surgical Package",items:[
+  {m:"54",n:"Surgical care only",ex:"Surgeon performs the operation but transfers post-op care to another provider."},
+  {m:"55",n:"Postoperative management only",ex:"A provider assumes only the post-op follow-up care after another did the surgery."},
+  {m:"56",n:"Preoperative management only",ex:"A provider handles only the pre-op work-up."},
+  {m:"58",n:"Staged or related procedure by the same physician during the postop period",ex:"Planned second-stage skin graft after an initial debridement."},
+  {m:"78",n:"Unplanned return to the OR for a related procedure during the postop period",ex:"Return to the OR to control post-op hemorrhage."},
+  {m:"79",n:"Unrelated procedure by the same physician during the postop period",ex:"Appendectomy performed while the patient is still in a knee-surgery global period."}]},
+ {cat:"Reduced / Discontinued / Repeat",items:[
+  {m:"22",n:"Increased procedural services (substantially greater work than typical)",ex:"An operation complicated by extensive adhesions requiring far more time."},
+  {m:"52",n:"Reduced services (partially reduced or eliminated at the provider's discretion)",ex:"A bilateral study performed on only one side."},
+  {m:"53",n:"Discontinued procedure (stopped due to threat to patient wellbeing)",ex:"Colonoscopy aborted because the patient became unstable."},
+  {m:"76",n:"Repeat procedure or service by the SAME physician",ex:"Repeat chest X-ray by the same physician later the same day."},
+  {m:"77",n:"Repeat procedure by ANOTHER physician",ex:"Repeat EKG performed by a different physician."},
+  {m:"91",n:"Repeat clinical diagnostic laboratory test (medically necessary repeat)",ex:"Repeat potassium level to trend a value the same day."}]},
+ {cat:"Multiple / Bilateral / Distinct",items:[
+  {m:"50",n:"Bilateral procedure (same procedure, both sides, same session)",ex:"Bilateral carpal tunnel release in one operative session."},
+  {m:"51",n:"Multiple procedures (different procedures, same session)",ex:"Two unrelated surgical procedures performed at the same session."},
+  {m:"59",n:"Distinct procedural service (unbundles an NCCI edit when justified)",ex:"A separate lesion at a different site excised during the same visit."},
+  {m:"XE / XS / XP / XU",n:"More specific subsets of 59 (separate Encounter / Structure / Practitioner / Unusual)",ex:"Use where payers require the granular X{EPSU} modifier instead of 59."}]},
+ {cat:"Component & Team",items:[
+  {m:"26",n:"Professional component (physician interpretation only)",ex:"Radiologist reads an X-ray taken at a facility that owns the equipment."},
+  {m:"TC",n:"Technical component (equipment/technician, facility side) \u2014 HCPCS",ex:"Facility bills for the X-ray equipment and technologist, not the read."},
+  {m:"62",n:"Two surgeons (co-surgeons, each performing distinct parts)",ex:"A spine case where two surgeons of different specialties operate together."},
+  {m:"80",n:"Assistant surgeon",ex:"A second surgeon actively assists during a complex operation."},
+  {m:"47",n:"Anesthesia administered by the operating surgeon",ex:"The surgeon personally provides regional anesthesia for the case."}]},
+ {cat:"HCPCS Anatomic & Payer",items:[
+  {m:"LT / RT",n:"Left side / Right side of the body",ex:"RT appended to a procedure done on the right knee."},
+  {m:"FA\u2013F9 / TA\u2013T9",n:"Specific fingers (FA, F1\u2013F9) and toes (TA, T1\u2013T9)",ex:"F1 = left hand second digit; identifies the exact digit treated."},
+  {m:"33",n:"Preventive service (waives cost-sharing under the ACA)",ex:"A screening colonoscopy identified as preventive."},
+  {m:"GA / GY / GZ",n:"ABN / Medicare coverage-liability modifiers (HCPCS)",ex:"GA = a signed ABN is on file for a service Medicare may deny."},
+  {m:"90",n:"Reference (outside) laboratory",ex:"Specimen sent to an outside lab; the ordering entity bills with 90."}]}
+];
+function modifierRef(){
+  var body=MODIFIERS.map(function(g){
+    var rows=g.items.map(function(x){
+      return '<tr><td class="mod-code">'+esc(x.m)+'</td>'
+        +'<td class="mod-mean"><b>'+esc(x.n)+'</b><div class="mod-ex">'+esc(x.ex)+'</div></td></tr>';
+    }).join("");
+    return '<div class="mod-cat">'+esc(g.cat)+'</div>'
+      +'<table class="mod-tbl"><tbody>'+rows+'</tbody></table>';
+  }).join("");
+  fullView('<div class="ecenter">'
+    +'<h2 class="etitle">\uD83C\uDFF7\uFE0F CPT / HCPCS Modifier Reference</h2>'
+    +'<p class="eintro">Modifiers are two-character codes appended to a CPT/HCPCS code to add detail without changing the code\'s core meaning. They are heavily tested on the CPC exam. Below are the most common ones grouped by purpose, each with a plain-English meaning and a real example. Always verify against current CPT guidelines and payer policy \u2014 rules and accepted modifiers change annually.</p>'
+    +body
+    +'<div style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
+    +'</div>');
+}
+
+
 function certGuide(){
   var cards=CERTS.map(function(c){
     return '<div class="certcard">'
