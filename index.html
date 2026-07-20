@@ -509,6 +509,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .jumpback{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:0 0 16px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--c2);cursor:pointer;transition:transform .12s,box-shadow .12s}.jumpback:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18)}.jumpback.exam{border-left-color:var(--wn)}.jb-ic{font-size:1.6rem;line-height:1}.jb-tx{flex:1}.jb-t{font-weight:700}.jb-s{color:var(--tx2);font-size:.85rem;margin-top:2px}.jb-go{margin-left:auto;color:var(--ac);font-weight:600;white-space:nowrap}
 .mod-cat{font-weight:700;margin:18px 0 6px;color:var(--ac);font-size:.95rem;border-bottom:1px solid var(--bd);padding-bottom:4px}.mod-tbl{width:100%;border-collapse:collapse;margin-bottom:4px}.mod-tbl td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}.mod-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:var(--ac);white-space:nowrap;width:1%}.mod-mean b{font-weight:600}.mod-ex{color:var(--tx2);font-size:.85rem;margin-top:3px}
 .gd-tbl td{padding:12px 10px}.gd-t{font-weight:700;color:var(--ac)}.gd-d{margin-top:4px}.gd-ex{margin-top:6px;color:var(--tx2);font-size:.85rem}
+.hy-search{width:100%;box-sizing:border-box;padding:10px 12px;margin:4px 0 8px;border:1px solid var(--bd);border-radius:8px;background:var(--c2);color:var(--tx);font-size:.95rem}
 </style>
 <body>
 <div id="hdr">
@@ -543,7 +544,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 <div class="navrow"><button class="abtn" onclick="dailyGoal()">&#128293; Daily Goal</button><button class="abtn" onclick="chartSim()">&#129513; Chart Sim</button></div>
 <div class="navrow"><button class="abtn" onclick="analyticsView()">&#128202; Analytics</button><button class="abtn" onclick="certGuide()">&#127941; Certifications</button></div>
 <div class="navrow"><button class="abtn" onclick="modifierRef()">&#127991;&#65039; Modifiers</button><button class="abtn" onclick="guidelinesRef()">&#128208; Guidelines</button></div>
-<div class="navrow"><button class="abtn" onclick="cheatSheet()">&#128424;&#65039; Cheat Sheet</button></div>
+<div class="navrow"><button class="abtn" onclick="cheatSheet()">&#128424;&#65039; Cheat Sheet</button><button class="abtn" onclick="codeLookup()">&#128455; Code Lookup</button></div>
 <div class="navrow"><button class="abtn" onclick="trendChart()">&#128200; Progress</button><button class="abtn" onclick="srReview()">&#129504; Spaced Review</button></div>
 <div class="navrow"><button class="abtn" onclick="bookmarksView()">&#128278; Bookmarks</button><button class="abtn" onclick="settingsView()">&#9881; Settings</button></div>
 </div>
@@ -3377,6 +3378,91 @@ const GUIDES=[
   {t:"Add-on codes & modifier 51-exempt",d:"Add-on codes (often marked +) describe additional work and are reported WITH a primary code, never alone. Many add-on and 51-exempt codes should not carry modifier 51.",ex:"Each additional lesion/level code is an add-on to its base procedure."},
   {t:"E/M medical decision making (2021+)",d:"Office/outpatient E/M level is chosen by either total time on the date of service OR medical decision making (MDM), based on problems addressed, data reviewed, and risk. History/exam no longer drive the level.",ex:"A moderate-complexity new problem with prescription-drug management supports a higher MDM level."}]}
 ];
+const HYCODES=[
+ {set:"ICD-10-CM",items:[
+  {c:"Z00.00",d:"Encounter for general adult medical exam without abnormal findings"},
+  {c:"Z12.11",d:"Encounter for screening for malignant neoplasm of colon"},
+  {c:"Z23",d:"Encounter for immunization"},
+  {c:"I10",d:"Essential (primary) hypertension"},
+  {c:"E11.9",d:"Type 2 diabetes mellitus without complications"},
+  {c:"E11.22",d:"Type 2 diabetes mellitus with diabetic chronic kidney disease"},
+  {c:"N18.30",d:"Chronic kidney disease, stage 3 unspecified"},
+  {c:"E78.5",d:"Hyperlipidemia, unspecified"},
+  {c:"E03.9",d:"Hypothyroidism, unspecified"},
+  {c:"J44.9",d:"Chronic obstructive pulmonary disease, unspecified"},
+  {c:"J45.909",d:"Unspecified asthma, uncomplicated"},
+  {c:"J06.9",d:"Acute upper respiratory infection, unspecified"},
+  {c:"J02.9",d:"Acute pharyngitis, unspecified"},
+  {c:"K21.9",d:"Gastro-esophageal reflux disease without esophagitis"},
+  {c:"R10.9",d:"Unspecified abdominal pain"},
+  {c:"M54.50",d:"Low back pain, unspecified"},
+  {c:"R51.9",d:"Headache, unspecified"},
+  {c:"F41.9",d:"Anxiety disorder, unspecified"},
+  {c:"F32.9",d:"Major depressive disorder, single episode, unspecified"},
+  {c:"I25.10",d:"Atherosclerotic heart disease of native coronary artery without angina pectoris"},
+  {c:"N39.0",d:"Urinary tract infection, site not specified"},
+  {c:"E66.9",d:"Obesity, unspecified"}]},
+ {set:"CPT \u2014 E/M",items:[
+  {c:"99202\u201399205",d:"New patient office/outpatient visit (level by MDM or total time, 2021+)"},
+  {c:"99211\u201399215",d:"Established patient office/outpatient visit (level by MDM or total time, 2021+)"},
+  {c:"99213",d:"Established patient visit, low-level MDM \u2014 a very common baseline"},
+  {c:"99214",d:"Established patient visit, moderate-level MDM"},
+  {c:"99385\u201399387",d:"Initial preventive medicine visit, new patient (by age)"},
+  {c:"99395\u201399397",d:"Periodic preventive medicine visit, established patient (by age)"},
+  {c:"99281\u201399285",d:"Emergency department visit (level by MDM)"}]},
+ {set:"CPT \u2014 Procedures & Labs",items:[
+  {c:"36415",d:"Collection of venous blood by venipuncture"},
+  {c:"93000",d:"Electrocardiogram, complete (tracing + interpretation and report)"},
+  {c:"80053",d:"Comprehensive metabolic panel"},
+  {c:"80048",d:"Basic metabolic panel"},
+  {c:"85025",d:"Complete CBC with automated differential WBC count"},
+  {c:"81002",d:"Urinalysis, non-automated, without microscopy"},
+  {c:"71046",d:"Radiologic exam, chest, 2 views"},
+  {c:"45378",d:"Colonoscopy, flexible; diagnostic (with or without collection of specimen)"},
+  {c:"45380",d:"Colonoscopy, flexible; with biopsy, single or multiple"},
+  {c:"96372",d:"Therapeutic/prophylactic/diagnostic injection, subcutaneous or intramuscular"},
+  {c:"90471",d:"Immunization administration, one vaccine"},
+  {c:"20610",d:"Arthrocentesis, aspiration and/or injection, major joint or bursa"},
+  {c:"12011\u201312018",d:"Simple repair of superficial wounds of face/ears/eyelids/nose/lips (by length)"},
+  {c:"29881",d:"Arthroscopy, knee, surgical; with meniscectomy"}]}
+];
+function _hyFilter(v){
+  var q=(v||"").toLowerCase().trim();
+  var rows=document.querySelectorAll('.hy-row');
+  var shown={};
+  rows.forEach(function(r){
+    var hit=q===""||r.getAttribute('data-s').indexOf(q)>=0;
+    r.style.display=hit?"":"none";
+    if(hit)shown[r.getAttribute('data-set')]=true;
+  });
+  document.querySelectorAll('.hy-cat').forEach(function(h){
+    h.style.display=(q===""||shown[h.getAttribute('data-set')])?"":"none";
+  });
+  var none=document.getElementById('hy-none');
+  var any=Object.keys(shown).length>0||q==="";
+  if(none)none.style.display=any?"none":"block";
+}
+function codeLookup(){
+  var body=HYCODES.map(function(g){
+    var rows=g.items.map(function(x){
+      var s=(x.c+" "+x.d).toLowerCase();
+      return '<tr class="hy-row" data-set="'+esc(g.set)+'" data-s="'+esc(s)+'">'
+        +'<td class="mod-code">'+esc(x.c)+'</td><td>'+esc(x.d)+'</td></tr>';
+    }).join('');
+    return '<div class="mod-cat hy-cat" data-set="'+esc(g.set)+'">'+esc(g.set)+'</div>'
+      +'<table class="mod-tbl"><tbody>'+rows+'</tbody></table>';
+  }).join('');
+  fullView('<div class="ecenter">'
+    +'<h2 class="etitle">\uD83D\uDCC7 High-Yield Code Lookup</h2>'
+    +'<p class="eintro"><b>Study aid \u2014 not a codebook.</b> These are commonly tested ICD-10-CM and CPT codes to build familiarity. Code sets change every year and many require added digits for laterality, severity, or specificity. <b>Always confirm the exact code against the current official codebook before assigning it.</b></p>'
+    +'<input class="hy-search" type="text" placeholder="\uD83D\uDD0D Search code or description\u2026" oninput="_hyFilter(this.value)">'
+    +body
+    +'<div id="hy-none" style="display:none;color:var(--tx2);padding:14px 4px">No matching codes.</div>'
+    +'<div style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
+    +'</div>');
+}
+
+
 function guidelinesRef(){
   var body=GUIDES.map(function(g){
     var rows=g.items.map(function(x){
