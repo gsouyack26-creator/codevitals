@@ -3469,22 +3469,35 @@ function _drillShuffle(a){
   for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
   return a;
 }
+function _missCount(){var m=PROG.drillMiss||{};return Object.keys(m).length;}
 function drillStart(filter){
   var deck=_drillDeck();
-  if(filter&&filter!=='all')deck=deck.filter(function(c){return c.tag===filter;});
+  if(filter==='miss'){
+    var m=PROG.drillMiss||{};
+    deck=deck.filter(function(c){return m[c.tag+'|'+c.f];});
+  } else if(filter&&filter!=='all'){
+    deck=deck.filter(function(c){return c.tag===filter;});
+  }
   DRILL={cards:_drillShuffle(deck),i:0,flip:false,right:0,wrong:0,filter:filter||'all'};
   drillRender();
 }
 function drillFlip(){ if(DRILL){DRILL.flip=!DRILL.flip;drillRender();} }
 function drillGrade(ok){
   if(!DRILL)return;
-  if(ok)DRILL.right++; else DRILL.wrong++;
+  var c=DRILL.cards[DRILL.i];
+  if(!PROG.drillMiss)PROG.drillMiss={};
+  var key=(c&&c.tag)?(c.tag+'|'+c.f):null;
+  if(ok){DRILL.right++;if(key&&PROG.drillMiss[key])delete PROG.drillMiss[key];}
+  else{DRILL.wrong++;if(key)PROG.drillMiss[key]=true;}
+  if(typeof saveProg==='function')saveProg();
   DRILL.i++;DRILL.flip=false;drillRender();
 }
 function drillRender(){
   if(!DRILL)return;
   var chips='';
   var opts=[['all','All'],['Modifier','Modifiers'],['Guideline','Guidelines'],['Code','Codes']];
+  var mc=_missCount();
+  if(mc>0)opts.push(['miss','\u2605 Missed ('+mc+')']);
   chips=opts.map(function(o){
     var on=DRILL.filter===o[0];
     return '<button class="drill-chip'+(on?' on':'')+'" onclick="drillStart(\''+o[0]+'\')">'+esc(o[1])+'</button>';
