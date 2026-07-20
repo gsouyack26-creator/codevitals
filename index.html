@@ -510,6 +510,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .mod-cat{font-weight:700;margin:18px 0 6px;color:var(--ac);font-size:.95rem;border-bottom:1px solid var(--bd);padding-bottom:4px}.mod-tbl{width:100%;border-collapse:collapse;margin-bottom:4px}.mod-tbl td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}.mod-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:var(--ac);white-space:nowrap;width:1%}.mod-mean b{font-weight:600}.mod-ex{color:var(--tx2);font-size:.85rem;margin-top:3px}
 .gd-tbl td{padding:12px 10px}.gd-t{font-weight:700;color:var(--ac)}.gd-d{margin-top:4px}.gd-ex{margin-top:6px;color:var(--tx2);font-size:.85rem}
 .hy-search{width:100%;box-sizing:border-box;padding:10px 12px;margin:4px 0 8px;border:1px solid var(--bd);border-radius:8px;background:var(--c2);color:var(--tx);font-size:.95rem}
+.drill-chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}.drill-chip{background:var(--c2);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:5px 12px;font-size:.82rem;cursor:pointer}.drill-chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}.drill-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--tx2);font-size:.8rem;margin-bottom:8px}.drill-tag{color:var(--ac);font-weight:600}.drill-card{background:var(--c2);border:1px solid var(--bd);border-radius:14px;padding:34px 22px;min-height:120px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;cursor:pointer;transition:transform .1s}.drill-card:hover{transform:translateY(-2px)}.drill-card.flipped{border-color:var(--ac);border-left:4px solid var(--ac)}.drill-face-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:10px}.drill-face-txt{font-size:1.15rem;font-weight:600;line-height:1.4}.drill-grade{display:flex;gap:10px;justify-content:center;margin-top:14px}.qbtn.good{background:var(--ok);color:#fff}.qbtn.bad{background:var(--er);color:#fff}.drill-done{text-align:center;padding:24px}.drill-score{font-size:2.6rem;font-weight:800;color:var(--ac)}.drill-sub{color:var(--tx2);margin-top:4px}
 </style>
 <body>
 <div id="hdr">
@@ -545,6 +546,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 <div class="navrow"><button class="abtn" onclick="analyticsView()">&#128202; Analytics</button><button class="abtn" onclick="certGuide()">&#127941; Certifications</button></div>
 <div class="navrow"><button class="abtn" onclick="modifierRef()">&#127991;&#65039; Modifiers</button><button class="abtn" onclick="guidelinesRef()">&#128208; Guidelines</button></div>
 <div class="navrow"><button class="abtn" onclick="cheatSheet()">&#128424;&#65039; Cheat Sheet</button><button class="abtn" onclick="codeLookup()">&#128455; Code Lookup</button></div>
+<div class="navrow"><button class="abtn" onclick="drillStart('all')">&#129504; Flash Drill</button></div>
 <div class="navrow"><button class="abtn" onclick="trendChart()">&#128200; Progress</button><button class="abtn" onclick="srReview()">&#129504; Spaced Review</button></div>
 <div class="navrow"><button class="abtn" onclick="bookmarksView()">&#128278; Bookmarks</button><button class="abtn" onclick="settingsView()">&#9881; Settings</button></div>
 </div>
@@ -3449,6 +3451,76 @@ function _hyFilter(v){
   var any=Object.keys(shown).length>0||q==="";
   if(none)none.style.display=any?"none":"block";
 }
+var DRILL=null;
+function _drillDeck(){
+  var d=[];
+  if(typeof MODIFIERS!=='undefined')MODIFIERS.forEach(function(g){g.items.forEach(function(x){
+    d.push({f:'Modifier '+x.m,b:x.n,tag:'Modifier',cat:g.cat});
+  });});
+  if(typeof GUIDES!=='undefined')GUIDES.forEach(function(g){g.items.forEach(function(x){
+    d.push({f:x.t,b:x.d,tag:'Guideline',cat:g.cat});
+  });});
+  if(typeof HYCODES!=='undefined')HYCODES.forEach(function(g){g.items.forEach(function(x){
+    d.push({f:x.d,b:x.c,tag:'Code',cat:g.set});
+  });});
+  return d;
+}
+function _drillShuffle(a){
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+  return a;
+}
+function drillStart(filter){
+  var deck=_drillDeck();
+  if(filter&&filter!=='all')deck=deck.filter(function(c){return c.tag===filter;});
+  DRILL={cards:_drillShuffle(deck),i:0,flip:false,right:0,wrong:0,filter:filter||'all'};
+  drillRender();
+}
+function drillFlip(){ if(DRILL){DRILL.flip=!DRILL.flip;drillRender();} }
+function drillGrade(ok){
+  if(!DRILL)return;
+  if(ok)DRILL.right++; else DRILL.wrong++;
+  DRILL.i++;DRILL.flip=false;drillRender();
+}
+function drillRender(){
+  if(!DRILL)return;
+  var chips='';
+  var opts=[['all','All'],['Modifier','Modifiers'],['Guideline','Guidelines'],['Code','Codes']];
+  chips=opts.map(function(o){
+    var on=DRILL.filter===o[0];
+    return '<button class="drill-chip'+(on?' on':'')+'" onclick="drillStart(\''+o[0]+'\')">'+esc(o[1])+'</button>';
+  }).join('');
+  var total=DRILL.cards.length;
+  if(DRILL.i>=total){
+    var pct=total?Math.round(DRILL.right/total*100):0;
+    fullView('<div class="ecenter"><h2 class="etitle">\uD83E\uDDE0 Flash Drill \u2014 Complete</h2>'
+      +'<div class="drill-done"><div class="drill-score">'+DRILL.right+' / '+total+'</div>'
+      +'<div class="drill-sub">'+pct+'% recalled without peeking</div></div>'
+      +'<div class="drill-chips">'+chips+'</div>'
+      +'<div style="margin-top:14px"><button class="qbtn" onclick="drillStart(\''+DRILL.filter+'\')">\uD83D\uDD01 Restart</button> '
+      +'<button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div></div>');
+    return;
+  }
+  var c=DRILL.cards[DRILL.i];
+  var faceCls=DRILL.flip?'drill-card flipped':'drill-card';
+  var faceTxt=DRILL.flip?esc(c.b):esc(c.f);
+  var hint=DRILL.flip?'Answer':'Prompt \u2014 tap to reveal';
+  var controls=DRILL.flip
+    ? '<div class="drill-grade"><button class="qbtn bad" onclick="drillGrade(false)">\u2717 Review</button>'
+      +'<button class="qbtn good" onclick="drillGrade(true)">\u2713 Got it</button></div>'
+    : '<div class="drill-grade"><button class="qbtn" onclick="drillFlip()">Reveal answer</button></div>';
+  fullView('<div class="ecenter"><h2 class="etitle">\uD83E\uDDE0 Reference Flash Drill</h2>'
+    +'<p class="eintro">Active recall on the modifiers, guidelines, and high-yield codes. Read the prompt, answer in your head, then reveal and grade yourself.</p>'
+    +'<div class="drill-chips">'+chips+'</div>'
+    +'<div class="drill-meta"><span>Card '+(DRILL.i+1)+' of '+total+'</span>'
+    +'<span class="drill-tag">'+esc(c.tag)+' \u00b7 '+esc(c.cat)+'</span>'
+    +'<span>\u2713 '+DRILL.right+' \u00b7 \u2717 '+DRILL.wrong+'</span></div>'
+    +'<div class="'+faceCls+'" onclick="drillFlip()"><div class="drill-face-lbl">'+hint+'</div>'
+    +'<div class="drill-face-txt">'+faceTxt+'</div></div>'
+    +controls
+    +'<div style="margin-top:14px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div></div>');
+}
+
+
 function codeLookup(){
   var body=HYCODES.map(function(g){
     var rows=g.items.map(function(x){
