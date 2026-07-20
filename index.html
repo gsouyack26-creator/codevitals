@@ -505,6 +505,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .ekeys b{color:var(--ac);font-weight:700;padding:0 1px}
 @media(max-width:640px){.ekeys{display:none}}
 .certgrid{display:grid;gap:12px;grid-template-columns:1fr}@media(min-width:680px){.certgrid{grid-template-columns:1fr 1fr}}.certcard{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px}.certtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}.certcode{font-weight:800;font-size:1.05rem;color:var(--ac);letter-spacing:.03em}.certbody{font-size:.7rem;font-weight:700;color:var(--tx2);border:1px solid var(--bd);border-radius:20px;padding:1px 8px}.certtag{font-size:.66rem;font-weight:700;border-radius:20px;padding:2px 9px;margin-left:auto;color:#fff}.certtag.start{background:var(--ok)}.certtag.pop{background:var(--ac)}.certtag.adv{background:color-mix(in srgb,var(--tx2) 70%,transparent)}.certname{font-weight:600;font-size:.92rem;margin-bottom:8px;color:var(--tx)}.certrow{font-size:.82rem;line-height:1.5;color:var(--tx);margin-bottom:5px}.certrow b{color:var(--tx2);font-weight:700}.certlink{display:inline-block;margin-top:6px;font-size:.82rem;font-weight:700;color:var(--ac);text-decoration:none}.certlink:hover{text-decoration:underline}
+.resume-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;background:color-mix(in srgb,var(--ac) 12%,var(--card));border:1px solid var(--ac);border-radius:14px;padding:12px 16px;margin-bottom:16px}.rb-txt b{font-size:.95rem;color:var(--tx)}.rb-sub{font-size:.8rem;color:var(--tx2);margin-top:2px}.rb-btns{display:flex;gap:8px}.rb-btns .qbtn{margin:0;padding:8px 16px}
+.jumpback{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:0 0 16px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--c2);cursor:pointer;transition:transform .12s,box-shadow .12s}.jumpback:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18)}.jumpback.exam{border-left-color:var(--wn)}.jb-ic{font-size:1.6rem;line-height:1}.jb-tx{flex:1}.jb-t{font-weight:700}.jb-s{color:var(--tx2);font-size:.85rem;margin-top:2px}.jb-go{margin-left:auto;color:var(--ac);font-weight:600;white-space:nowrap}
 </style>
 <body>
 <div id="hdr">
@@ -1453,6 +1455,7 @@ function buildSB(){
 
 function showMod(id){
   APP.allQuiz=false;
+  if(typeof _rememberMod==='function')_rememberMod(id);
   APP.mod=MODULES.find(m=>m.id===id);
   document.querySelectorAll('.mi').forEach(el=>el.classList.toggle('sel',el.id==='mi-'+id));
   document.getElementById('all-quiz-view').style.display='none';
@@ -1836,6 +1839,7 @@ function examCenter(){
   el.innerHTML=`<div class="ecenter">
     <h2 class="etitle">\uD83D\uDCDA Exam Center</h2>
     <p class="eintro">Timed, scored practice exams that simulate the real certification. Answer all questions (skip and come back using the palette), then submit to see your score, pass/fail, and a full answer review. Question pool: ${pool} vetted questions, freshly shuffled each attempt.</p>
+    ${(typeof _resumeBannerHTML==='function')?_resumeBannerHTML():''}
     <div class="egrid">${cards}</div>
     <button class="qbtn sec" style="margin-top:16px" onclick="showMod(MODULES[0].id)">\uD83C\uDFE0 Back to Modules</button>
   </div>`;
@@ -1882,6 +1886,7 @@ function examRender(){
     <div class="palette">${pal}</div>
   </div>`;
   examTick();
+  if(typeof _examSave==='function')_examSave();
   document.getElementById('main').scrollTop=0;
 }
 
@@ -1897,6 +1902,7 @@ function examConfirmSubmit(){
 
 function examSubmit(timeUp){
   const ex=APP.exam;if(ex.submitted)return;ex.submitted=true;
+  if(typeof _examClear==='function')_examClear();
   if(ex.timer)clearInterval(ex.timer);
   let correct=0;const byMod={};
   ex.qs.forEach((q,i)=>{
@@ -2769,7 +2775,7 @@ function pwaStatus(){
   return hosted?'Hosted \u2014 installable from the browser menu':'Offline file \u2014 works with no internet';
 }
 
-const CHARTS=[{"id": "chart1", "title": "Office Visit — Type 2 Diabetes with CKD", "setting": "Outpatient E/M + ICD-10-CM", "sections": [["Chief Complaint", "Follow-up of diabetes and kidney function; patient reports mild fatigue."], ["HPI", "58-year-old established patient with type 2 diabetes mellitus for 9 years, seen for routine follow-up. Also has hypertension. Recent labs show an eGFR of 48 and albuminuria, consistent with chronic kidney disease stage 3a. No diabetic retinopathy noted. Medications reviewed and reconciled."], ["Exam", "Detailed exam of 6 organ systems. BP 138/86. No edema. Feet examined — protective sensation intact."], ["Assessment / Plan", "(1) Type 2 diabetes with diabetic chronic kidney disease. (2) Hypertension, controlled. (3) CKD stage 3a. Continue metformin and lisinopril; repeat labs in 3 months. Total visit time 30 minutes, moderate MDM."]], "tasks": [{"q": "How should the diabetes and CKD relationship be coded?", "opts": ["Two unrelated codes: diabetes and CKD", "A combination code linking diabetes to CKD (E11.22), plus the CKD stage code", "Only the CKD code", "Only the diabetes code"], "ans": 1, "exp": "ICD-10-CM assumes a causal link between diabetes and CKD. Use the combination code E11.22 (type 2 diabetes with diabetic chronic kidney disease) AND an additional code for the CKD stage (N18.31 for stage 3a)."}, {"q": "Which additional code reports the CKD stage?", "opts": ["N18.1", "N18.31 (CKD stage 3a)", "N18.6", "No stage code is needed"], "ans": 1, "exp": "Per the E11.22 instructional note, 'use additional code to identify the stage of CKD (N18.-).' Stage 3a = N18.31."}, {"q": "How is the hypertension coded here?", "opts": ["I10 (essential hypertension)", "Do not code — it is implied", "Hypertensive heart disease", "Combine with CKD as hypertensive CKD"], "ans": 0, "exp": "Documentation states hypertension is present and controlled but does not link it as the cause of CKD, and the diabetic CKD combination already applies. Report I10 for the essential hypertension. (If the provider documented hypertensive CKD, I12.- would apply instead.)"}, {"q": "For an established patient, 30 minutes total time, moderate MDM, which E/M level fits?", "opts": ["99212", "99213", "99214", "99215"], "ans": 2, "exp": "99214 (established patient) supports moderate MDM or 30–39 minutes total time on the date of the encounter. Both time and MDM here point to 99214."}]}, {"id": "chart2", "title": "Operative Report — Screening Colonoscopy with Polypectomy", "setting": "Facility/Pro CPT + Modifiers", "sections": [["Preop Dx", "Screening for colon cancer; average-risk, no symptoms."], ["Postop Dx", "Single 6 mm polyp, sigmoid colon, removed by snare."], ["Procedure", "A colonoscope was advanced to the cecum. A 6 mm sessile polyp was identified in the sigmoid colon and removed using a hot snare. Specimen sent to pathology. Patient tolerated well."], ["Note", "Patient is a Medicare beneficiary. The exam began as a screening but a polyp was found and removed."]], "tasks": [{"q": "Which CPT best describes removal of a polyp by snare technique during colonoscopy?", "opts": ["45378 (diagnostic colonoscopy)", "45380 (colonoscopy with biopsy)", "45385 (colonoscopy with removal of lesion by snare)", "45388 (colonoscopy with ablation)"], "ans": 2, "exp": "45385 = colonoscopy, flexible, with removal of tumor(s), polyp(s), or other lesion(s) by snare technique. Biopsy (45380) or cold forceps would be different codes; here a snare was used."}, {"q": "The exam started as screening but became therapeutic. For a Medicare patient, which modifier is appended?", "opts": ["Modifier 33", "Modifier PT", "Modifier 59", "Modifier 52"], "ans": 1, "exp": "For Medicare, when a screening colonoscopy converts to a diagnostic/therapeutic procedure, append modifier PT (colorectal cancer screening test converted to diagnostic). Modifier 33 (preventive services) is used for commercial payers in the same scenario."}, {"q": "Which ICD-10-CM code is sequenced FIRST?", "opts": ["The polyp finding (D12.5)", "Z12.11 (encounter for screening for malignant neoplasm of colon)", "K63.5 (polyp of colon)", "Z86.010 (personal history of colon polyps)"], "ans": 1, "exp": "Because the intent was screening, Z12.11 is sequenced first as the reason for the encounter, followed by the finding (e.g., D12.5, benign neoplasm of sigmoid colon / polyp). The finding does not replace the screening as the first-listed code."}]}];
+const CHARTS=[{"id": "chart1", "title": "Office Visit — Type 2 Diabetes with CKD", "setting": "Outpatient E/M + ICD-10-CM", "sections": [["Chief Complaint", "Follow-up of diabetes and kidney function; patient reports mild fatigue."], ["HPI", "58-year-old established patient with type 2 diabetes mellitus for 9 years, seen for routine follow-up. Also has hypertension. Recent labs show an eGFR of 48 and albuminuria, consistent with chronic kidney disease stage 3a. No diabetic retinopathy noted. Medications reviewed and reconciled."], ["Exam", "Detailed exam of 6 organ systems. BP 138/86. No edema. Feet examined — protective sensation intact."], ["Assessment / Plan", "(1) Type 2 diabetes with diabetic chronic kidney disease. (2) Hypertension, controlled. (3) CKD stage 3a. Continue metformin and lisinopril; repeat labs in 3 months. Total visit time 30 minutes, moderate MDM."]], "tasks": [{"q": "How should the diabetes and CKD relationship be coded?", "opts": ["Two unrelated codes: diabetes and CKD", "A combination code linking diabetes to CKD (E11.22), plus the CKD stage code", "Only the CKD code", "Only the diabetes code"], "ans": 1, "exp": "ICD-10-CM assumes a causal link between diabetes and CKD. Use the combination code E11.22 (type 2 diabetes with diabetic chronic kidney disease) AND an additional code for the CKD stage (N18.31 for stage 3a)."}, {"q": "Which additional code reports the CKD stage?", "opts": ["N18.1", "N18.31 (CKD stage 3a)", "N18.6", "No stage code is needed"], "ans": 1, "exp": "Per the E11.22 instructional note, 'use additional code to identify the stage of CKD (N18.-).' Stage 3a = N18.31."}, {"q": "How is the hypertension coded here?", "opts": ["I10 (essential hypertension)", "Do not code — it is implied", "Hypertensive heart disease", "Combine with CKD as hypertensive CKD"], "ans": 0, "exp": "Documentation states hypertension is present and controlled but does not link it as the cause of CKD, and the diabetic CKD combination already applies. Report I10 for the essential hypertension. (If the provider documented hypertensive CKD, I12.- would apply instead.)"}, {"q": "For an established patient, 30 minutes total time, moderate MDM, which E/M level fits?", "opts": ["99212", "99213", "99214", "99215"], "ans": 2, "exp": "99214 (established patient) supports moderate MDM or 30–39 minutes total time on the date of the encounter. Both time and MDM here point to 99214."}]}, {"id": "chart2", "title": "Operative Report — Screening Colonoscopy with Polypectomy", "setting": "Facility/Pro CPT + Modifiers", "sections": [["Preop Dx", "Screening for colon cancer; average-risk, no symptoms."], ["Postop Dx", "Single 6 mm polyp, sigmoid colon, removed by snare."], ["Procedure", "A colonoscope was advanced to the cecum. A 6 mm sessile polyp was identified in the sigmoid colon and removed using a hot snare. Specimen sent to pathology. Patient tolerated well."], ["Note", "Patient is a Medicare beneficiary. The exam began as a screening but a polyp was found and removed."]], "tasks": [{"q": "Which CPT best describes removal of a polyp by snare technique during colonoscopy?", "opts": ["45378 (diagnostic colonoscopy)", "45380 (colonoscopy with biopsy)", "45385 (colonoscopy with removal of lesion by snare)", "45388 (colonoscopy with ablation)"], "ans": 2, "exp": "45385 = colonoscopy, flexible, with removal of tumor(s), polyp(s), or other lesion(s) by snare technique. Biopsy (45380) or cold forceps would be different codes; here a snare was used."}, {"q": "The exam started as screening but became therapeutic. For a Medicare patient, which modifier is appended?", "opts": ["Modifier 33", "Modifier PT", "Modifier 59", "Modifier 52"], "ans": 1, "exp": "For Medicare, when a screening colonoscopy converts to a diagnostic/therapeutic procedure, append modifier PT (colorectal cancer screening test converted to diagnostic). Modifier 33 (preventive services) is used for commercial payers in the same scenario."}, {"q": "Which ICD-10-CM code is sequenced FIRST?", "opts": ["The polyp finding (D12.5)", "Z12.11 (encounter for screening for malignant neoplasm of colon)", "K63.5 (polyp of colon)", "Z86.010 (personal history of colon polyps)"], "ans": 1, "exp": "Because the intent was screening, Z12.11 is sequenced first as the reason for the encounter, followed by the finding (e.g., D12.5, benign neoplasm of sigmoid colon / polyp). The finding does not replace the screening as the first-listed code."}]},{"id": "chart3", "title": "ED Visit \u2014 Facial Laceration Repair", "setting": "Outpatient/ED CPT + modifiers", "sections": [["Chief Complaint", "Fell off bicycle, cuts to the face."], ["HPI", "28-year-old presents after a bicycle fall. Two lacerations to the face: a 3.5 cm laceration of the cheek and a 2.0 cm laceration of the forehead. Both are clean, superficial, and closed with a single layer of sutures (simple repair). Patient also evaluated for possible concussion \u2014 brief loss of consciousness reported; a problem-focused neuro exam and history were performed and documented separately."], ["Procedure", "Local anesthesia. Simple single-layer closure of the 3.5 cm cheek laceration and the 2.0 cm forehead laceration. Wounds irrigated, no foreign body. Tolerated well."], ["Assessment / Plan", "Facial lacerations, repaired. Concussion without loss of consciousness ruled in by history \u2014 mild. Wound care instructions, suture removal in 5 days."]], "tasks": [{"q": "Two simple repairs are on the face (cheek and forehead). How are their lengths handled for CPT?", "opts": ["Report a separate repair code for each wound", "Sum the lengths of repairs in the same classification and anatomic group, then report ONE code", "Report only the longest wound", "Repairs under 4 cm are never coded"], "ans": 1, "exp": "For wound repairs, add together the lengths of all repairs of the SAME complexity (simple) that fall in the SAME anatomic group. Cheek + forehead are both in the face/ears/eyelids/nose/lips group. 3.5 + 2.0 = 5.5 cm simple repair, reported with one code (CPT 12014, simple repair face 5.1-7.5 cm)."}, {"q": "A separately documented E/M for the concussion evaluation is billed the same day as the repair. What modifier is appended to the E/M?", "opts": ["Modifier 59", "Modifier 51", "Modifier 25", "No modifier is allowed"], "ans": 2, "exp": "Modifier 25 identifies a significant, separately identifiable E/M service performed by the same provider on the same day as a procedure. The concussion history/exam is distinct from the routine work bundled into the repair, so the E/M carries modifier 25."}, {"q": "What is the correct 7th character for the initial encounter, active treatment of the laceration?", "opts": ["D (subsequent)", "A (initial encounter)", "S (sequela)", "No 7th character is needed"], "ans": 1, "exp": "Injury codes (S/T) require a 7th character. 'A' is used while the patient is receiving active treatment for the injury (the ED repair). 'D' is for routine healing/aftercare, and 'S' is for sequelae/late effects."}]},{"id": "chart4", "title": "Orthopedic Office \u2014 Closed Fracture Reduction", "setting": "CPT surgical package / global period", "sections": [["Chief Complaint", "Right wrist pain after a fall."], ["HPI", "45-year-old fell on an outstretched hand. X-ray confirms a closed fracture of the distal right radius, displaced. Orthopedist performs closed treatment with manipulation (closed reduction) in the office. Cast applied."], ["Procedure", "Closed reduction of distal radius fracture with manipulation, CPT 25605. Post-reduction films confirm alignment. Short-arm cast applied."], ["Assessment / Plan", "Closed, reduced distal radius fracture. Return in 3 weeks for cast check and repeat films. Full surgical and follow-up care provided by this orthopedist."]], "tasks": [{"q": "CPT 25605 carries a 90-day global period. At the routine 3-week cast-check visit (no complication), how is that visit reported?", "opts": ["A new E/M code with modifier 25", "It is NOT separately reported \u2014 it is included in the surgical global package", "A new E/M code with modifier 59", "CPT 25605 is billed again"], "ans": 1, "exp": "The surgical package (global period) for a procedure with a 90-day global bundles the pre-op visit, the procedure, and normal, uncomplicated post-op follow-up care. A routine cast check within the 90 days is not separately billable."}, {"q": "The orthopedist is providing BOTH the surgical (reduction) care AND all follow-up care. Which statement about modifiers 54/55 applies?", "opts": ["Modifier 54 is required because another provider does follow-up", "Modifier 55 is required for the reduction", "NO split-care modifier is needed \u2014 one provider does the whole package", "Modifier 62 for co-surgeons is required"], "ans": 2, "exp": "Modifiers 54 (surgical care only) and 55 (postoperative management only) split the global package between providers. Here one orthopedist does everything, so the full global code is reported with NO split-care modifier."}, {"q": "Which 7th character reports this initial encounter for a CLOSED fracture receiving active treatment?", "opts": ["A (initial, closed)", "B (initial, open type I/II)", "D (subsequent, routine healing)", "G (subsequent, delayed healing)"], "ans": 0, "exp": "For fractures, 7th character 'A' = initial encounter for closed fracture (active treatment). 'B' is for open fractures. 'D' and later characters describe subsequent encounters during healing or sequelae."}]},{"id": "chart5", "title": "Ambulatory Surgery \u2014 Modifiers 50 & 59", "setting": "CPT modifier application", "sections": [["Chief Complaint", "Numbness and tingling in both hands."], ["HPI", "52-year-old with bilateral carpal tunnel syndrome confirmed by EMG. Scheduled for endoscopic carpal tunnel release on BOTH wrists in the same operative session."], ["Procedure", "Endoscopic carpal tunnel release performed on the right wrist and the left wrist (CPT 64721). Separately, a distinct ganglion cyst on the left wrist \u2014 a different lesion at a different site \u2014 was excised during the same session."], ["Assessment / Plan", "Bilateral carpal tunnel release completed. Ganglion cyst excised. Routine post-op care."]], "tasks": [{"q": "The same procedure (64721) is performed on BOTH wrists in one session. What modifier reports this?", "opts": ["Modifier 51 (multiple procedures)", "Modifier 50 (bilateral procedure)", "Modifier 59 (distinct service)", "Modifier 76 (repeat procedure)"], "ans": 1, "exp": "Modifier 50 reports the SAME procedure performed bilaterally in the same session. It is used when one CPT code applies to a mirror-image structure done on both sides."}, {"q": "The ganglion cyst excision is a distinct procedure at a separate site that could be bundled by NCCI edits. What modifier unbundles it appropriately?", "opts": ["Modifier 25", "Modifier 50", "Modifier 59 (distinct procedural service)", "Modifier 22"], "ans": 2, "exp": "Modifier 59 identifies a distinct procedural service \u2014 a different procedure/site/lesion not normally reported together \u2014 allowing it to bypass an NCCI bundling edit when documentation supports the distinction. (X{EPSU} modifiers are more specific alternatives where accepted.)"}, {"q": "Modifier 51 vs 50 \u2014 why is 51 NOT the best choice for the two carpal tunnel releases?", "opts": ["51 is only for E/M services", "50 specifically captures the bilateral (same-procedure, both sides) scenario; 51 is a generic multiple-procedure indicator", "51 deletes the second procedure", "They are interchangeable"], "ans": 1, "exp": "Modifier 51 (multiple procedures) is a generic indicator for different procedures in one session. When the SAME procedure is done on paired/bilateral structures, modifier 50 is the specific, correct choice and drives bilateral payment rules."}]}];
 /* ===== FEAT9: DAILY GOAL + STREAK FREEZE, ANALYTICS+CONFIDENCE, CHART SIM, THEME PICKER ===== */
 
 /* ---- Theme picker ---- */
@@ -3294,6 +3300,81 @@ function certGuide(){
 }
 
 
+function _examSave(){
+  try{
+    var ex=APP.exam;
+    if(!ex||ex.submitted)return;
+    var snap={id:ex.def.id,qs:ex.qs,ans:ex.ans,flags:ex.flags,i:ex.i,end:ex.end,sv:Date.now()};
+    localStorage.setItem('mc_exam',JSON.stringify(snap));
+  }catch(e){}
+}
+function _examClear(){ try{localStorage.removeItem('mc_exam');}catch(e){} }
+function _examSaved(){
+  try{
+    var raw=localStorage.getItem('mc_exam'); if(!raw)return null;
+    var snap=JSON.parse(raw);
+    if(!snap||!snap.qs||!snap.qs.length)return null;
+    if((snap.end||0)<=Date.now()){ _examClear(); return null; }
+    return snap;
+  }catch(e){ return null; }
+}
+function examResume(){
+  var snap=_examSaved(); if(!snap){ examCenter(); return; }
+  var def=(typeof EXAM_DEFS!=='undefined')&&EXAM_DEFS.find(function(d){return d.id===snap.id;});
+  if(!def){ _examClear(); examCenter(); return; }
+  if(APP.exam&&APP.exam.timer)clearInterval(APP.exam.timer);
+  APP.exam={def:def,qs:snap.qs,ans:snap.ans,flags:snap.flags,i:snap.i||0,submitted:false,end:snap.end,timer:null};
+  var el=document.getElementById('all-quiz-view'); if(el)el.style.display='block';
+  var mv=document.getElementById('mod-view'); if(mv)mv.innerHTML='';
+  document.querySelectorAll('.mi').forEach(function(x){x.classList.remove('sel');});
+  APP.exam.timer=setInterval(examTick,1000);
+  examRender();
+}
+function examDiscard(){ _examClear(); examCenter(); }
+function _resumeBannerHTML(){
+  var snap=_examSaved(); if(!snap)return '';
+  var def=(typeof EXAM_DEFS!=='undefined')&&EXAM_DEFS.find(function(d){return d.id===snap.id;});
+  if(!def)return '';
+  var answered=snap.ans.filter(function(a){return a!==null&&a!==undefined;}).length;
+  var leftMs=Math.max(0,(snap.end||0)-Date.now());
+  var mins=Math.ceil(leftMs/60000);
+  return '<div class="resume-banner"><div class="rb-txt"><b>\u23F8\uFE0F Resume your exam in progress</b>'
+    +'<div class="rb-sub">'+esc(def.name)+' \u00b7 '+answered+'/'+snap.qs.length+' answered \u00b7 ~'+mins+' min left</div></div>'
+    +'<div class="rb-btns"><button class="qbtn" onclick="examResume()">Resume</button>'
+    +'<button class="qbtn sec" onclick="examDiscard()">Discard</button></div></div>';
+}
+
+
+function _rememberMod(id){ try{ localStorage.setItem('mc_last',JSON.stringify({id:id,at:Date.now()})); }catch(e){} }
+function _lastMod(){ try{ var r=localStorage.getItem('mc_last'); if(!r)return null; var o=JSON.parse(r); if(!o||!o.id)return null; return o; }catch(e){ return null; } }
+function _jumpBackHTML(){
+  if(typeof _examSaved==='function'){
+    var snap=_examSaved();
+    if(snap){
+      var edef=(typeof EXAM_DEFS!=='undefined')&&EXAM_DEFS.find(function(d){return d.id===snap.id;});
+      if(edef){
+        var ans=snap.ans.filter(function(a){return a!==null&&a!==undefined;}).length;
+        return '<div class="jumpback exam" onclick="examResume()"><div class="jb-ic">\u23F8\uFE0F</div>'
+          +'<div class="jb-tx"><div class="jb-t">Resume your exam</div>'
+          +'<div class="jb-s">'+esc(edef.name)+' \u00b7 '+ans+'/'+snap.qs.length+' answered</div></div>'
+          +'<div class="jb-go">Resume \u2192</div></div>';
+      }
+    }
+  }
+  var last=_lastMod();
+  if(last&&typeof MODULES!=='undefined'){
+    var m=MODULES.find(function(x){return x.id===last.id;});
+    if(m){
+      return '<div class="jumpback" onclick="showMod(\''+m.id+'\')"><div class="jb-ic">\uD83D\uDCD6</div>'
+        +'<div class="jb-tx"><div class="jb-t">Jump back in</div>'
+        +'<div class="jb-s">Continue \u2014 '+m.title+'</div></div>'
+        +'<div class="jb-go">Open \u2192</div></div>';
+    }
+  }
+  return '';
+}
+
+
 function fullView(html){
   if(APP.exam&&APP.exam.timer){clearInterval(APP.exam.timer);}
   APP.exam=null;
@@ -3357,6 +3438,7 @@ function dashboard(){
   const ex=PROG.exams||{};
   const exRows=Object.keys(ex).map(k=>{const d=EXAM_DEFS.find(x=>x.id===k);return `<tr><td>${esc(d?d.name:k)}</td><td style="color:${ex[k].pass?'var(--ok)':'var(--er)'};font-weight:600">${ex[k].score}%</td><td>${ex[k].pass?'\u2713 Pass':'Fail'}</td></tr>`;}).join('')||'<tr><td colspan="3" style="color:var(--tx2)">No exams taken yet.</td></tr>';
   fullView(`<div class="dash">
+    ${(typeof _jumpBackHTML==='function')?_jumpBackHTML():''}
     <h2 class="etitle">\uD83D\uDCCA Readiness Dashboard</h2>
     <div class="dgrid">
       <div class="dcard dring-card">
