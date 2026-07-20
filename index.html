@@ -504,6 +504,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .ekeys{font-size:.72rem;color:var(--tx2);margin:2px 0 8px;letter-spacing:.02em;opacity:.85}
 .ekeys b{color:var(--ac);font-weight:700;padding:0 1px}
 @media(max-width:640px){.ekeys{display:none}}
+.certgrid{display:grid;gap:12px;grid-template-columns:1fr}@media(min-width:680px){.certgrid{grid-template-columns:1fr 1fr}}.certcard{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px}.certtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}.certcode{font-weight:800;font-size:1.05rem;color:var(--ac);letter-spacing:.03em}.certbody{font-size:.7rem;font-weight:700;color:var(--tx2);border:1px solid var(--bd);border-radius:20px;padding:1px 8px}.certtag{font-size:.66rem;font-weight:700;border-radius:20px;padding:2px 9px;margin-left:auto;color:#fff}.certtag.start{background:var(--ok)}.certtag.pop{background:var(--ac)}.certtag.adv{background:color-mix(in srgb,var(--tx2) 70%,transparent)}.certname{font-weight:600;font-size:.92rem;margin-bottom:8px;color:var(--tx)}.certrow{font-size:.82rem;line-height:1.5;color:var(--tx);margin-bottom:5px}.certrow b{color:var(--tx2);font-weight:700}.certlink{display:inline-block;margin-top:6px;font-size:.82rem;font-weight:700;color:var(--ac);text-decoration:none}.certlink:hover{text-decoration:underline}
 </style>
 <body>
 <div id="hdr">
@@ -536,7 +537,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 <div class="navrow"><button class="abtn" onclick="quizBuilder()">&#128256; Custom Quiz</button><button class="abtn" onclick="studyCalendar()">&#128197; Calendar</button></div>
 <div class="navrow"><button class="abtn" onclick="adaptiveQuiz()">&#127919; Adaptive</button><button class="abtn" onclick="personalBests()">&#127942; Personal Bests</button></div>
 <div class="navrow"><button class="abtn" onclick="dailyGoal()">&#128293; Daily Goal</button><button class="abtn" onclick="chartSim()">&#129513; Chart Sim</button></div>
-<div class="navrow"><button class="abtn" onclick="analyticsView()">&#128202; Analytics</button></div>
+<div class="navrow"><button class="abtn" onclick="analyticsView()">&#128202; Analytics</button><button class="abtn" onclick="certGuide()">&#127941; Certifications</button></div>
 <div class="navrow"><button class="abtn" onclick="trendChart()">&#128200; Progress</button><button class="abtn" onclick="srReview()">&#129504; Spaced Review</button></div>
 <div class="navrow"><button class="abtn" onclick="bookmarksView()">&#128278; Bookmarks</button><button class="abtn" onclick="settingsView()">&#9881; Settings</button></div>
 </div>
@@ -3227,6 +3228,69 @@ function _initExamKeys(){
   if(_initExamKeys._on)return;
   _initExamKeys._on=true;
   document.addEventListener('keydown',_examKeyHandler);
+}
+
+
+const CERTS=[
+  {code:"CCA",name:"Certified Coding Associate",body:"AHIMA",tag:"Best first cert",tagcls:"start",
+   focus:"Entry-level \u2014 both hospital and physician settings. No experience required to sit.",
+   format:"~90\u2013105 multiple-choice questions, about 2 hours. Passing = scaled score of 300 (scale 100\u2013400).",
+   renew:"20 CEUs every 2 years.",
+   best:"A brand-new coder with no work history who wants a recognized credential fast.",
+   url:"https://www.ahima.org/certification-careers/certifications-info/cca"},
+  {code:"CPC",name:"Certified Professional Coder",body:"AAPC",tag:"Most requested (physician)",tagcls:"pop",
+   focus:"Physician office / outpatient coding \u2014 the most in-demand credential in physician-side job postings.",
+   format:"100 multiple-choice questions, ~4 hours, open code books (ICD-10-CM, CPT, HCPCS). Passing = 70%.",
+   renew:"36 CEUs every 2 years. Active AAPC membership required to sit and to hold the credential.",
+   best:"Anyone aiming for a clinic, physician-group, or outpatient coding job. New coders earn CPC-A (Apprentice) until they show 2 years experience (or 1 year + approved coursework).",
+   url:"https://www.aapc.com/certification/cpc"},
+  {code:"CCS",name:"Certified Coding Specialist",body:"AHIMA",tag:"Hospital / inpatient",tagcls:"adv",
+   focus:"Advanced hospital coding \u2014 inpatient and outpatient. Highly respected for hospital HIM roles.",
+   format:"Multiple-choice plus medical-scenario coding, about 4 hours. Passing = scaled score of 300.",
+   renew:"20 CEUs every 2 years.",
+   best:"A coder targeting hospital / inpatient work, usually after some experience or CCA first.",
+   url:"https://www.ahima.org/certification-careers/certifications-info/ccs"},
+  {code:"COC",name:"Certified Outpatient Coder",body:"AAPC",tag:"Facility outpatient",tagcls:"adv",
+   focus:"Hospital outpatient departments and ambulatory surgery centers (facility side).",
+   format:"100 multiple-choice questions, ~4 hours, open code books. Passing = 70%.",
+   renew:"36 CEUs every 2 years (AAPC membership required).",
+   best:"Coders working the facility outpatient / ASC side rather than the physician office.",
+   url:"https://www.aapc.com/certification/coc"},
+  {code:"CIC",name:"Certified Inpatient Coder",body:"AAPC",tag:"Facility inpatient",tagcls:"adv",
+   focus:"Hospital inpatient coding \u2014 ICD-10-PCS procedures and MS-DRGs.",
+   format:"Multiple-choice plus fill-in-the-blank inpatient cases. Passing = 70%.",
+   renew:"36 CEUs every 2 years (AAPC membership required).",
+   best:"Coders specializing in inpatient facility records and DRG assignment.",
+   url:"https://www.aapc.com/certification/cic"},
+  {code:"CRC",name:"Certified Risk Adjustment Coder",body:"AAPC",tag:"Risk adjustment / HCC",tagcls:"adv",
+   focus:"Risk-adjustment coding (HCC) for Medicare Advantage and value-based programs.",
+   format:"100 multiple-choice questions, ~4 hours, open code books. Passing = 70%.",
+   renew:"36 CEUs every 2 years (AAPC membership required).",
+   best:"Coders moving into the fast-growing risk-adjustment / HCC niche.",
+   url:"https://www.aapc.com/certification/crc"}
+];
+function certGuide(){
+  var cards=CERTS.map(function(c){
+    return '<div class="certcard">'
+      +'<div class="certtop"><span class="certcode">'+esc(c.code)+'</span>'
+      +'<span class="certbody">'+esc(c.body)+'</span>'
+      +'<span class="certtag '+c.tagcls+'">'+esc(c.tag)+'</span></div>'
+      +'<div class="certname">'+esc(c.name)+'</div>'
+      +'<div class="certrow"><b>Focus:</b> '+esc(c.focus)+'</div>'
+      +'<div class="certrow"><b>Exam:</b> '+esc(c.format)+'</div>'
+      +'<div class="certrow"><b>Renewal:</b> '+esc(c.renew)+'</div>'
+      +'<div class="certrow"><b>Best for:</b> '+esc(c.best)+'</div>'
+      +'<a class="certlink" href="'+esc(c.url)+'" target="_blank" rel="noopener">Official exam page \u2197</a>'
+      +'</div>';
+  }).join('');
+  fullView('<div class="ecenter">'
+    +'<h2 class="etitle">\uD83C\uDFC5 Certifications Guide</h2>'
+    +'<p class="eintro">The real medical-coding credentials, who issues them, and which one to start with. Two bodies dominate the field: <b>AHIMA</b> (health-information / hospital focus) and <b>AAPC</b> (physician / outpatient focus). Both are respected \u2014 pick based on the job you want.</p>'
+    +'<div class="tip" style="margin-bottom:14px"><b>Where to start:</b> With no experience, the easiest entry points are <b>CCA</b> (AHIMA \u2014 no experience required, shorter exam) or <b>CPC-A</b> (AAPC \u2014 the Apprentice version of the CPC). Want a physician-office / clinic job? Aim for <b>CPC</b>. Want hospital / inpatient? Start with <b>CCA</b>, then <b>CCS</b>.</div>'
+    +'<div class="certgrid">'+cards+'</div>'
+    +'<p class="eintro" style="font-size:.78rem;margin-top:14px;opacity:.8">\u2139\uFE0F Exam fees, exact question counts, and formats are set by AHIMA and AAPC and change over time \u2014 always confirm the current details on the official exam page linked in each card before you register. This guide covers the durable facts (issuing body, focus, passing standard, and CEU renewal).</p>'
+    +'<div class="dcta" style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
+    +'</div>');
 }
 
 
