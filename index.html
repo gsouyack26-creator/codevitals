@@ -2980,16 +2980,18 @@ async function cloudSync(manual){
   if(remote.error){ if(manual)_syncStatus('Sync failed: '+remote.error,'bad'); return; }
   const localTs=PROG._ts||0;
   if(remote.none){ await cloudPush(!manual); if(manual)_syncStatus('Started your cloud backup \u2713','ok'); return; }
-  if(remote.ts>localTs){
-    _adoptRemote(remote.data);
-    if(typeof dashboard==='function')dashboard();
-    _syncStatus('Pulled newer progress from cloud \u2713','ok');
-  } else if(localTs>remote.ts){
-    await cloudPush(!manual);
-    if(manual)_syncStatus('Pushed your latest progress \u2713','ok');
-  } else {
-    if(manual)_syncStatus('Already up to date \u2713','ok');
-  }
+  var merged=(typeof _mergeProg==='function')?_mergeProg(PROG,remote.data):(remote.ts>localTs?remote.data:PROG);
+  var beforeLocal=_canon(_progNoTs(PROG));
+  var afterLocal=_canon(_progNoTs(merged));
+  var remoteStr=_canon(_progNoTs(remote.data));
+  var localChanged=(afterLocal!==beforeLocal);
+  var remoteStale=(afterLocal!==remoteStr);
+  if(localChanged){ _adoptRemote(merged); if(typeof dashboard==='function')dashboard(); }
+  if(remoteStale){ await cloudPush(!manual); }
+  if(localChanged&&remoteStale){ if(manual)_syncStatus('Merged progress from all your devices \u2713','ok'); }
+  else if(localChanged){ _syncStatus('Pulled newer progress from cloud \u2713','ok'); }
+  else if(remoteStale){ if(manual)_syncStatus('Pushed your latest progress \u2713','ok'); }
+  else { if(manual)_syncStatus('Already up to date \u2713','ok'); }
 }
 
 async function cloudRestore(){
@@ -3090,6 +3092,105 @@ function showWelcome(){
   +'</div>';
   document.body.appendChild(ov);
   const c=document.getElementById('wc-code'); if(c)setTimeout(function(){c.focus();},200);
+}
+
+
+function _canon(o){
+  if(o===null||typeof o!=='object')return JSON.stringify(o);
+  if(Array.isArray(o))return '['+o.map(_canon).join(',')+']';
+  return '{'+Object.keys(o).sort().map(function(k){return JSON.stringify(k)+':'+_canon(o[k]);}).join(',')+'}';
+}
+function _progNoTs(p){ var c=Object.assign({},p||{}); delete c._ts; return c; }
+function _mergeProg(a,b){
+  a=a||{}; b=b||{};
+  var out=JSON.parse(JSON.stringify(a));
+  var newer=(b._ts||0)>=(a._ts||0)?b:a;
+  function num(x){ return typeof x==='number'&&isFinite(x)?x:0; }
+  function bestMap(key,field){
+    var A=a[key]||{}, B=b[key]||{}, o={};
+    Object.keys(A).forEach(function(k){o[k]=A[k];});
+    Object.keys(B).forEach(function(k){
+      if(!(k in o)){o[k]=B[k];return;}
+      var av=num((A[k]||{})[field]), bv=num((B[k]||{})[field]);
+      o[k]= bv>av ? B[k] : A[k];
+    });
+    out[key]=o;
+  }
+  bestMap('exams','score'); bestMap('charts','pct'); bestMap('sr','box');
+  function numMap(key){
+    var A=a[key]||{}, B=b[key]||{}, o={};
+    Object.keys(A).forEach(function(k){o[k]=A[k];});
+    Object.keys(B).forEach(function(k){ o[k]= (k in o) ? Math.max(num(o[k]),num(B[k])) : B[k]; });
+    out[key]=o;
+  }
+  numMap('bossScore'); numMap('activity'); numMap('trend');
+  (function(){
+    var A=a.boss||{}, B=b.boss||{}, o={};
+    Object.keys(A).forEach(function(k){o[k]=A[k];});
+    Object.keys(B).forEach(function(k){ if(!(k in o))o[k]=B[k]; });
+    out.boss=o;
+  })();
+  (function(){
+    var A=a.ach||{}, B=b.ach||{}, o={};
+    Object.keys(A).forEach(function(k){o[k]=A[k];});
+    Object.keys(B).forEach(function(k){
+      if(!(k in o)){o[k]=B[k];return;}
+      var av=num(o[k]), bv=num(B[k]);
+      o[k]= (av&&bv) ? Math.min(av,bv) : (av||bv||o[k]);
+    });
+    out.ach=o;
+  })();
+  (function(){
+    var A=a.miss||{}, B=b.miss||{}, o={};
+    Object.keys(A).forEach(function(k){o[k]=A[k];});
+    Object.keys(B).forEach(function(k){
+      if(!(k in o)){o[k]=B[k];return;}
+      var m=o[k]||{}; o[k]=Object.assign({},m,{n:Math.max(num(m.n),num((B[k]||{}).n))});
+    });
+    out.miss=o;
+  })();
+  (function(){
+    var A=a.bookmarks||{}, B=b.bookmarks||{};
+    out.bookmarks={ q:Object.assign({},A.q||{},B.q||{}), gloss:Object.assign({},A.gloss||{},B.gloss||{}) };
+  })();
+  (function(){
+    var A=a.topics||{}, B=b.topics||{}, o={};
+    Object.keys(A).forEach(function(k){o[k]=A[k];});
+    Object.keys(B).forEach(function(k){
+      if(!(k in o)){o[k]=B[k];return;}
+      var av=num((A[k]||{}).seen)||num((A[k]||{}).n), bv=num((B[k]||{}).seen)||num((B[k]||{}).n);
+      o[k]= bv>av ? B[k] : A[k];
+    });
+    out.topics=o;
+  })();
+  (function(){
+    var A=a.streak||{}, B=b.streak||{};
+    var base= num(B.days)>num(A.days) ? B : A;
+    out.streak=Object.assign({},base,{freezes:Math.max(num(A.freezes),num(B.freezes))});
+  })();
+  (function(){
+    var A=a.daily||{}, B=b.daily||{};
+    out.daily={ best:Math.max(num(A.best),num(B.best)), streak:Math.max(num(A.streak),num(B.streak)), last:(newer.daily||{}).last||A.last||B.last||null };
+  })();
+  (function(){
+    var A=a.stats||{}, B=b.stats||{};
+    out.stats={ seen:Math.max(num(A.seen),num(B.seen)), correct:Math.max(num(A.correct),num(B.correct)) };
+  })();
+  (function(){
+    var A=a.bossRush||{}, B=b.bossRush||{};
+    out.bossRush=Object.assign({}, num(B.best)>num(A.best)?B:A);
+  })();
+  (function(){
+    var A=Array.isArray(a.runlog)?a.runlog:[], B=Array.isArray(b.runlog)?b.runlog:[];
+    var seen={}, all=[];
+    A.concat(B).forEach(function(r){ var k=JSON.stringify(r); if(!seen[k]){seen[k]=1;all.push(r);} });
+    all.sort(function(x,y){ return num(y&&y.t)-num(x&&x.t); });
+    out.runlog=all.slice(0,60);
+  })();
+  if(newer.goal!==undefined) out.goal=newer.goal;
+  if(newer.analytics!==undefined) out.analytics=newer.analytics;
+  out._ts=Date.now();
+  return out;
 }
 
 
