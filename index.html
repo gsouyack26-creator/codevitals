@@ -2523,6 +2523,12 @@ function cheatSheet(){
     }).join('');
     return '<h3>'+esc(g.cat)+'</h3><table>'+rows+'</table>';
   }).join('');
+  var codeSecs=(typeof HYCODES!=='undefined')?HYCODES.map(function(g){
+    var rows=g.items.map(function(x){
+      return '<tr><td class="c">'+esc(x.c)+'</td><td>'+esc(x.d)+'</td></tr>';
+    }).join('');
+    return '<h3>'+esc(g.set)+'</h3><table>'+rows+'</table>';
+  }).join(''):'';
   var win=window.open('','_blank');
   var html='<html><head><title>CodeVitals Cheat Sheet</title><style>'
     +'body{font-family:system-ui,Arial,sans-serif;color:#1e293b;max-width:1000px;margin:20px auto;padding:0 16px}'
@@ -2541,6 +2547,7 @@ function cheatSheet(){
     +'<p class="sub">Modifiers &amp; coding-guideline quick reference \u00b7 generated '+new Date().toLocaleDateString()+' \u00b7 verify against current CPT / ICD-10-CM Official Guidelines.</p>'
     +'<h2>\uD83C\uDFF7\uFE0F CPT / HCPCS Modifiers</h2><div class="cols">'+modSecs+'</div>'
     +'<h2>\uD83D\uDCD0 Coding Guidelines</h2><div class="cols">'+gdSecs+'</div>'
+    +(codeSecs?('<h2>\uD83D\uDCC7 High-Yield Codes</h2><p class="sub">Study aid \u2014 verify every code against the current official codebook before assigning.</p><div class="cols">'+codeSecs+'</div>'):'')
     +'<button onclick="window.print()">\uD83D\uDDA8\uFE0F Print / Save as PDF</button>'
     +'<button onclick="window.close()">Close</button>'
     +'</body></html>';
