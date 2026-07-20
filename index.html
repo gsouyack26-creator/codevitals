@@ -501,6 +501,9 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 #etimefill{height:100%;width:100%;background:var(--ac);border-radius:6px;transition:width 1s linear}
 #etimefill.low{background:var(--er,#dc2626)}
 
+.ekeys{font-size:.72rem;color:var(--tx2);margin:2px 0 8px;letter-spacing:.02em;opacity:.85}
+.ekeys b{color:var(--ac);font-weight:700;padding:0 1px}
+@media(max-width:640px){.ekeys{display:none}}
 </style>
 <body>
 <div id="hdr">
@@ -1426,6 +1429,7 @@ function init(){
   showMod(MODULES[0].id);
   if(typeof cloudSync==='function')setTimeout(function(){cloudSync(false);},600);
   if(typeof _initSyncPill==='function')_initSyncPill();
+  if(typeof _initExamKeys==='function')_initExamKeys();
   if(typeof showWelcome==='function')setTimeout(showWelcome,400);
   if(typeof pwaInit==='function')pwaInit();
 }
@@ -1866,6 +1870,7 @@ function examRender(){
     <div class="ebar"><span id="etimer" class="etimer">\u23F1\uFE0F</span><span class="ecount">${answered}/${ex.qs.length} answered</span></div>
     <div class="etimebar"><div id="etimefill"></div></div>
     <div class="qprog">Question ${ex.i+1} of ${ex.qs.length} &bull; ${esc(q.mod||'')}</div>
+    <div class="ekeys">⌨️ <b>1–4</b> answer · <b>← →</b> move · <b>F</b> flag</div>
     <div class="qcard"><div class="qq">${esc(q.q)}</div>${opts}</div>
     <div class="enav">
       <button class="qbtn sec" onclick="examGo(${ex.i-1})" ${ex.i===0?'disabled':''}>&#8592; Prev</button>
@@ -3191,6 +3196,37 @@ function _mergeProg(a,b){
   if(newer.analytics!==undefined) out.analytics=newer.analytics;
   out._ts=Date.now();
   return out;
+}
+
+
+function _examKeyHandler(e){
+  var ex=(typeof APP!=='undefined')&&APP.exam;
+  if(!ex||ex.submitted)return;
+  var t=e.target||{};
+  var tag=(t.tagName||'').toUpperCase();
+  if(tag==='INPUT'||tag==='TEXTAREA'||t.isContentEditable)return;
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  var k=e.key||'';
+  var lk=k.toLowerCase();
+  var q=ex.qs[ex.i];
+  if(k>='1'&&k<='9'){
+    var idx=parseInt(k,10)-1;
+    if(q&&idx<q.opts.length){ examSelect(idx); e.preventDefault(); }
+    return;
+  }
+  if(lk==='a'||lk==='b'||lk==='c'||lk==='d'){
+    var oi='abcd'.indexOf(lk);
+    if(q&&oi<q.opts.length){ examSelect(oi); e.preventDefault(); }
+    return;
+  }
+  if(k==='ArrowRight'){ if(ex.i<ex.qs.length-1){ examGo(ex.i+1); e.preventDefault(); } return; }
+  if(k==='ArrowLeft'){ if(ex.i>0){ examGo(ex.i-1); e.preventDefault(); } return; }
+  if(lk==='f'){ examFlag(); e.preventDefault(); return; }
+}
+function _initExamKeys(){
+  if(_initExamKeys._on)return;
+  _initExamKeys._on=true;
+  document.addEventListener('keydown',_examKeyHandler);
 }
 
 
