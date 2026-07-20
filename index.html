@@ -508,6 +508,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .resume-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;background:color-mix(in srgb,var(--ac) 12%,var(--card));border:1px solid var(--ac);border-radius:14px;padding:12px 16px;margin-bottom:16px}.rb-txt b{font-size:.95rem;color:var(--tx)}.rb-sub{font-size:.8rem;color:var(--tx2);margin-top:2px}.rb-btns{display:flex;gap:8px}.rb-btns .qbtn{margin:0;padding:8px 16px}
 .jumpback{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:0 0 16px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--c2);cursor:pointer;transition:transform .12s,box-shadow .12s}.jumpback:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18)}.jumpback.exam{border-left-color:var(--wn)}.jb-ic{font-size:1.6rem;line-height:1}.jb-tx{flex:1}.jb-t{font-weight:700}.jb-s{color:var(--tx2);font-size:.85rem;margin-top:2px}.jb-go{margin-left:auto;color:var(--ac);font-weight:600;white-space:nowrap}
 .mod-cat{font-weight:700;margin:18px 0 6px;color:var(--ac);font-size:.95rem;border-bottom:1px solid var(--bd);padding-bottom:4px}.mod-tbl{width:100%;border-collapse:collapse;margin-bottom:4px}.mod-tbl td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}.mod-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:var(--ac);white-space:nowrap;width:1%}.mod-mean b{font-weight:600}.mod-ex{color:var(--tx2);font-size:.85rem;margin-top:3px}
+.gd-tbl td{padding:12px 10px}.gd-t{font-weight:700;color:var(--ac)}.gd-d{margin-top:4px}.gd-ex{margin-top:6px;color:var(--tx2);font-size:.85rem}
 </style>
 <body>
 <div id="hdr">
@@ -541,7 +542,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 <div class="navrow"><button class="abtn" onclick="adaptiveQuiz()">&#127919; Adaptive</button><button class="abtn" onclick="personalBests()">&#127942; Personal Bests</button></div>
 <div class="navrow"><button class="abtn" onclick="dailyGoal()">&#128293; Daily Goal</button><button class="abtn" onclick="chartSim()">&#129513; Chart Sim</button></div>
 <div class="navrow"><button class="abtn" onclick="analyticsView()">&#128202; Analytics</button><button class="abtn" onclick="certGuide()">&#127941; Certifications</button></div>
-<div class="navrow"><button class="abtn" onclick="modifierRef()">&#127991;&#65039; Modifiers</button></div>
+<div class="navrow"><button class="abtn" onclick="modifierRef()">&#127991;&#65039; Modifiers</button><button class="abtn" onclick="guidelinesRef()">&#128208; Guidelines</button></div>
 <div class="navrow"><button class="abtn" onclick="trendChart()">&#128200; Progress</button><button class="abtn" onclick="srReview()">&#129504; Spaced Review</button></div>
 <div class="navrow"><button class="abtn" onclick="bookmarksView()">&#128278; Bookmarks</button><button class="abtn" onclick="settingsView()">&#9881; Settings</button></div>
 </div>
@@ -3315,6 +3316,47 @@ const MODIFIERS=[
   {m:"GA / GY / GZ",n:"ABN / Medicare coverage-liability modifiers (HCPCS)",ex:"GA = a signed ABN is on file for a service Medicare may deny."},
   {m:"90",n:"Reference (outside) laboratory",ex:"Specimen sent to an outside lab; the ordering entity bills with 90."}]}
 ];
+const GUIDES=[
+ {cat:"ICD-10-CM Conventions",items:[
+  {t:"Code first / Use additional code",d:"\"Code first\" means an underlying/etiology condition must be sequenced BEFORE the current code. \"Use additional code\" tells you to add a second code (often a manifestation) AFTER it. They travel together.",ex:"Dementia in Parkinson's: code Parkinson's (G20) first, then the dementia manifestation."},
+  {t:"Etiology / Manifestation (\"code, in diseases classified elsewhere\")",d:"When a manifestation code has \"in diseases classified elsewhere\" in its title, the etiology (cause) is sequenced first and the manifestation second. Manifestation codes are never first-listed.",ex:"Diabetic cataract: sequence the diabetes code first, then the cataract manifestation."},
+  {t:"Combination codes",d:"A single code that captures two diagnoses, a diagnosis with an associated manifestation, or a diagnosis with a complication. Use the combination code instead of two separate codes when one exists.",ex:"Type 2 diabetes WITH diabetic CKD = E11.22 (one combination code), plus the CKD stage."},
+  {t:"Excludes1 vs Excludes2",d:"Excludes1 = NOT CODED HERE \u2014 the two conditions cannot be reported together (mutually exclusive). Excludes2 = NOT INCLUDED HERE \u2014 the condition is separate and BOTH may be coded if present.",ex:"Excludes2 lets you code a listed 'other' condition alongside; Excludes1 forbids it."},
+  {t:"Laterality",d:"Many codes require right, left, or bilateral. If no bilateral code exists, report separate right and left codes. Unspecified laterality should be avoided when the side is documented.",ex:"Cataract of the right eye vs left eye each has its own code."}]},
+ {cat:"Injury & Fracture 7th Characters",items:[
+  {t:"A / D / S (general injuries)",d:"7th character 'A' = initial encounter (active treatment). 'D' = subsequent encounter (routine healing/aftercare). 'S' = sequela (a late-effect condition caused by the injury). The injury code with 'S' is sequenced after the sequela code.",ex:"Laceration repaired in the ED = 'A'; suture-removal follow-up = 'D'."},
+  {t:"Fracture 7th characters",d:"Fractures expand the set: A = initial closed, B = initial open, D = subsequent routine healing, G = subsequent delayed healing, K = nonunion, P = malunion, S = sequela.",ex:"Closed distal radius fracture, first active-treatment visit = 'A'."},
+  {t:"Placeholder X",d:"When a code needs a 7th character but has fewer than 6 characters, fill the empty positions with the placeholder 'X' so the 7th character lands in the 7th position.",ex:"T-code poisoning entries commonly use X placeholders before the 7th character."}]},
+ {cat:"Symptoms, Z-codes & Sequencing",items:[
+  {t:"Signs & symptoms",d:"Do NOT code a symptom that is integral to a confirmed diagnosis. DO code a symptom that is not routinely associated with the confirmed condition, or when no definitive diagnosis is made.",ex:"Chest pain is not coded once an MI is confirmed; it IS coded if the cause is still unknown."},
+  {t:"First-listed vs principal diagnosis",d:"Outpatient uses the 'first-listed' diagnosis (the main reason for the encounter). Inpatient uses the 'principal' diagnosis (condition established after study to be chiefly responsible for admission).",ex:"An outpatient screening visit lists the screening Z-code first."},
+  {t:"Screening (Z-code first)",d:"For a screening with no symptoms, the screening Z-code is first-listed. Any finding (e.g., a polyp) is coded additionally \u2014 it does NOT replace the screening as the reason for the visit.",ex:"Screening colonoscopy that finds a polyp: screening Z12.11 first, then the polyp finding."},
+  {t:"Suspected / rule-out (outpatient)",d:"In the OUTPATIENT setting, do not code 'probable', 'suspected', or 'rule-out' conditions as if confirmed \u2014 code the signs/symptoms instead. (Inpatient rules differ and allow uncertain diagnoses at discharge.)",ex:"Outpatient 'rule out pneumonia' with cough = code the cough, not pneumonia."}]},
+ {cat:"CPT Concepts",items:[
+  {t:"Surgical package (global period)",d:"A CPT surgical code bundles the operation plus the usual pre-op visit and normal post-op follow-up care within its global period (0, 10, or 90 days). Routine follow-up in that window is not billed separately.",ex:"A 90-day global includes the uncomplicated post-op wound check."},
+  {t:"Separate procedure",d:"A code labeled '(separate procedure)' is only reported when it is performed alone \u2014 not when it is a component of a larger procedure done at the same session.",ex:"A 'separate procedure' bundled into a bigger operation is not reported separately."},
+  {t:"Add-on codes & modifier 51-exempt",d:"Add-on codes (often marked +) describe additional work and are reported WITH a primary code, never alone. Many add-on and 51-exempt codes should not carry modifier 51.",ex:"Each additional lesion/level code is an add-on to its base procedure."},
+  {t:"E/M medical decision making (2021+)",d:"Office/outpatient E/M level is chosen by either total time on the date of service OR medical decision making (MDM), based on problems addressed, data reviewed, and risk. History/exam no longer drive the level.",ex:"A moderate-complexity new problem with prescription-drug management supports a higher MDM level."}]}
+];
+function guidelinesRef(){
+  var body=GUIDES.map(function(g){
+    var rows=g.items.map(function(x){
+      return '<tr><td class="gd-cell"><div class="gd-t">'+esc(x.t)+'</div>'
+        +'<div class="gd-d">'+esc(x.d)+'</div>'
+        +'<div class="gd-ex"><b>Example:</b> '+esc(x.ex)+'</div></td></tr>';
+    }).join("");
+    return '<div class="mod-cat">'+esc(g.cat)+'</div>'
+      +'<table class="mod-tbl gd-tbl"><tbody>'+rows+'</tbody></table>';
+  }).join("");
+  fullView('<div class="ecenter">'
+    +'<h2 class="etitle">\uD83D\uDCD0 Coding Guidelines Quick Reference</h2>'
+    +'<p class="eintro">The ICD-10-CM conventions and CPT concepts that the CPC exam tests most \u2014 sequencing rules, 7th characters, combination codes, laterality, the surgical package, and 2021+ E/M. These are guideline summaries; always confirm against the current Official Guidelines for Coding and Reporting and CPT instructions.</p>'
+    +body
+    +'<div style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
+    +'</div>');
+}
+
+
 function modifierRef(){
   var body=MODIFIERS.map(function(g){
     var rows=g.items.map(function(x){
