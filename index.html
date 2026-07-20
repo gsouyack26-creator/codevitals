@@ -543,6 +543,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 <div class="navrow"><button class="abtn" onclick="dailyGoal()">&#128293; Daily Goal</button><button class="abtn" onclick="chartSim()">&#129513; Chart Sim</button></div>
 <div class="navrow"><button class="abtn" onclick="analyticsView()">&#128202; Analytics</button><button class="abtn" onclick="certGuide()">&#127941; Certifications</button></div>
 <div class="navrow"><button class="abtn" onclick="modifierRef()">&#127991;&#65039; Modifiers</button><button class="abtn" onclick="guidelinesRef()">&#128208; Guidelines</button></div>
+<div class="navrow"><button class="abtn" onclick="cheatSheet()">&#128424;&#65039; Cheat Sheet</button></div>
 <div class="navrow"><button class="abtn" onclick="trendChart()">&#128200; Progress</button><button class="abtn" onclick="srReview()">&#129504; Spaced Review</button></div>
 <div class="navrow"><button class="abtn" onclick="bookmarksView()">&#128278; Bookmarks</button><button class="abtn" onclick="settingsView()">&#9881; Settings</button></div>
 </div>
@@ -2508,6 +2509,44 @@ function resetProg(){
 }
 
 /* ===== PRINTABLE SCORE REPORT ===== */
+function cheatSheet(){
+  var modSecs=MODIFIERS.map(function(g){
+    var rows=g.items.map(function(x){
+      return '<tr><td class="c">'+esc(x.m)+'</td><td>'+esc(x.n)+'</td></tr>';
+    }).join('');
+    return '<h3>'+esc(g.cat)+'</h3><table>'+rows+'</table>';
+  }).join('');
+  var gdSecs=GUIDES.map(function(g){
+    var rows=g.items.map(function(x){
+      return '<tr><td class="t">'+esc(x.t)+'</td><td>'+esc(x.d)+'</td></tr>';
+    }).join('');
+    return '<h3>'+esc(g.cat)+'</h3><table>'+rows+'</table>';
+  }).join('');
+  var win=window.open('','_blank');
+  var html='<html><head><title>CodeVitals Cheat Sheet</title><style>'
+    +'body{font-family:system-ui,Arial,sans-serif;color:#1e293b;max-width:1000px;margin:20px auto;padding:0 16px}'
+    +'h1{color:#0284c7;margin-bottom:2px}.sub{color:#64748b;margin-top:0;font-size:.85rem}'
+    +'h2{color:#0284c7;border-bottom:2px solid #0284c7;padding-bottom:3px;margin:22px 0 8px;font-size:1.05rem}'
+    +'h3{margin:12px 0 4px;font-size:.82rem;color:#334155;text-transform:uppercase;letter-spacing:.03em}'
+    +'.cols{column-count:2;column-gap:26px}'
+    +'table{width:100%;border-collapse:collapse;margin:2px 0 8px;font-size:.74rem;break-inside:avoid}'
+    +'td{text-align:left;padding:3px 6px;border-bottom:1px solid #e2e8f0;vertical-align:top}'
+    +'td.c{font-family:ui-monospace,Consolas,monospace;font-weight:700;color:#0284c7;white-space:nowrap;width:1%}'
+    +'td.t{font-weight:700;color:#0f172a;width:34%}'
+    +'@media print{button{display:none}body{margin:0}}'
+    +'button{background:#0284c7;color:#fff;border:0;padding:9px 18px;border-radius:8px;font-size:.9rem;cursor:pointer;margin:14px 6px 0 0}'
+    +'</style></head><body>'
+    +'<h1>\uD83E\uDE7A CodeVitals \u2014 CPC Cheat Sheet</h1>'
+    +'<p class="sub">Modifiers &amp; coding-guideline quick reference \u00b7 generated '+new Date().toLocaleDateString()+' \u00b7 verify against current CPT / ICD-10-CM Official Guidelines.</p>'
+    +'<h2>\uD83C\uDFF7\uFE0F CPT / HCPCS Modifiers</h2><div class="cols">'+modSecs+'</div>'
+    +'<h2>\uD83D\uDCD0 Coding Guidelines</h2><div class="cols">'+gdSecs+'</div>'
+    +'<button onclick="window.print()">\uD83D\uDDA8\uFE0F Print / Save as PDF</button>'
+    +'<button onclick="window.close()">Close</button>'
+    +'</body></html>';
+  win.document.write(html); win.document.close();
+}
+
+
 function printReport(){
   const r=readiness();
   const ex=PROG.exams||{};
