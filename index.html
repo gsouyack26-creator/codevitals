@@ -511,9 +511,12 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .gd-tbl td{padding:12px 10px}.gd-t{font-weight:700;color:var(--ac)}.gd-d{margin-top:4px}.gd-ex{margin-top:6px;color:var(--tx2);font-size:.85rem}
 .hy-search{width:100%;box-sizing:border-box;padding:10px 12px;margin:4px 0 8px;border:1px solid var(--bd);border-radius:8px;background:var(--c2);color:var(--tx);font-size:.95rem}
 .drill-chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}.drill-chip{background:var(--c2);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:5px 12px;font-size:.82rem;cursor:pointer}.drill-chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}.drill-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--tx2);font-size:.8rem;margin-bottom:8px}.drill-tag{color:var(--ac);font-weight:600}.drill-card{background:var(--c2);border:1px solid var(--bd);border-radius:14px;padding:34px 22px;min-height:120px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;cursor:pointer;transition:transform .1s}.drill-card:hover{transform:translateY(-2px)}.drill-card.flipped{border-color:var(--ac);border-left:4px solid var(--ac)}.drill-face-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:10px}.drill-face-txt{font-size:1.15rem;font-weight:600;line-height:1.4}.drill-grade{display:flex;gap:10px;justify-content:center;margin-top:14px}.qbtn.good{background:var(--ok);color:#fff}.qbtn.bad{background:var(--er);color:#fff}.drill-done{text-align:center;padding:24px}.drill-score{font-size:2.6rem;font-weight:800;color:var(--ac)}.drill-sub{color:var(--tx2);margin-top:4px}
+#hbg{display:none;font-size:1.15rem;line-height:1;padding:3px 10px}#sb-ov{display:none}
+@media(max-width:760px){#hbg{display:inline-flex;align-items:center}#sb{position:fixed;top:50px;left:0;bottom:0;z-index:60;transform:translateX(-100%);transition:transform .2s ease;width:80%;max-width:300px;box-shadow:2px 0 16px rgba(0,0,0,.3)}#app.sb-open #sb{transform:none}#sb-ov{position:fixed;top:50px;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:55}#app.sb-open #sb-ov{display:block}.mod-tbl{table-layout:fixed}.mod-code{white-space:normal;word-break:break-word}}
 </style>
 <body>
 <div id="hdr">
+<button class="hbtn" id="hbg" onclick="toggleSb()" title="Menu" aria-label="Open menu">☰</button>
 <div style="flex:1;min-width:0;line-height:1.12"><h1 style="flex:none">🩺 CodeVitals</h1><div style="font-size:.62rem;font-weight:500;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Monitor your readiness. Pass with confidence.</div></div>
 <div style="position:relative">
 <input id="srch" type="search" placeholder="Search topics..." oninput="doSearch(this.value)" autocomplete="off">
@@ -527,6 +530,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 <button class="hbtn" onclick="examCenter()" title="Timed cert-style practice exams">📝 Exam Center</button>
 </div>
 <div id="app">
+<div id="sb-ov" onclick="closeSb()"></div>
 <nav id="sb">
 <div class="sbhd">
 <h2>Course Progress</h2>
@@ -3695,6 +3699,10 @@ function _jumpBackHTML(){
   return '';
 }
 
+
+function toggleSb(){var a=document.getElementById('app');if(a)a.classList.toggle('sb-open');}
+function closeSb(){var a=document.getElementById('app');if(a)a.classList.remove('sb-open');}
+(function(){var sb=document.getElementById('sb');if(sb)sb.addEventListener('click',function(e){var b=e.target.closest('button');if(b&&window.innerWidth<=760)closeSb();});})();
 
 function fullView(html){
   if(APP.exam&&APP.exam.timer){clearInterval(APP.exam.timer);}
