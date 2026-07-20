@@ -3478,9 +3478,11 @@ function drillStart(filter){
   } else if(filter&&filter!=='all'){
     deck=deck.filter(function(c){return c.tag===filter;});
   }
-  DRILL={cards:_drillShuffle(deck),i:0,flip:false,right:0,wrong:0,filter:filter||'all'};
+  var rev=(DRILL&&typeof DRILL.rev!=='undefined')?DRILL.rev:false;
+  DRILL={cards:_drillShuffle(deck),i:0,flip:false,right:0,wrong:0,filter:filter||'all',rev:rev};
   drillRender();
 }
+function drillReverse(){ if(DRILL){DRILL.rev=!DRILL.rev;DRILL.flip=false;drillRender();} }
 function drillFlip(){ if(DRILL){DRILL.flip=!DRILL.flip;drillRender();} }
 function drillGrade(ok){
   if(!DRILL)return;
@@ -3514,8 +3516,10 @@ function drillRender(){
     return;
   }
   var c=DRILL.cards[DRILL.i];
+  var front=DRILL.rev?c.b:c.f;
+  var back=DRILL.rev?c.f:c.b;
   var faceCls=DRILL.flip?'drill-card flipped':'drill-card';
-  var faceTxt=DRILL.flip?esc(c.b):esc(c.f);
+  var faceTxt=DRILL.flip?esc(back):esc(front);
   var hint=DRILL.flip?'Answer':'Prompt \u2014 tap to reveal';
   var controls=DRILL.flip
     ? '<div class="drill-grade"><button class="qbtn bad" onclick="drillGrade(false)">\u2717 Review</button>'
@@ -3523,7 +3527,7 @@ function drillRender(){
     : '<div class="drill-grade"><button class="qbtn" onclick="drillFlip()">Reveal answer</button></div>';
   fullView('<div class="ecenter"><h2 class="etitle">\uD83E\uDDE0 Reference Flash Drill</h2>'
     +'<p class="eintro">Active recall on the modifiers, guidelines, and high-yield codes. Read the prompt, answer in your head, then reveal and grade yourself.</p>'
-    +'<div class="drill-chips">'+chips+'</div>'
+    +'<div class="drill-chips">'+chips+'<button class="drill-chip'+(DRILL.rev?' on':'')+'" onclick="drillReverse()">\u21c4 '+(DRILL.rev?'Meaning \u2192 term':'Term \u2192 meaning')+'</button></div>'
     +'<div class="drill-meta"><span>Card '+(DRILL.i+1)+' of '+total+'</span>'
     +'<span class="drill-tag">'+esc(c.tag)+' \u00b7 '+esc(c.cat)+'</span>'
     +'<span>\u2713 '+DRILL.right+' \u00b7 \u2717 '+DRILL.wrong+'</span></div>'
