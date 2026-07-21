@@ -6470,6 +6470,7 @@ function gqRender(){
     var sh='<div class="ecenter"><h2 class="etitle">\uD83E\uDDE0 Quiz complete</h2>'
       +'<div class="gq-card"><div class="gq-def" style="text-align:center">You reviewed '+q.list.length+' term'+(q.list.length===1?'':'s')+'.</div>'
       +'<div class="gq-term">\u2705 '+(q.got||0)+' \u00b7 \u274c '+(q.missed||0)+(tot?' \u00b7 '+acc+'%':'')+'</div></div>'
+      +((typeof _gmaster==='function')?'<p class="gq-hint" style="margin-top:10px">\uD83C\uDF93 '+Object.keys(_gmaster()||{}).length+' mastered \u00b7 \u26a0\uFE0F '+((typeof _gweak==='function')?Object.keys(_gweak()||{}).length:0)+' need review \u00b7 of '+((typeof _glossTotal==='function')?_glossTotal():GLOSSARY.length)+' terms</p>':'')
       +'<div class="dcta" style="margin-top:14px">'
       +(mc>0?'<button class="qbtn" onclick="gqMissedQuiz()">\uD83D\uDD01 Quiz missed ('+mc+')</button>':'')
       +'<button class="qbtn sec" onclick="gqRestart()">\uD83D\uDD04 Restart deck</button>'
