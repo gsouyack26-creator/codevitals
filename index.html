@@ -2970,6 +2970,8 @@ function renderFC(){
       <button class="fcbtn" onclick="moveFC(-1)">&#8592; Prev</button>
       <div class="fcctr" id="fc-ctr"></div>
       <button class="fcbtn" onclick="moveFC(1)">Next &#8594;</button>
+      <input id="fc-jump" type="number" min="1" placeholder="#" title="Jump to card number" style="width:56px;padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--txt);text-align:center" onkeydown="if(event.key==='Enter'){event.preventDefault();jumpToCard();}">
+      <button class="fcbtn" onclick="jumpToCard()">Go</button>
     </div>
     <div class="fc-seenwrap"><div class="fc-seenbar"><div class="fc-seenfill" id="fc-seenfill"></div></div><div class="fc-seentxt" id="fc-seentxt"></div></div>
     <div style="text-align:center;margin-top:8px;display:flex;gap:8px;justify-content:center">
@@ -3058,6 +3060,15 @@ function moveFC(d){
   APP.fi=((APP.fi+d)%APP.fCards.length+APP.fCards.length)%APP.fCards.length;
   showFC();fcAutoRead();
   if(APP.fCards&&APP.fCards.length===FLASHCARDS.length&&APP.fCards[APP.fi]){PROG.fcLast=APP.fCards[APP.fi].front;saveProg();}
+}
+
+function jumpToCard(){
+  var el=document.getElementById('fc-jump'); if(!el)return;
+  var n=parseInt(el.value,10);
+  if(isNaN(n)||n<1||n>APP.fCards.length){if(typeof mcToast==='function')mcToast('Enter 1\u2013'+APP.fCards.length,'\uD83D\uDD22');el.value='';return;}
+  APP.fi=n-1; showFC(); fcAutoRead();
+  if(APP.fCards&&APP.fCards.length===FLASHCARDS.length&&APP.fCards[APP.fi]){PROG.fcLast=APP.fCards[APP.fi].front;saveProg();}
+  el.value='';
 }
 
 function copyFC(){
