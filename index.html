@@ -2583,6 +2583,24 @@ function showScore(m){
   saveProg();
   if(typeof checkAchievements==='function')checkAchievements();
   buildSB();
+  if(typeof checkCurriculumMilestone==='function')checkCurriculumMilestone();
+}
+function checkCurriculumMilestone(){
+  if(typeof MODULES==='undefined'||!MODULES.length)return;
+  const done=MODULES.filter(function(x){return (PROG[x.id]||{}).done;}).length;
+  const tot=MODULES.length;
+  const pct=Math.round(done/tot*100);
+  if(!PROG.currMilestones)PROG.currMilestones={};
+  const tiers=[{p:100,e:'\uD83C\uDFC6',t:'Curriculum complete!',s:'You finished all '+tot+' modules. You are exam-ready — go crush a full practice exam!'},{p:75,e:'\uD83D\uDD25',t:'Three quarters done!',s:done+' of '+tot+' modules complete. The finish line is close.'},{p:50,e:'\u2B50',t:'Halfway there!',s:done+' of '+tot+' modules complete. Great momentum — keep going.'},{p:25,e:'\uD83D\uDE80',t:'Quarter of the way!',s:done+' of '+tot+' modules complete. You are building real skills.'}];
+  for(var i=0;i<tiers.length;i++){
+    var tr=tiers[i];
+    if(pct>=tr.p&&!PROG.currMilestones[tr.p]){
+      PROG.currMilestones[tr.p]=true; if(typeof saveProg==='function')saveProg();
+      if(typeof celebrate==='function')celebrate(tr.e+' '+tr.t,tr.s,true);
+      else if(typeof mcToast==='function')mcToast(tr.t,tr.e);
+      break;
+    }
+  }
 }
 function renderFC(){
   const tags=[...new Set(FLASHCARDS.map(c=>c.tag))];
