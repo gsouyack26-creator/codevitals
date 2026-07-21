@@ -115,6 +115,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .dcd-ic{font-size:1.4rem}
 .dcd-lb{font-size:.95rem;display:flex;flex-direction:column;gap:2px}
 .dcd-dt{font-size:.75rem;color:var(--tx2)}
+.dcd-pace{display:block;font-size:.72rem;color:var(--ac);margin-top:2px}
 .drec-foot .ok{color:var(--ok);font-weight:700}
 .drec-foot .lo{color:var(--er);font-weight:700}
 .fctgbtn.on .fctg-star{color:#fff}
@@ -3713,7 +3714,12 @@ function _countdownHTML(){
   var days=Math.round((d.getTime()-now.getTime())/864e5);
   var pretty=d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
   var msg,cls;
-  if(days>1){msg='<b>'+days+'</b> days until your CPC exam';cls='';}
+  var pace='';
+  if(days>1&&typeof MODULES!=='undefined'&&typeof moduleMastery==='function'){
+    var left=MODULES.filter(function(m){return moduleMastery(m).pct<100;}).length;
+    if(left>0){var per=(left/days);var perTxt=per<=1?('about 1 module every '+Math.max(1,Math.round(days/left))+' day'+(Math.round(days/left)===1?'':'s')):('about '+Math.ceil(per)+' modules a day');pace='<span class="dcd-pace">'+left+' module'+(left===1?'':'s')+' left \u00b7 '+perTxt+'</span>';}
+  }
+  if(days>1){msg='<b>'+days+'</b> days until your CPC exam'+pace;cls='';}
   else if(days===1){msg='Your CPC exam is <b>tomorrow</b> \u2014 you\u2019ve got this!';cls='soon';}
   else if(days===0){msg='Your CPC exam is <b>today</b> \u2014 good luck!';cls='soon';}
   else{msg='Exam date passed \u2014 tap to update';cls='past';}
