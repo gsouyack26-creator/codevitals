@@ -6380,13 +6380,15 @@ function glossaryView(){
   if(typeof GLOSSARY==='undefined'){fullView('<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Glossary</h2><p class="eintro">Coming soon.</p><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>');return;}
   const cats=['All'].concat(Array.from(new Set(GLOSSARY.map(g=>g.cat))).sort());
   const chips=cats.map(c=>`<button class="gchip${c==='All'?' on':''}" data-cat="${esc(c)}" onclick="glossaryFilter('${esc(c)}','')">${esc(c)}</button>`).join('');
-  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}</div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
+  const savedChip=`<button class="gchip gchip-saved" data-cat="__saved__" onclick="glossaryFilter('__saved__','')">\u2605 Saved</button>`;
+  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
   APP.gcat='All';glossaryFilter('All','');
 }
 function glossaryFilter(cat,term){
   APP.gcat=cat;term=(term||'').toLowerCase();
   document.querySelectorAll('.gchip').forEach(c=>c.classList.toggle('on',c.dataset.cat===cat));
-  let list=GLOSSARY.filter(g=>(cat==='All'||g.cat===cat)&&(!term||g.term.toLowerCase().includes(term)||g.def.toLowerCase().includes(term)));
+  const savedMode=(cat==='__saved__');
+  let list=GLOSSARY.filter(g=>(cat==='All'||savedMode||g.cat===cat)&&(!savedMode||(typeof bmHasG==='function'&&bmHasG(g.term)))&&(!term||g.term.toLowerCase().includes(term)||g.def.toLowerCase().includes(term)));
   list=list.slice().sort((a,b)=>a.term.localeCompare(b.term));
   const html=list.map(g=>`<div class="gitem"><div class="gterm">${bmStarG(g.term)}${esc(g.term)} <span class="gcat">${esc(g.cat)}</span></div><div class="gdef">${esc(g.def)}</div>${eliGloss(g.term)}</div>`).join('')||'<p style="font-size:.8rem;color:var(--tx2)">No matches.</p>';
   const el=document.getElementById('glist');if(el)el.innerHTML=`<div class="gcount">${list.length} term${list.length===1?'':'s'}</div>`+html;
