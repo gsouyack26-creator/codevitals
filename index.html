@@ -589,6 +589,18 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 #scrolltop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 #readprog{position:sticky;top:0;left:0;height:3px;width:100%;background:transparent;z-index:35;pointer-events:none}
 #readprog-fill{height:100%;width:0;background:var(--ac);transition:width .1s linear}
+
+#kbdhelp-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:none;align-items:center;justify-content:center;padding:16px}
+#kbdhelp-ov.show{display:flex}
+#kbdhelp-card{background:var(--card,#fff);color:var(--fg,#111);border:1px solid var(--line,#ddd);border-radius:14px;max-width:440px;width:100%;max-height:82vh;overflow-y:auto;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+#kbdhelp-card h3{margin:0 0 4px;font-size:19px}
+#kbdhelp-card .khsub{opacity:.7;font-size:12.5px;margin-bottom:14px}
+#kbdhelp-card .khsec{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.04em;opacity:.6;margin:14px 0 6px}
+#kbdhelp-card .khrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line,#eee)}
+#kbdhelp-card .khrow:last-child{border-bottom:none}
+#kbdhelp-card .khdesc{font-size:14px}
+#kbdhelp-card kbd{display:inline-block;background:var(--chip,#f1f1f4);border:1px solid var(--line,#ccc);border-bottom-width:2px;border-radius:6px;padding:2px 8px;font:600 12px/1.4 ui-monospace,monospace;min-width:20px;text-align:center}
+#kbdhelp-card .khclose{margin-top:16px;width:100%;padding:10px;border:none;border-radius:9px;background:var(--accent,#2d6cdf);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
 </style>
 <body>
 <div id="hdr">
@@ -5870,6 +5882,39 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='ArrowLeft'){moveFC(-1);e.preventDefault();}
   else if(e.key===' '&&document.getElementById('fci')){flipFC();e.preventDefault();}
   else if((e.key==='s'||e.key==='S')&&typeof toggleFcFav==='function'){toggleFcFav();e.preventDefault();}
+});
+
+var _KBDHELP=[
+  {sec:'Flashcards',rows:[['\u2190 / \u2192','Previous / next card'],['Space','Flip card'],['S','Star / unstar card']]},
+  {sec:'Quiz',rows:[['1 \u2013 9','Pick answer by number'],['A \u2013 I','Pick answer by letter']]},
+  {sec:'Practice exam',rows:[['\u2190 / \u2192','Previous / next question'],['1 \u2013 9','Pick answer']]},
+  {sec:'Anywhere',rows:[['?','Show / hide this help']]}
+];
+function _kbdHelpHTML(){
+  var h='';
+  _KBDHELP.forEach(function(g){
+    h+='<div class="khsec">'+g.sec+'</div>';
+    g.rows.forEach(function(r){
+      h+='<div class="khrow"><span class="khdesc">'+r[1]+'</span><span><kbd>'+r[0]+'</kbd></span></div>';
+    });
+  });
+  return h;
+}
+function toggleKbdHelp(force){
+  var ov=document.getElementById('kbdhelp-ov');
+  if(!ov){
+    ov=document.createElement('div');ov.id='kbdhelp-ov';
+    ov.innerHTML='<div id="kbdhelp-card"><h3>Keyboard shortcuts</h3><div class="khsub">Study faster without the mouse.</div>'+_kbdHelpHTML()+'<button class="khclose" onclick="toggleKbdHelp(false)">Got it</button></div>';
+    ov.addEventListener('click',function(e){if(e.target===ov)toggleKbdHelp(false);});
+    document.body.appendChild(ov);
+  }
+  var show=(typeof force==='boolean')?force:!ov.classList.contains('show');
+  ov.classList.toggle('show',show);
+}
+document.addEventListener('keydown',function(e){
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||''))return;
+  if(e.key==='?'||(e.key==='/'&&e.shiftKey)){toggleKbdHelp();e.preventDefault();}
+  else if(e.key==='Escape'){var ov=document.getElementById('kbdhelp-ov');if(ov&&ov.classList.contains('show')){toggleKbdHelp(false);e.preventDefault();}}
 });
 
 function _scrollMainTop(){var m=document.getElementById('main');if(m)m.scrollTo({top:0,behavior:'smooth'});}
