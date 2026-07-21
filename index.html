@@ -671,6 +671,13 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dgreet-tip-l{font-weight:700;opacity:.85;margin-right:4px}
 .tip-more{margin-left:6px;padding:1px 8px;border:1px solid var(--bd);border-radius:9px;background:none;font-size:11px;color:var(--tx2);cursor:pointer;white-space:nowrap}
 .tip-more:hover{border-color:var(--ac);color:var(--ac)}
+.dterm{margin-top:12px;padding:12px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);cursor:pointer}
+.dterm:hover{border-color:var(--ac)}
+.dterm-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.dterm-l{font-weight:700;font-size:12px;opacity:.85}
+.dterm-cat{font-size:10.5px;color:var(--tx2);border:1px solid var(--bd);border-radius:9px;padding:1px 7px}
+.dterm-t{font-weight:700;font-size:15px;margin-bottom:3px}
+.dterm-d{font-size:12.5px;color:var(--tx2);line-height:1.5}
 </style>
 <body>
 <div id="hdr">
@@ -3871,6 +3878,15 @@ function copyTip(e){
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
   else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
 }
+function _termOfDayHTML(){
+  if(typeof GLOSSARY==='undefined'||!GLOSSARY.length)return '';
+  var idx=Math.floor(Date.now()/864e5)%GLOSSARY.length;
+  var g=GLOSSARY[idx];
+  if(!g)return '';
+  return '<div class="dterm" onclick="glossaryView()"><div class="dterm-h"><span class="dterm-l">\uD83D\uDCD6 Term of the day</span><span class="dterm-cat">'+esc(g.cat)+'</span></div>'
+    +'<div class="dterm-t">'+esc(g.term)+'</div>'
+    +'<div class="dterm-d">'+esc(g.def)+'</div></div>';
+}
 function _masteryStatHTML(){
   if(typeof MODULES==='undefined')return '';
   var tot=MODULES.length;
@@ -6226,6 +6242,7 @@ function dashboard(){
     ${(typeof _fcFavHTML==='function')?_fcFavHTML():''}
     ${(typeof _examTrendHTML==='function')?_examTrendHTML():''}
     ${(typeof _recentHTML==='function')?_recentHTML():''}
+    ${(typeof _termOfDayHTML==='function')?_termOfDayHTML():''}
     <h2 class="etitle">\uD83D\uDCCA Readiness Dashboard</h2>
     <div class="dgrid">
       <div class="dcard dring-card">
