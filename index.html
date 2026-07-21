@@ -3055,7 +3055,8 @@ function showFC(){
   document.getElementById('fc-tag2').textContent=c.tag;
   document.getElementById('fc-front').textContent=c.front;
   document.getElementById('fc-back').textContent=c.back;
-  document.getElementById('fc-ctr').textContent=(APP.fi+1)+' / '+APP.fCards.length;
+  var _fcStarN=(PROG.fcFav)?APP.fCards.filter(function(x){return PROG.fcFav[x.front];}).length:0;
+  document.getElementById('fc-ctr').textContent=(APP.fi+1)+' / '+APP.fCards.length+(_fcStarN?'  \u2605'+_fcStarN:'');
   if(!APP.fcSeen)APP.fcSeen={};
   APP.fcSeen[c.front]=true;
   var tot=APP.fCards.length;
