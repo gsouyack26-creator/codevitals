@@ -585,6 +585,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .tab-done{color:var(--ok);font-weight:800}
 .q-kbdhint{text-align:center;font-size:.7rem;color:var(--tx2);margin-top:10px}
 .q-kbdhint b{color:var(--tx);font-weight:600}
+#scrolltop{position:fixed;right:18px;bottom:18px;width:42px;height:42px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s,transform .2s;z-index:40}
+#scrolltop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 </style>
 <body>
 <div id="hdr">
@@ -630,6 +632,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 <main id="main">
 <div id="mod-view"></div>
 <div id="all-quiz-view" style="display:none;padding:16px"></div>
+<button id="scrolltop" aria-label="Scroll to top" title="Back to top" onclick="_scrollMainTop()">↑</button>
 </main>
 </div>
 <script>
@@ -5866,6 +5869,16 @@ document.addEventListener('keydown',e=>{
   else if((e.key==='s'||e.key==='S')&&typeof toggleFcFav==='function'){toggleFcFav();e.preventDefault();}
 });
 
+function _scrollMainTop(){var m=document.getElementById('main');if(m)m.scrollTo({top:0,behavior:'smooth'});}
+(function(){
+  function wire(){
+    var m=document.getElementById('main'),btn=document.getElementById('scrolltop');
+    if(!m||!btn)return;
+    m.addEventListener('scroll',function(){btn.classList.toggle('show',m.scrollTop>400);});
+  }
+  if(document.readyState!=='loading')wire();
+  else document.addEventListener('DOMContentLoaded',wire);
+})();
 document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
