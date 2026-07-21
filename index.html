@@ -572,6 +572,13 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .fctg-fav.on{background:#f59e0b;color:#fff}
 .fc-kbdhint{text-align:center;font-size:.7rem;color:var(--tx2);margin-top:10px}
 .fc-kbdhint b{color:var(--tx);font-weight:600}
+.dstar{display:flex;align-items:center;gap:12px;background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:13px 16px;margin-bottom:14px;cursor:pointer;transition:border-color .15s}
+.dstar:hover{border-color:#f59e0b}
+.dstar-ic{font-size:1.5rem;color:#f59e0b}
+.dstar-tx{flex:1}
+.dstar-t{font-weight:700;font-size:.9rem}
+.dstar-s{font-size:.76rem;color:var(--tx2);margin-top:2px}
+.dstar-go{font-size:.8rem;color:#f59e0b;font-weight:600;white-space:nowrap}
 </style>
 <body>
 <div id="hdr">
@@ -3345,6 +3352,24 @@ function exportNotes(){
   setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},100);
   if(typeof mcToast==='function')mcToast('Notes exported','\u2b07\ufe0f');
 }
+function reviewStarred(){
+  if(_fcFavCount()===0){if(typeof mcToast==='function')mcToast('No starred cards yet','\u2605');return;}
+  var mid=(typeof APP!=='undefined'&&APP.mod)?APP.mod.id:(typeof MODULES!=='undefined'?MODULES[0].id:null);
+  if(!mid)return;
+  showMod(mid);
+  setTimeout(function(){
+    if(typeof gotoTab==='function')gotoTab('fv');
+    setTimeout(function(){var fb=document.querySelector('.fctg-fav');if(typeof filtFCFav==='function')filtFCFav(fb);},120);
+  },60);
+}
+function _fcFavHTML(){
+  var n=(typeof _fcFavCount==='function')?_fcFavCount():0;
+  if(!n)return '';
+  return '<div class="dstar" onclick="reviewStarred()"><div class="dstar-ic">\u2605</div>'
+    +'<div class="dstar-tx"><div class="dstar-t">'+n+' starred flashcard'+(n===1?'':'s')+'</div>'
+    +'<div class="dstar-s">Review the cards you marked for a second look.</div></div>'
+    +'<div class="dstar-go">Review \u2192</div></div>';
+}
 function _notesHTML(){
   if(typeof MODULES==='undefined')return '';
   var items=MODULES.filter(function(m){var n=(PROG[m.id]||{}).note;return n&&n.trim().length;});
@@ -5633,6 +5658,7 @@ function dashboard(){
     ${(typeof _studyPlanHTML==='function')?_studyPlanHTML():''}
     ${(typeof _masteryStatHTML==='function')?_masteryStatHTML():''}
     ${(typeof _notesHTML==='function')?_notesHTML():''}
+    ${(typeof _fcFavHTML==='function')?_fcFavHTML():''}
     <h2 class="etitle">\uD83D\uDCCA Readiness Dashboard</h2>
     <div class="dgrid">
       <div class="dcard dring-card">
