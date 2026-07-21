@@ -2587,7 +2587,21 @@ function _lreadBar(m){
   const pct=Math.round(rd/tot*100);
   const totMin=(m.lessons||[]).reduce(function(a,l){return a+parseInt(_lesMin(l),10);},0);
   const cont=(rd>0&&rd<tot)?`<button class="lread-cont" onclick="continueReading('${m.id}')">Continue reading &rarr;</button>`:'';
-  return `<div class="lread" id="lread-${m.id}"><div class="lread-lbl"><span>${rd} of ${tot} lessons read &middot; ~${totMin} min total</span><span>${pct}%</span></div><div class="lread-bar"><div class="lread-fill${pct>=100?' full':''}" style="width:${pct}%"></div></div>${cont}</div>`;
+  const exp=(tot>1)?`<button class="lread-exp" onclick="toggleAllLessons('${m.id}',this)">Expand all</button>`:'';
+  return `<div class="lread" id="lread-${m.id}"><div class="lread-lbl"><span>${rd} of ${tot} lessons read &middot; ~${totMin} min total</span><span>${pct}%</span></div><div class="lread-bar"><div class="lread-fill${pct>=100?' full':''}" style="width:${pct}%"></div></div><div class="lread-btns">${cont}${exp}</div></div>`;
+}
+function toggleAllLessons(mid,btn){
+  var lessons=document.querySelectorAll('#lv .les');
+  var anyClosed=false;
+  lessons.forEach(function(le){var bd=le.querySelector('.lbd');if(bd&&!bd.classList.contains('op'))anyClosed=true;});
+  var open=anyClosed;
+  lessons.forEach(function(le,i){
+    var bd=le.querySelector('.lbd'); var car=le.querySelector('.les-caret');
+    if(!bd)return;
+    if(open){bd.classList.add('op');if(car)car.innerHTML='&#9650;';if(typeof markLesRead==='function')markLesRead(mid,i);}
+    else {bd.classList.remove('op');if(car)car.innerHTML='&#9660;';}
+  });
+  if(btn)btn.textContent=open?'Collapse all':'Expand all';
 }
 function continueReading(mid){
   const mod=(typeof MODULES!=='undefined')?MODULES.find(function(x){return x.id===mid;}):null;
