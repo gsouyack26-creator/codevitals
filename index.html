@@ -107,6 +107,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .fctgbtn{padding:3px 9px;border:1px solid var(--bd);border-radius:11px;background:none;font-size:.73rem;color:var(--tx2)}
 .fctgbtn.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 .fctg-star{color:var(--wn,#e0a800);font-weight:700}
+.fctg-ct{color:var(--tx2);opacity:.75;font-size:.9em}
 .drec-foot{margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:.8rem;color:var(--tx2);text-align:center}
 .dcd{display:flex;align-items:center;gap:10px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;cursor:pointer}
 .dcd.soon{border-color:var(--ok)}
@@ -2965,6 +2966,7 @@ function checkCurriculumMilestone(){
     }
   }
 }
+function _fcTagCount(tag){var n=0;FLASHCARDS.forEach(function(c){if(c.tag===tag)n++;});return n;}
 function _fcTagStars(tag){
   var fav=(PROG.fcFav)||{};
   var n=0;
@@ -2981,7 +2983,7 @@ function renderFC(){
     <div class="fc-filter">
       <button class="fctgbtn on" onclick="filtFC(null,this)">All (${FLASHCARDS.length})</button>
       <button class="fctgbtn fctg-fav" onclick="filtFCFav(this)">\u2605 Favorites (${_fcFavCount()})</button>
-      ${tags.map(t=>`<button class="fctgbtn" onclick="filtFC('${t}',this)">${t}${_fcTagStars(t)?' <span class="fctg-star">\u2605'+_fcTagStars(t)+'</span>':''}</button>`).join('')}
+      ${tags.map(t=>`<button class="fctgbtn" onclick="filtFC('${t}',this)">${t} <span class="fctg-ct">(${_fcTagCount(t)})</span>${_fcTagStars(t)?' <span class="fctg-star">\u2605'+_fcTagStars(t)+'</span>':''}</button>`).join('')}
     </div>
     <div class="fcd" onclick="flipFC()">
       <div class="fci" id="fci">
