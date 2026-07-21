@@ -645,6 +645,9 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .fc-srch-act:empty{margin:0}
 .fc-srch-btn{background:var(--card,#fff);border:1px solid var(--ac,#2d6cdf);color:var(--ac,#2d6cdf);font-size:12.5px;font-weight:700;border-radius:8px;padding:5px 12px;cursor:pointer}
 .fc-srch-btn:hover{background:var(--ac,#2d6cdf);color:#fff}
+
+.dgreet-tip{margin-top:10px;padding:9px 11px;background:var(--chip,rgba(0,0,0,.04));border-radius:9px;font-size:12.5px;line-height:1.5;opacity:.9}
+.dgreet-tip-l{font-weight:700;opacity:.85;margin-right:4px}
 </style>
 <body>
 <div id="hdr">
@@ -3631,7 +3634,25 @@ function _greetHTML(){
   } else {
     sub='Ready for a productive study session?';
   }
-  return '<div class="dgreet"><div class="dgreet-t">'+part+esc(name)+'</div><div class="dgreet-s">'+sub+'</div></div>';
+  return '<div class="dgreet"><div class="dgreet-t">'+part+esc(name)+'</div><div class="dgreet-s">'+sub+'</div>'+_dailyTipHTML()+'</div>';
+}
+var CPC_TIPS=[
+  'On the CPC exam, read the full op note before choosing a code \u2014 the diagnosis often changes the CPT.',
+  'Modifier 25 = a separate, significant E/M on the same day as a procedure. Modifier 59 = a distinct procedural service.',
+  'Always code to the highest specificity the documentation supports \u2014 unspecified codes can trigger denials.',
+  'Bundled services (NCCI edits) can\u2019t be billed separately unless a modifier is justified.',
+  'Time-based E/M: total time on the date of encounter now drives the level \u2014 document it.',
+  'For injuries, the ICD-10 7th character (A/D/S) tells the payer initial vs subsequent vs sequela.',
+  'Watch for \u201cExcludes1\u201d notes \u2014 those two codes can never be reported together.',
+  'Laterality matters: right, left, and bilateral often have distinct ICD-10 codes.',
+  'Global surgical packages include normal follow-up \u2014 don\u2019t bill routine post-op visits separately.',
+  'Answer every exam question \u2014 there\u2019s no penalty for guessing on the CPC.',
+  'Use your code book tabs and highlights \u2014 the CPC is open-book and speed matters.',
+  'Medical necessity, not just the procedure, must be supported by the diagnosis code you link.'
+];
+function _dailyTipHTML(){
+  var idx=Math.floor(Date.now()/864e5)%CPC_TIPS.length;
+  return '<div class="dgreet-tip"><span class="dgreet-tip-l">\uD83D\uDCA1 Tip of the day</span> '+esc(CPC_TIPS[idx])+'</div>';
 }
 function _masteryStatHTML(){
   if(typeof MODULES==='undefined')return '';
