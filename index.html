@@ -564,6 +564,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dnote-row:hover{border-color:var(--ac)}
 .dnote-t{font-weight:600;font-size:.84rem;margin-bottom:3px}
 .dnote-s{font-size:.76rem;color:var(--tx2);line-height:1.4}
+.mchip.note{background:transparent;border:1px solid var(--bd);color:var(--tx2)}
 </style>
 <body>
 <div id="hdr">
@@ -2418,6 +2419,8 @@ function buildSB(){
     if(isDone)chip='<span class="mchip done">✓ Done</span>';
     else if(mm.pct>=50)chip='<span class="mchip almost">Almost there</span>';
     else if(started)chip='<span class="mchip prog">In progress</span>';
+    var hasNote=pr.note&&pr.note.trim().length;
+    if(hasNote)chip+='<span class="mchip note" title="You have notes in this module">\uD83D\uDCDD Note</span>';
     return `<div class="mi${isNext?' mi-next':''}" id="mi-${m.id}" onclick="showMod('${m.id}')">
       <div class="mdot${isDone?' done':''}"></div>
       <div class="minfo"><div class="mtit">${esc(m.title.split('&amp;').join('&'))}${isNext?'<span class="mi-nextpill">Next</span>':''}</div>
