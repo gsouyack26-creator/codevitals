@@ -6380,7 +6380,8 @@ function glossaryView(){
   if(typeof GLOSSARY==='undefined'){fullView('<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Glossary</h2><p class="eintro">Coming soon.</p><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>');return;}
   const cats=['All'].concat(Array.from(new Set(GLOSSARY.map(g=>g.cat))).sort());
   const chips=cats.map(c=>`<button class="gchip${c==='All'?' on':''}" data-cat="${esc(c)}" onclick="glossaryFilter('${esc(c)}','')">${esc(c)}</button>`).join('');
-  const savedChip=`<button class="gchip gchip-saved" data-cat="__saved__" onclick="glossaryFilter('__saved__','')">\u2605 Saved</button>`;
+  const _savedN=(typeof _bm==='function')?Object.keys(_bm().gloss||{}).length:0;
+  const savedChip=_savedN?`<button class="gchip gchip-saved" data-cat="__saved__" onclick="glossaryFilter('__saved__','')">\u2605 Saved (${_savedN})</button>`:'';
   fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
   APP.gcat='All';glossaryFilter('All','');
 }
