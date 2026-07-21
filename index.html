@@ -568,6 +568,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dnotes-hd-r{display:flex;align-items:center;gap:10px}
 .dnotes-exp{background:transparent;border:1px solid var(--bd);color:var(--tx2);border-radius:7px;padding:4px 10px;font-size:.72rem;cursor:pointer}
 .dnotes-exp:hover{border-color:var(--ac);color:var(--ac)}
+.fcstar-btn.on{background:#f59e0b;color:#fff;border-color:#f59e0b}
+.fctg-fav.on{background:#f59e0b;color:#fff}
 </style>
 <body>
 <div id="hdr">
@@ -2844,6 +2846,7 @@ function renderFC(){
   el.innerHTML=`<div class="fcw">
     <div class="fc-filter">
       <button class="fctgbtn on" onclick="filtFC(null,this)">All (${FLASHCARDS.length})</button>
+      <button class="fctgbtn fctg-fav" onclick="filtFCFav(this)">\u2605 Favorites (${_fcFavCount()})</button>
       ${tags.map(t=>`<button class="fctgbtn" onclick="filtFC('${t}',this)">${t}</button>`).join('')}
     </div>
     <div class="fcd" onclick="flipFC()">
@@ -2862,6 +2865,7 @@ function renderFC(){
       <button class="fcbtn" onclick="shuffleFC()">&#128256; Shuffle</button>
       <button class="fcbtn" onclick="nextUnseenFC()">&#128269; Next unseen</button>
       <button class="fcbtn" onclick="moveFC(-APP.fi)">&#9199; Reset</button>
+      <button class="fcbtn fcstar-btn" id="fcstar" onclick="toggleFcFav()" title="Star this card for review">\u2606 Star</button>
       <button class="fcbtn" onclick="speakFC()" title="Read this card aloud">&#128266; Read</button>
       <button class="spk-btn" id="spk-tog" onclick="toggleSpeak()" title="Auto read-aloud on flip">Auto-read: <span id="spk-st">OFF</span></button>
     </div>
@@ -2870,6 +2874,37 @@ function renderFC(){
   showFC();
 }
 
+function _fcFavCount(){
+  var f=(PROG&&PROG.fcFav)||{};
+  return Object.keys(f).filter(function(k){return f[k];}).length;
+}
+function toggleFcFav(){
+  var c=APP.fCards[APP.fi]; if(!c)return;
+  if(!PROG.fcFav)PROG.fcFav={};
+  PROG.fcFav[c.front]=!PROG.fcFav[c.front];
+  if(typeof saveProg==='function')saveProg();
+  _updateFcStar();
+  var fb=document.querySelector('.fctg-fav'); if(fb)fb.textContent='\u2605 Favorites ('+_fcFavCount()+')';
+}
+function _updateFcStar(){
+  var c=APP.fCards[APP.fi]; var btn=document.getElementById('fcstar'); if(!c||!btn)return;
+  var on=!!((PROG.fcFav||{})[c.front]);
+  btn.classList.toggle('on',on);
+  btn.innerHTML=on?'\u2605 Starred':'\u2606 Star';
+}
+function filtFCFav(btn){
+  document.querySelectorAll('.fctgbtn').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  var fav=(PROG.fcFav)||{};
+  APP.fCards=FLASHCARDS.filter(function(c){return fav[c.front];});
+  APP.fi=0;APP.fcSeen={};APP._fcAllSeen=false;
+  if(!APP.fCards.length){
+    if(typeof mcToast==='function')mcToast('No starred cards yet \u2014 tap \u2606 Star on cards you want to review','\u2605');
+    APP.fCards=[...FLASHCARDS];
+  }
+  showFC();
+  var ctr=document.getElementById('fc-ctr'); if(ctr)ctr.textContent='1 / '+APP.fCards.length;
+}
 function showFC(){
   const c=APP.fCards[APP.fi];
   if(!c)return;
@@ -2887,6 +2922,7 @@ function showFC(){
   var f=document.getElementById('fc-seenfill'); if(f)f.style.width=pc+'%';
   var t=document.getElementById('fc-seentxt'); if(t)t.textContent=seen+' of '+tot+' cards seen';
   if(seen===tot&&tot>1&&!APP._fcAllSeen){APP._fcAllSeen=true;if(typeof mcToast==='function')mcToast('You reviewed every card in this set! \uD83C\uDF89','\uD83C\uDCCF');}
+  if(typeof _updateFcStar==='function')_updateFcStar();
 }
 
 function flipFC(){document.getElementById('fci').classList.toggle('fl');fcAutoRead();}
