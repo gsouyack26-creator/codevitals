@@ -2564,6 +2564,11 @@ function ckObj(mid,idx){
   if(mod){
     var total=(mod.objectives||[]).length;
     var checked=Object.keys(PROG[mid].obj).filter(function(k){return PROG[mid].obj[k];}).length;
+    var half=Math.ceil(total/2);
+    if(total>=4&&checked>=half&&checked<total&&!PROG[mid].objHalf){
+      PROG[mid].objHalf=true; saveProg();
+      if(typeof mcToast==='function')mcToast('Halfway through the objectives — keep it up!','✨');
+    }
     if(total>0&&checked===total&&!PROG[mid].objDone){
       PROG[mid].objDone=true; saveProg();
       if(typeof celebrate==='function')celebrate('Objectives complete! \uD83C\uDF93','You covered every objective in '+mod.title.split('&amp;').join('&')+'. Take the quiz to lock it in \u2014 you\u2019re on a roll!',false);
