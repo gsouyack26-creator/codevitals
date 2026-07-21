@@ -2470,9 +2470,10 @@ function renderLearn(m){
     <ul class="objl">${m.objectives.map((o,i)=>`<li onclick="ckObj('${m.id}',${i})">
       <div class="ocb${oc[i]?' ck':''}">${oc[i]?'&#10003;':''}</div><span>${esc(o)}</span></li>`).join('')}</ul>
     <div class="secttl">📖 Lecture</div>${_lreadBar(m)}`+
-    m.lessons.map((l,i)=>{const _rd=((PROG[m.id]||{}).lread||{})[i];return `<div class="les${_rd?' les-read':''}" id="les-${m.id}-${i}">
-      <div class="lhd" onclick="togLes(this,'${m.id}',${i})"><span><span class="les-badge">&#10003;</span>${esc(l.title)}</span><span class="lhd-r"><span class="les-min">${_lesMin(l)}</span><span class="les-caret">${i?'&#9660;':'&#9650;'}</span></span></div>
-      <div class="lbd${i?'':' op'}">${l.body}</div></div>`;}).join('')+
+    (()=>{const _ll=(PROG[m.id]||{}).lastLesson; const _open=(typeof _ll==='number'&&_ll>=0&&_ll<m.lessons.length)?_ll:0;
+    return m.lessons.map((l,i)=>{const _rd=((PROG[m.id]||{}).lread||{})[i];const _op=(i===_open);return `<div class="les${_rd?' les-read':''}" id="les-${m.id}-${i}">
+      <div class="lhd" onclick="togLes(this,'${m.id}',${i})"><span><span class="les-badge">&#10003;</span>${esc(l.title)}</span><span class="lhd-r"><span class="les-min">${_lesMin(l)}</span><span class="les-caret">${_op?'&#9650;':'&#9660;'}</span></span></div>
+      <div class="lbd${_op?' op':''}">${l.body}</div></div>`;}).join('');})()+
     `<div class="bridge">
       <div class="bridge-num">2</div>
       <div class="bridge-body">
@@ -2533,8 +2534,12 @@ function ckObj(mid,idx){
 function togLes(hd,mid,i){
   const bd=hd.nextElementSibling;
   bd.classList.toggle('op');
-  hd.querySelector('span:last-child').innerHTML=bd.classList.contains('op')?'&#9650;':'&#9660;';
-  if(bd.classList.contains('op')&&mid!=null&&i!=null)markLesRead(mid,i);
+  const car=hd.querySelector('.les-caret')||hd.querySelector('span:last-child');
+  if(car)car.innerHTML=bd.classList.contains('op')?'&#9650;':'&#9660;';
+  if(bd.classList.contains('op')&&mid!=null&&i!=null){
+    if(PROG[mid]){PROG[mid].lastLesson=i; if(typeof saveProg==='function')saveProg();}
+    markLesRead(mid,i);
+  }
 }
 function _lesMin(l){
   var txt=String(l.body||'').replace(/<[^>]*>/g,' ');
