@@ -6404,6 +6404,11 @@ function copyGloss(term){
   var txt=g.term+': '+g.def;
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof mcToast==='function')mcToast('Copied','\uD83D\uDCCB');}).catch(function(){});}
 }
+function hearGloss(term){
+  var g=(typeof GLOSSARY!=='undefined')&&GLOSSARY.find(function(x){return x.term===term;});
+  if(!g)return;
+  if(typeof speak==='function')speak(g.term+'. '+g.def);
+}
 function _glossShownText(){
   if(typeof GLOSSARY==='undefined')return {n:0,txt:''};
   var cat=(APP&&APP.gcat)||'All';
@@ -6445,7 +6450,7 @@ function glossaryFilter(cat,term){
   const savedMode=(cat==='__saved__');
   let list=GLOSSARY.filter(g=>(cat==='All'||savedMode||g.cat===cat)&&(!savedMode||(typeof bmHasG==='function'&&bmHasG(g.term)))&&(!term||g.term.toLowerCase().includes(term)||g.def.toLowerCase().includes(term)));
   list=list.slice().sort((a,b)=>a.term.localeCompare(b.term));
-  const html=list.map(g=>`<div class="gitem"><div class="gterm">${bmStarG(g.term)}${esc(g.term)} <span class="gcat">${esc(g.cat)}</span><button class="gcopy" title="Copy term" onclick="copyGloss('${String(g.term).split("'").join("\\'")}')">\uD83D\uDCCB</button></div><div class="gdef">${esc(g.def)}</div>${eliGloss(g.term)}</div>`).join('')||'<p style="font-size:.8rem;color:var(--tx2)">No matches.</p>';
+  const html=list.map(g=>`<div class="gitem"><div class="gterm">${bmStarG(g.term)}${esc(g.term)} <span class="gcat">${esc(g.cat)}</span><button class="gcopy" title="Copy term" onclick="copyGloss('${String(g.term).split("'").join("\\'")}')">\uD83D\uDCCB</button><button class="gcopy" title="Hear term" onclick="hearGloss('${String(g.term).split("'").join("\\'")}')">\uD83D\uDD0A</button></div><div class="gdef">${esc(g.def)}</div>${eliGloss(g.term)}</div>`).join('')||'<p style="font-size:.8rem;color:var(--tx2)">No matches.</p>';
   const el=document.getElementById('glist');if(el)el.innerHTML=`<div class="gcount">${list.length} term${list.length===1?'':'s'}</div>`+html;
 }
 /* exam keyboard shortcuts */
