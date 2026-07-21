@@ -6461,17 +6461,19 @@ function gqRender(){
   var g=q.list[q.i]; if(!g){glossaryView();return;}
   var revealed=q.revealed;
   var html='<div class="ecenter"><h2 class="etitle">\uD83E\uDDE0 Glossary Quiz</h2>'
-    +'<p class="eintro">Read the definition and recall the term. '+(q.i+1)+' of '+q.list.length+'.</p>'
+    +'<p class="eintro">Read the definition and recall the term. '+(q.i+1)+' of '+q.list.length+'.'+((q.got||q.missed)?' \u00b7 \u2705 '+(q.got||0)+' \u00b7 \u274c '+(q.missed||0):'')+'</p>'
     +'<div class="gq-card"><div class="gq-cat">'+esc(g.cat)+'</div>'
     +'<div class="gq-def">'+esc(g.def)+'</div>'
     +(revealed?'<div class="gq-term">'+esc(g.term)+'</div><div class="gq-acts"><button class="tip-more" onclick="gqSave()" id="gq-star">'+(bmHasG(g.term)?'\u2605 Saved':'\u2606 Save')+'</button> <button class="tip-more" onclick="gqHear()">\uD83D\uDD0A Hear</button></div>':'<button class="qbtn" onclick="gqReveal()">\uD83D\uDC41\uFE0F Reveal term</button>')
     +'</div>'
     +'<div class="dcta" style="margin-top:14px">'
-    +(revealed?'<button class="qbtn" onclick="gqNext()">Next \u2192</button>':'')
-    +'<button class="qbtn sec" onclick="glossaryView()">\u2190 Back to glossary</button></div>'+'<p class="gq-hint">'+(revealed?'<b>Space</b> or <b>\u2192</b> next \u00b7 <b>S</b> save':'<b>Space</b> reveal')+'</p></div>';
+    +(revealed?'<button class="qbtn" onclick="gqGot()">\u2705 Got it</button><button class="qbtn sec" onclick="gqMissed()">\u274c Missed \u2014 save</button>':'')
+    +'<button class="qbtn sec" onclick="glossaryView()">\u2190 Back to glossary</button></div>'+'<p class="gq-hint">'+(revealed?'<b>G</b> got it \u00b7 <b>M</b> missed \u00b7 <b>Space</b>/<b>\u2192</b> next':'<b>Space</b> reveal')+'</p></div>';
   fullView(html);
 }
 function gqReveal(){ if(APP.gquiz){APP.gquiz.revealed=true;gqRender();} }
+function gqGot(){ var q=APP.gquiz; if(!q)return; q.got=(q.got||0)+1; gqNext(); }
+function gqMissed(){ var q=APP.gquiz; if(!q)return; q.missed=(q.missed||0)+1; var g=q.list[q.i]; if(g&&typeof _bm==='function'&&!_bm().gloss[g.term]){_bm().gloss[g.term]={term:g.term,def:g.def,cat:g.cat}; if(typeof saveProg==='function')saveProg();} gqNext(); }
 function gqSave(){
   var q=APP.gquiz; if(!q)return; var g=q.list[q.i]; if(!g)return;
   var btn=document.getElementById('gq-star');
@@ -6540,6 +6542,8 @@ document.addEventListener('keydown',e=>{
   if(k===' '||k==='enter'){ if(!APP.gquiz.revealed){gqReveal();}else{gqNext();} e.preventDefault(); }
   else if(k==='arrowright'){ if(APP.gquiz.revealed){gqNext();} e.preventDefault(); }
   else if(k==='s'){ if(APP.gquiz.revealed){gqSave();} e.preventDefault(); }
+  else if(k==='g'){ if(APP.gquiz.revealed){gqGot();} e.preventDefault(); }
+  else if(k==='m'){ if(APP.gquiz.revealed){gqMissed();} e.preventDefault(); }
 });
 
 function toggleTheme(){
