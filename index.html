@@ -3960,6 +3960,15 @@ const MODIFIERS=[
   {m:"26",n:"Professional component \u2014 the physician's interpretation and report only",ex:"A radiologist reading a hospital's imaging bills the code with modifier 26."},
   {m:"TC",n:"Technical component \u2014 equipment, supplies, and technologist only",ex:"The facility that owns the CT scanner bills the same code with modifier TC."},
   {m:"99",n:"Multiple modifiers \u2014 indicates that two or more modifiers are needed to describe the service",ex:"When more modifiers apply than a payer field allows, modifier 99 signals multiple modifiers reported."}
+ ]},
+
+ {cat:"Split Care & Special Circumstances",items:[
+  {m:"54",n:"Surgical care only \u2014 the surgeon provides the intraoperative service but not pre/post-op care",ex:"A surgeon who operates but transfers postoperative care to another physician appends modifier 54."},
+  {m:"55",n:"Postoperative management only \u2014 a physician provides only the post-op portion of the global package",ex:"A physician assuming a patient's post-op care after transfer reports the surgical code with modifier 55."},
+  {m:"56",n:"Preoperative management only \u2014 a physician provides only the pre-op portion",ex:"When one provider does the pre-op workup and another operates, the pre-op physician uses modifier 56."},
+  {m:"47",n:"Anesthesia by surgeon \u2014 regional or general anesthesia personally administered by the operating surgeon",ex:"A surgeon who personally provides the anesthesia (not local) appends modifier 47 to the surgical code (not the anesthesia code)."},
+  {m:"32",n:"Mandated services \u2014 a service required by a payer, governmental, or other third party",ex:"A payer-mandated second opinion before surgery is reported with modifier 32."},
+  {m:"63",n:"Procedure performed on infants less than 4 kg \u2014 reflects increased complexity",ex:"A procedure on a neonate weighing under 4 kg may append modifier 63 to reflect the added difficulty (where allowed)."}
  ]}
 ];
 const GUIDES=[
@@ -4010,6 +4019,13 @@ const GUIDES=[
   {t:"Presumed causal relationships",d:"ICD-10-CM presumes a causal link for certain condition pairs even without explicit provider linkage: hypertension WITH heart failure (I11), hypertension WITH chronic kidney disease (I12), and diabetes with many manifestations (the 'with' convention). Some links, such as hypertension and stroke, are NOT presumed and require documentation.",ex:"A note listing 'HTN' and 'CHF' is coded I11.0 + I50.- because the relationship is presumed."},
   {t:"Root operation: Replacement vs Supplement",d:"In ICD-10-PCS, <b>Replacement</b> puts in material that takes the place of a body part (total joint, heart valve). <b>Supplement</b> puts in material that only reinforces or augments a body part (hernia mesh, joint lining). Excision of the native part is inherent to Replacement and not coded separately.",ex:"A total knee arthroplasty is Replacement; a hernia repair with mesh is Supplement."},
   {t:"Root operation: Excision vs Resection",d:"<b>Excision</b> cuts out a PORTION of a body part; <b>Resection</b> cuts out ALL of a body part (or an entire independent structure with its own PCS body-part value). This distinction is heavily tested.",ex:"A partial lobectomy is Excision; removing an entire lung lobe (a PCS body part) or the whole gallbladder is Resection."}
+ ]},
+
+ {cat:"Neoplasm Coding & Split Care",items:[
+  {t:"Neoplasm coding and the Table of Neoplasms",d:"Neoplasms are coded using the <b>Table of Neoplasms</b>, which lists the anatomic site with six behavior columns: <b>malignant primary, malignant secondary, in situ, benign, uncertain behavior, and unspecified behavior</b>. You must determine the behavior from the documentation before choosing a column, then verify the code in the Tabular. Morphology (from a pathology report) helps establish behavior.",ex:"A metastasis to the lung from a breast primary uses the malignant-secondary column for lung (C78.0-) plus the primary breast code."},
+  {t:"Neoplasm sequencing",d:"Sequencing depends on the <b>reason for the encounter</b>. If treatment is directed at the <b>primary</b>, it is first-listed; if directed at a <b>secondary (metastatic)</b> site, that site is first-listed with the primary as additional. An encounter <b>solely</b> for chemo/radiation/immunotherapy is led by the appropriate Z51.- code. Anemia associated with the malignancy: sequence the malignancy first, then D63.0.",ex:"Admission to treat bone metastases: sequence the secondary bone neoplasm first, then the primary."},
+  {t:"Splitting the global surgical package",d:"When different providers handle different parts of a surgery's global package, use split-care modifiers on the SAME surgical code: <b>56</b> (preoperative only), <b>54</b> (surgical/intraoperative only), and <b>55</b> (postoperative only). Together they distribute the global payment among the providers.",ex:"A surgeon operating but not managing recovery uses 54; the physician who takes over recovery uses 55."},
+  {t:"Personal history vs active disease",d:"Assign an <b>active-disease</b> code while a condition is being treated or monitored. Switch to a <b>personal-history (Z8x)</b> code only after the condition is resolved/eradicated and no longer receiving treatment. This is especially important for malignancies (active C-code vs Z85 history).",ex:"A patient still on cancer treatment keeps the active C-code; a cancer survivor with no current treatment uses Z85.-"}
  ]}
 ];
 const HYCODES=[
