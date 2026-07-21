@@ -119,6 +119,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .drec-ct{font-size:.72rem;color:var(--tx2);margin-left:4px}
 .jumpback.weak{border-color:var(--wn,#e0a800)}
 .dgreet-tip.urgent .dgreet-tip-l{color:var(--er)}
+.fcbtn.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 .drec-foot .ok{color:var(--ok);font-weight:700}
 .drec-foot .lo{color:var(--er);font-weight:700}
 .fctgbtn.on .fctg-star{color:#fff}
@@ -3000,6 +3001,7 @@ function renderFC(){
       <button class="fcbtn" onclick="shuffleFC()">&#128256; Shuffle</button>
       <button class="fcbtn" onclick="nextUnseenFC()">&#128269; Next unseen</button>
       <button class="fcbtn" onclick="moveFC(-APP.fi)">&#9199; Reset</button>
+      <button class="fcbtn" id="fc-rev" onclick="toggleReverse()">&#128257; Reverse</button>
       <button class="fcbtn" onclick="printFC()">&#128424;&#65039; Print</button>
       <button class="fcbtn" onclick="exportFcFav()">&#11088;&#8595; Export stars</button>
       <button class="fcbtn" onclick="copyFcFav()">&#11088;&#128203; Copy stars</button>
@@ -3047,14 +3049,22 @@ function filtFCFav(btn){
   showFC();
   var ctr=document.getElementById('fc-ctr'); if(ctr)ctr.textContent='1 / '+APP.fCards.length;
 }
+function toggleReverse(){
+  APP.fcReverse=!APP.fcReverse;
+  var btn=document.getElementById('fc-rev');
+  if(btn)btn.classList.toggle('on',APP.fcReverse);
+  if(typeof showFC==='function')showFC();
+  if(typeof mcToast==='function')mcToast(APP.fcReverse?'Reverse mode: guess the term':'Normal mode: guess the definition','\uD83D\uDD01');
+}
 function showFC(){
   const c=APP.fCards[APP.fi];
   if(!c)return;
   document.getElementById('fci').classList.remove('fl');
   document.getElementById('fc-tag').textContent=c.tag;
   document.getElementById('fc-tag2').textContent=c.tag;
-  document.getElementById('fc-front').textContent=c.front;
-  document.getElementById('fc-back').textContent=c.back;
+  var _rv=APP.fcReverse;
+  document.getElementById('fc-front').textContent=_rv?c.back:c.front;
+  document.getElementById('fc-back').textContent=_rv?c.front:c.back;
   var _fcStarN=(PROG.fcFav)?APP.fCards.filter(function(x){return PROG.fcFav[x.front];}).length:0;
   document.getElementById('fc-ctr').textContent=(APP.fi+1)+' / '+APP.fCards.length+(_fcStarN?'  \u2605'+_fcStarN:'');
   if(!APP.fcSeen)APP.fcSeen={};
