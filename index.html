@@ -3006,6 +3006,7 @@ function renderFC(){
       <button class="fcbtn${APP.fcReverse?' on':''}" id="fc-rev" onclick="toggleReverse()">&#128257; Reverse</button>
       <button class="fcbtn" onclick="printFC()">&#128424;&#65039; Print</button>
       <button class="fcbtn" onclick="exportDeck()">&#128228; Export deck</button>
+      <button class="fcbtn" onclick="copyDeck()">&#128203; Copy deck</button>
       <button class="fcbtn" onclick="exportFcFav()">&#11088;&#8595; Export stars</button>
       <button class="fcbtn" onclick="copyFcFav()">&#11088;&#128203; Copy stars</button>
       <button class="fcbtn fcstar-btn" id="fcstar" onclick="toggleFcFav()" title="Star this card for review">\u2606 Star</button>
@@ -3161,6 +3162,15 @@ function exportDeck(){
   document.body.appendChild(a); a.click();
   setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},100);
   if(typeof mcToast==='function')mcToast('Deck exported ('+cards.length+' cards)','⬇️');
+}
+function copyDeck(){
+  if(typeof FLASHCARDS==='undefined')return;
+  var cards=(APP.fCards&&APP.fCards.length)?APP.fCards:FLASHCARDS;
+  if(!cards.length){if(typeof mcToast==='function')mcToast('No cards to copy','📋');return;}
+  var txt=_deckText();
+  function done(){if(typeof mcToast==='function')mcToast('Deck copied ('+cards.length+' cards)','📋');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
 }
 function exportFcFav(){
   if(typeof FLASHCARDS==='undefined')return;
