@@ -40,6 +40,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .mp-cta{width:100%;margin-top:8px;padding:10px;border:none;border-radius:10px;background:var(--ok);color:#fff;font-size:.85rem;font-weight:700;cursor:pointer}.mp-cta:hover{opacity:.92}
 .obj-count{font-size:.72rem;font-weight:700;color:var(--tx2);background:rgba(127,127,127,.14);padding:1px 8px;border-radius:8px;margin-left:6px;vertical-align:middle}
 .mastered{margin:10px 0 4px;padding:11px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(52,211,153,.18),rgba(96,165,250,.14));border:1px solid var(--ok);font-size:.83rem;line-height:1.4}
+.mr-act{margin-top:9px}.mr-btn{padding:8px 14px;border:none;border-radius:9px;background:var(--ok);color:#fff;font-size:.82rem;font-weight:700;cursor:pointer}.mr-btn:hover{opacity:.92}
 .lhd-r{display:inline-flex;align-items:center;gap:9px;flex-shrink:0}.les-min{font-size:.68rem;font-weight:600;color:var(--tx2);opacity:.8}
 .weekact{margin:6px 0 14px;padding:12px 14px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--cardbg,rgba(127,127,127,.05))}.weekact.ok{border-left-color:var(--ok)}.weekact.wn{border-left-color:var(--wn)}.wa-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.wa-ttl{font-weight:700;font-size:.92rem}.wa-cnt{font-size:.8rem;font-weight:700;color:var(--tx2)}.wa-msg{font-size:.82rem;color:var(--tx2);line-height:1.4}.wa-pills{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px}.wa-pill{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:10px;background:rgba(127,127,127,.14);color:var(--tx2)}
 .studyplan{margin:6px 0 14px;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--cardbg,rgba(127,127,127,.05))}.studyplan.all{border-color:var(--ok)}.sp-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.sp-ttl{font-weight:700;font-size:.92rem}.sp-cnt{font-size:.8rem;font-weight:700;color:var(--tx2)}.sp-bar{height:5px;border-radius:5px;background:rgba(127,127,127,.2);overflow:hidden;margin-bottom:8px}.sp-fill{height:100%;border-radius:5px;background:var(--ac);transition:width .3s}.sp-fill.full{background:var(--ok)}.sp-row{display:flex;align-items:center;gap:9px;padding:7px 4px;cursor:pointer;border-radius:8px;font-size:.83rem}.sp-row:hover{background:rgba(127,127,127,.08)}.sp-ck{width:20px;height:20px;flex-shrink:0;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff}.sp-row.done .sp-ck{background:var(--ok);border-color:var(--ok)}.sp-row.done .sp-lbl{color:var(--tx2);text-decoration:line-through}
@@ -2468,7 +2469,11 @@ function _masteredRibbon(m){
   var lT=(m.lessons||[]).length, lD=Object.keys(lr).filter(function(k){return lr[k];}).length;
   var full=pr.done&&(oT===0||oD>=oT)&&(lT===0||lD>=lT);
   if(!full)return '';
-  return '<div class="mastered">\uD83C\uDF96\uFE0F <b>Module mastered!</b> Objectives, lectures, and quiz all complete. Scroll down for your next step.</div>';
+  var idx=(typeof MODULES!=='undefined')?MODULES.findIndex(function(x){return x.id===m.id;}):-1;
+  var act;
+  if(idx>=0&&idx<MODULES.length-1){var nx=MODULES[idx+1];act='<button class="mr-btn" onclick="showMod(\''+nx.id+'\')">Next module &rarr;</button>';}
+  else {act='<button class="mr-btn" onclick="examCenter()">Go to Exam Center &rarr;</button>';}
+  return '<div class="mastered">\uD83C\uDF96\uFE0F <b>Module mastered!</b> Objectives, lectures, and quiz all complete.<div class="mr-act">'+act+'</div></div>';
 }
 function _modProgressRow(m){
   var pr=PROG[m.id]||{};
