@@ -4229,6 +4229,7 @@ function settingsView(){
     <div class="set-list">
       <div class="set-row"><div><b>\uD83D\uDD0A Sound effects</b><div class="set-sub">Chimes on answers and celebrations.</div></div><button class="set-tog${soundOn()?' on':''}" id="snd-tog" onclick="setToggleSound()">${soundOn()?'ON':'OFF'}</button></div>
       <div class="set-row"><div><b>\uD83C\uDF93 CPC exam date</b><div class="set-sub">${PROG.examDate?('Counting down to '+new Date(PROG.examDate+'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})+'.'):'Set a target date for a dashboard countdown.'}</div></div><button class="set-tog on" style="min-width:auto;padding:0 14px" onclick="setExamDate();setTimeout(settingsView,50)">${PROG.examDate?'Change':'Set'}</button></div>
+      <div class="set-row"><div><b>\uD83D\uDCCB Share progress</b><div class="set-sub">Copy a summary of your readiness, accuracy and streak to paste anywhere.</div></div><button class="set-tog on" style="min-width:auto;padding:0 14px" onclick="copyProgress()">Copy</button></div>
       <div class="set-row" style="flex-direction:column;align-items:stretch"><div style="margin-bottom:8px"><b>\uD83C\uDF13 Theme</b><div class="set-sub">Pick a palette \u2014 includes lavender, sepia, high-contrast &amp; colorblind-safe.</div></div>${themePickerHTML()}</div>
       <div class="set-row"><div><b>\uD83E\uDDD1\u200D\uD83C\uDFEB Plain-English mode</b><div class="set-sub">Adds simple explanations to modules and glossary terms.</div></div><button class="set-tog${eliOn()?' on':''}" id="eli-tog" onclick="toggleEli();document.getElementById('eli-tog').classList.toggle('on',eliOn());document.getElementById('eli-tog').textContent=eliOn()?'ON':'OFF';">${eliOn()?'ON':'OFF'}</button></div>
       <div class="set-row"><div><b>\uD83C\uDF99\uFE0F Read-aloud</b><div class="set-sub">Speak flashcards aloud automatically when you flip or advance.</div></div><button class="set-tog${speakOn()?' on':''}" id="rda-tog" onclick="toggleSpeak();document.getElementById('rda-tog').classList.toggle('on',speakOn());document.getElementById('rda-tog').textContent=speakOn()?'ON':'OFF';">${speakOn()?'ON':'OFF'}</button></div>
@@ -5995,6 +5996,28 @@ function readiness(){
   const passed=ek.filter(k=>ex[k].pass).length;
   let score=ek.length?(modPct*.35+acc*.30+examAvg*.35):(modPct*.5+acc*.5);
   return {pct:Math.round(score*100),modDone,modPct,acc,examAvg,ek,passed,st};
+}
+function copyProgress(){
+  if(typeof readiness!=='function'){return;}
+  var r=readiness();
+  var streak=((PROG.streak)||{}).count||0;
+  var lines=[];
+  lines.push('CodeVitals \u2014 CPC Study Progress');
+  lines.push('Readiness: '+r.pct+'%');
+  lines.push('Modules done: '+r.modDone+'/'+MODULES.length);
+  lines.push('Overall accuracy: '+Math.round(r.acc*100)+'%');
+  lines.push('Exams passed: '+r.passed+'/'+(r.ek.length||0));
+  lines.push('Day streak: '+streak);
+  if(PROG.examDate){
+    var d=new Date(PROG.examDate+'T00:00:00'); var now=new Date(); now.setHours(0,0,0,0);
+    var days=Math.round((d.getTime()-now.getTime())/864e5);
+    if(days>=0)lines.push('Exam in: '+days+' day'+(days===1?'':'s'));
+  }
+  lines.push('As of '+new Date().toLocaleDateString());
+  var txt=lines.join('\n');
+  function done(){if(typeof mcToast==='function')mcToast('Progress summary copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
 }
 function _studyPlanHTML(){
   var today=_todayStr();
