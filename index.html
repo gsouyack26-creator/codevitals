@@ -6232,9 +6232,9 @@ function dashboard(){
         <div class="dring" style="background:conic-gradient(${ring} ${r.pct*3.6}deg,var(--bd) 0)"><div class="dring-in"><div class="dringn">${r.pct}%</div><div class="dringl">${label}</div></div></div>
       </div>
       <div class="dcard dstats">
-        <div class="dstat"><div class="dsn">${r.modDone}/${MODULES.length}</div><div class="dsl">Modules done</div></div>
-        <div class="dstat"><div class="dsn">${r.st.seen}</div><div class="dsl">Questions answered</div></div>
-        <div class="dstat"><div class="dsn">${Math.round(r.acc*100)}%</div><div class="dsl">Overall accuracy</div></div>
+        <div class="dstat tap" onclick="analyticsView()"><div class="dsn">${r.modDone}/${MODULES.length}</div><div class="dsl">Modules done</div></div>
+        <div class="dstat${r.st.seen>0?' tap':''}" ${r.st.seen>0?'onclick="analyticsView()"':''}><div class="dsn">${r.st.seen}</div><div class="dsl">Questions answered</div></div>
+        <div class="dstat${r.st.seen>0?' tap':''}" ${r.st.seen>0?'onclick="analyticsView()"':''}><div class="dsn">${Math.round(r.acc*100)}%</div><div class="dsl">Overall accuracy</div></div>
         <div class="dstat${r.ek.length?' tap':''}" ${r.ek.length?'onclick="examCenter()"':''}><div class="dsn">${r.passed}/${r.ek.length||0}</div><div class="dsl">Exams passed</div></div>
         <div class="dstat${streak>0?' tap':''}" ${streak>0?'onclick="studyCalendar()"':''}><div class="dsn">\uD83D\uDD25 ${streak}</div><div class="dsl">Day streak</div></div>
         <div class="dstat${misses>0?' tap':''}" ${misses>0?'onclick="reviewStart()"':''}><div class="dsn">${misses}</div><div class="dsl">In miss bank</div></div>
