@@ -565,6 +565,9 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dnote-t{font-weight:600;font-size:.84rem;margin-bottom:3px}
 .dnote-s{font-size:.76rem;color:var(--tx2);line-height:1.4}
 .mchip.note{background:transparent;border:1px solid var(--bd);color:var(--tx2)}
+.dnotes-hd-r{display:flex;align-items:center;gap:10px}
+.dnotes-exp{background:transparent;border:1px solid var(--bd);color:var(--tx2);border-radius:7px;padding:4px 10px;font-size:.72rem;cursor:pointer}
+.dnotes-exp:hover{border-color:var(--ac);color:var(--ac)}
 </style>
 <body>
 <div id="hdr">
@@ -3281,6 +3284,28 @@ function achievementsView(){
 }
 
 /* ===== MODULE MASTERY HEATMAP ===== */
+function exportNotes(){
+  if(typeof MODULES==='undefined')return;
+  var lines=[];
+  MODULES.forEach(function(m){
+    var n=(PROG[m.id]||{}).note;
+    if(n&&n.trim().length){
+      var title=m.title.split('&amp;').join('&');
+      lines.push('=== '+title+' ===');
+      lines.push(n.trim());
+      lines.push('');
+    }
+  });
+  if(!lines.length){if(typeof mcToast==='function')mcToast('No notes to export yet','\uD83D\uDCDD');return;}
+  var header='CodeVitals \u2014 My Study Notes\nExported '+new Date().toLocaleString()+'\n\n';
+  var blob=new Blob([header+lines.join('\n')],{type:'text/plain'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='codevitals-notes.txt';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+  if(typeof mcToast==='function')mcToast('Notes exported','\u2b07\ufe0f');
+}
 function _notesHTML(){
   if(typeof MODULES==='undefined')return '';
   var items=MODULES.filter(function(m){var n=(PROG[m.id]||{}).note;return n&&n.trim().length;});
@@ -3291,7 +3316,7 @@ function _notesHTML(){
     var title=m.title.split('&amp;').join('&');
     return '<div class="dnote-row" onclick="showMod(\''+m.id+'\')"><div class="dnote-t">'+esc(title)+'</div><div class="dnote-s">'+esc(snip)+'</div></div>';
   }).join('');
-  return '<div class="dnotes"><div class="dnotes-hd"><span>\uD83D\uDCDD My Notes</span><span class="dnotes-n">'+items.length+' module'+(items.length===1?'':'s')+'</span></div>'+rows+'</div>';
+  return '<div class="dnotes"><div class="dnotes-hd"><span>\uD83D\uDCDD My Notes</span><span class="dnotes-hd-r"><span class="dnotes-n">'+items.length+' module'+(items.length===1?'':'s')+'</span><button class="dnotes-exp" onclick="event.stopPropagation();exportNotes()">\u2b07\ufe0f Export</button></span></div>'+rows+'</div>';
 }
 function _masteryStatHTML(){
   if(typeof MODULES==='undefined')return '';
