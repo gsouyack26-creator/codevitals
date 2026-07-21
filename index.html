@@ -628,6 +628,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .fc-srch{margin:0 0 8px}
 .fc-srch input{width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid var(--line,#d5d5dc);border-radius:9px;background:var(--card,#fff);color:var(--tx,#222);font-size:14px}
 .fc-srch input:focus{outline:none;border-color:var(--ac,#2d6cdf)}
+
+.dtrend-avg{margin-top:9px;font-size:12px;opacity:.65;text-align:center;font-weight:600}
 </style>
 <body>
 <div id="hdr">
@@ -3473,6 +3475,7 @@ function _examTrendHTML(){
   var log=(PROG.runlog||[]).filter(function(r){return r.type==='exam';});
   if(log.length<2)return '';
   var runs=log.slice(0,8).reverse();
+  var avg=Math.round(log.reduce(function(s,r){return s+r.pct;},0)/log.length);
   var last=runs[runs.length-1].pct, prev=runs[runs.length-2].pct, delta=last-prev;
   var dcls=delta>0?'up':(delta<0?'down':'flat');
   var dtxt=delta>0?('\u25B2 +'+delta+'%'):(delta<0?('\u25BC '+delta+'%'):'\u2013 no change');
@@ -3484,7 +3487,8 @@ function _examTrendHTML(){
   var xs=runs.map(function(r){return '<span>'+_relDay(r.ts)+'</span>';}).join('');
   return '<div class="dtrend"><div class="dtrend-h"><div class="dtrend-t">\uD83D\uDCC8 Exam score trend</div>'
     +'<div class="dtrend-d '+dcls+'">'+dtxt+'</div></div>'
-    +'<div class="dtrend-bars">'+bars+'</div><div class="dtrend-x">'+xs+'</div></div>';
+    +'<div class="dtrend-bars">'+bars+'</div><div class="dtrend-x">'+xs+'</div>'
+    +'<div class="dtrend-avg">Average '+avg+'% over '+log.length+' attempt'+(log.length===1?'':'s')+'</div></div>';
 }
 function _fcFavHTML(){
   var n=(typeof _fcFavCount==='function')?_fcFavCount():0;
