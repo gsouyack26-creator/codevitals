@@ -677,7 +677,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dterm-l{font-weight:700;font-size:12px;opacity:.85}
 .dterm-cat{font-size:10.5px;color:var(--tx2);border:1px solid var(--bd);border-radius:9px;padding:1px 7px}
 .dterm-t{font-weight:700;font-size:15px;margin-bottom:3px}
-.dterm-d{font-size:12.5px;color:var(--tx2);line-height:1.5}.dterm-foot{margin-top:8px;font-size:12px;color:var(--accent,#4a9);cursor:pointer;font-weight:600}.gq-card{background:var(--cardbg,#fff);border:1px solid var(--bd,#ddd);border-radius:14px;padding:22px 18px;margin:12px 0;text-align:center}.gq-cat{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:8px}.gq-def{font-size:1.05rem;line-height:1.5;margin-bottom:16px}.gq-term{font-size:1.4rem;font-weight:800;color:var(--ac);margin-top:6px}.gq-acts{margin-top:10px;display:flex;gap:8px;justify-content:center}.gq-hint{font-size:11px;color:var(--tx2);text-align:center;margin-top:10px}.dterm-foot:hover{text-decoration:underline}
+.dterm-d{font-size:12.5px;color:var(--tx2);line-height:1.5}.dterm-foot{margin-top:8px;font-size:12px;color:var(--accent,#4a9);cursor:pointer;font-weight:600}.gq-card{background:var(--cardbg,#fff);border:1px solid var(--bd,#ddd);border-radius:14px;padding:22px 18px;margin:12px 0;text-align:center}.gq-cat{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:8px}.gq-def{font-size:1.05rem;line-height:1.5;margin-bottom:16px}.gq-term{font-size:1.4rem;font-weight:800;color:var(--ac);margin-top:6px}.gq-acts{margin-top:10px;display:flex;gap:8px;justify-content:center}.gstatus{font-size:.85rem;vertical-align:middle}.gs-w{opacity:.9}.gq-hint{font-size:11px;color:var(--tx2);text-align:center;margin-top:10px}.dterm-foot:hover{text-decoration:underline}
 </style>
 <body>
 <div id="hdr">
@@ -4400,6 +4400,7 @@ function _gweak(){ PROG.glossWeak=PROG.glossWeak||{}; return PROG.glossWeak; }
 function _gmaster(){ PROG.glossMastered=PROG.glossMastered||{}; return PROG.glossMastered; }
 var _glossUniqN=0;
 function _glossTotal(){ if(_glossUniqN)return _glossUniqN; if(typeof GLOSSARY==='undefined')return 0; var seen={},n=0; for(var i=0;i<GLOSSARY.length;i++){var t=GLOSSARY[i].term; if(!seen[t]){seen[t]=1;n++;}} _glossUniqN=n; return n; }
+function _gStatusBadge(t){ if(typeof _gmaster==='function'&&_gmaster()[t])return ' <span class="gstatus gs-m" title="Mastered">\uD83C\uDF93</span>'; if(typeof _gweak==='function'&&_gweak()[t])return ' <span class="gstatus gs-w" title="Needs review">\u26a0\uFE0F</span>'; return ''; }
 function bmToggleQ(q,btn){
   const b=_bm(); const id=qid(q);
   if(b.q[id]){delete b.q[id];btn.classList.remove('on');btn.textContent='\u2606';}
@@ -6548,7 +6549,7 @@ function glossaryFilter(cat,term){
   const _ms=(typeof _gmaster==='function')?_gmaster():{};
   let list=GLOSSARY.filter(g=>(cat==='All'||savedMode||weakMode||masterMode||g.cat===cat)&&(!savedMode||(typeof bmHasG==='function'&&bmHasG(g.term)))&&(!weakMode||_wk[g.term])&&(!masterMode||_ms[g.term])&&(!term||g.term.toLowerCase().includes(term)||g.def.toLowerCase().includes(term)));
   list=list.slice().sort((a,b)=>a.term.localeCompare(b.term));
-  const html=list.map(g=>`<div class="gitem"><div class="gterm">${bmStarG(g.term)}${esc(g.term)} <span class="gcat">${esc(g.cat)}</span><button class="gcopy" title="Copy term" onclick="copyGloss('${String(g.term).split("'").join("\\'")}')">\uD83D\uDCCB</button><button class="gcopy" title="Hear term" onclick="hearGloss('${String(g.term).split("'").join("\\'")}')">\uD83D\uDD0A</button></div><div class="gdef">${esc(g.def)}</div>${eliGloss(g.term)}</div>`).join('')||'<p style="font-size:.8rem;color:var(--tx2)">No matches.</p>';
+  const html=list.map(g=>`<div class="gitem"><div class="gterm">${bmStarG(g.term)}${esc(g.term)} <span class="gcat">${esc(g.cat)}</span>${_gStatusBadge(g.term)}<button class="gcopy" title="Copy term" onclick="copyGloss('${String(g.term).split("'").join("\\'")}')">\uD83D\uDCCB</button><button class="gcopy" title="Hear term" onclick="hearGloss('${String(g.term).split("'").join("\\'")}')">\uD83D\uDD0A</button></div><div class="gdef">${esc(g.def)}</div>${eliGloss(g.term)}</div>`).join('')||'<p style="font-size:.8rem;color:var(--tx2)">No matches.</p>';
   const el=document.getElementById('glist');if(el)el.innerHTML=`<div class="gcount">${list.length} term${list.length===1?'':'s'}</div>`+html;
 }
 /* exam keyboard shortcuts */
