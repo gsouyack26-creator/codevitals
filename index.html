@@ -640,6 +640,11 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .drec-pc{font-weight:700;flex-shrink:0}
 .drec-pc.ok{color:#1a9c53}.drec-pc.lo{color:#d1435b}
 .drec-dt{font-size:11px;opacity:.5;flex-shrink:0;min-width:58px;text-align:right}
+
+.fc-srch-act{margin:0 0 6px;text-align:center}
+.fc-srch-act:empty{margin:0}
+.fc-srch-btn{background:var(--card,#fff);border:1px solid var(--ac,#2d6cdf);color:var(--ac,#2d6cdf);font-size:12.5px;font-weight:700;border-radius:8px;padding:5px 12px;cursor:pointer}
+.fc-srch-btn:hover{background:var(--ac,#2d6cdf);color:#fff}
 </style>
 <body>
 <div id="hdr">
@@ -2946,6 +2951,7 @@ function renderFC(){
   const el=document.getElementById('fv');
   el.innerHTML=`<div class="fcw">
     <div class="fc-srch"><input id="fc-srch-in" type="search" placeholder="\uD83D\uDD0D Search flashcards\u2026" oninput="searchFC(this.value)" autocomplete="off"></div>
+    <div id="fc-srch-act" class="fc-srch-act"></div>
     <div class="fc-filter">
       <button class="fctgbtn on" onclick="filtFC(null,this)">All (${FLASHCARDS.length})</button>
       <button class="fctgbtn fctg-fav" onclick="filtFCFav(this)">\u2605 Favorites (${_fcFavCount()})</button>
@@ -3077,6 +3083,36 @@ function printFC(){
     +'<script>window.onload=function(){setTimeout(function(){window.print();},250);};<\/script></body></html>';
   win.document.write(html);win.document.close();
 }
+function _fcSrchAct(q){
+  var box=document.getElementById('fc-srch-act');
+  if(!box)return;
+  if(!q||!APP.fCards.length){box.innerHTML='';return;}
+  var n=APP.fCards.length;
+  var allStarred=APP.fCards.every(function(c){return (PROG.fcFav||{})[c.front];});
+  if(allStarred){
+    box.innerHTML='<button class="fc-srch-btn" onclick="unstarMatchingFC()">\u2605 Unstar these '+n+'</button>';
+  }else{
+    box.innerHTML='<button class="fc-srch-btn" onclick="starMatchingFC()">\u2606 Star all '+n+' result'+(n===1?'':'s')+'</button>';
+  }
+}
+function starMatchingFC(){
+  if(!PROG.fcFav)PROG.fcFav={};
+  APP.fCards.forEach(function(c){PROG.fcFav[c.front]=true;});
+  if(typeof saveProg==='function')saveProg();
+  if(typeof _updateFcStar==='function')_updateFcStar();
+  var fb=document.querySelector('.fctg-fav'); if(fb&&typeof _fcFavCount==='function')fb.textContent='\u2605 Favorites ('+_fcFavCount()+')';
+  if(typeof mcToast==='function')mcToast('Starred '+APP.fCards.length+' cards','\u2605');
+  _fcSrchAct((document.getElementById('fc-srch-in')||{}).value||'x');
+}
+function unstarMatchingFC(){
+  if(!PROG.fcFav)PROG.fcFav={};
+  APP.fCards.forEach(function(c){delete PROG.fcFav[c.front];});
+  if(typeof saveProg==='function')saveProg();
+  if(typeof _updateFcStar==='function')_updateFcStar();
+  var fb=document.querySelector('.fctg-fav'); if(fb&&typeof _fcFavCount==='function')fb.textContent='\u2605 Favorites ('+_fcFavCount()+')';
+  if(typeof mcToast==='function')mcToast('Unstarred '+APP.fCards.length+' cards','\u2606');
+  _fcSrchAct((document.getElementById('fc-srch-in')||{}).value||'x');
+}
 function searchFC(q){
   q=(q||'').trim().toLowerCase();
   document.querySelectorAll('.fctgbtn').forEach(function(b){b.classList.remove('on');});
@@ -3095,10 +3131,12 @@ function searchFC(q){
     document.getElementById('fc-back').textContent='';
     document.getElementById('fc-tag').textContent='';document.getElementById('fc-tag2').textContent='';
     if(ctr)ctr.textContent='0 / 0';
+    _fcSrchAct('');
     return;
   }
   showFC();
   if(ctr)ctr.textContent='1 / '+APP.fCards.length;
+  _fcSrchAct(q);
 }
 function filtFC(tag,btn){
   var _si=document.getElementById('fc-srch-in');if(_si)_si.value='';
