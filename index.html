@@ -2985,7 +2985,7 @@ function renderFC(){
     </div>
     <div class="fcd" onclick="flipFC()">
       <div class="fci" id="fci">
-        <div class="fcf"><div class="fctg" id="fc-tag"></div><div class="fctx" id="fc-front"></div><div class="fcht">click to flip &#8635;</div></div>
+        <div class="fcf"><div class="fctg" id="fc-tag"></div><div class="fctx" id="fc-front"></div><div class="fcht" id="fc-ht">click to flip &#8635;</div></div>
         <div class="fcf bk"><div class="fctg" id="fc-tag2"></div><div class="fctx" id="fc-back"></div></div>
       </div>
     </div>
@@ -3065,6 +3065,7 @@ function showFC(){
   var _rv=APP.fcReverse;
   document.getElementById('fc-front').textContent=_rv?c.back:c.front;
   document.getElementById('fc-back').textContent=_rv?c.front:c.back;
+  var _htEl=document.getElementById('fc-ht'); if(_htEl)_htEl.innerHTML=_rv?'definition &#8594; recall the term &#8635;':'click to flip &#8635;';
   var _fcStarN=(PROG.fcFav)?APP.fCards.filter(function(x){return PROG.fcFav[x.front];}).length:0;
   document.getElementById('fc-ctr').textContent=(APP.fi+1)+' / '+APP.fCards.length+(_fcStarN?'  \u2605'+_fcStarN:'');
   if(!APP.fcSeen)APP.fcSeen={};
