@@ -2957,6 +2957,7 @@ function renderFC(){
       <button class="fcbtn" onclick="shuffleFC()">&#128256; Shuffle</button>
       <button class="fcbtn" onclick="nextUnseenFC()">&#128269; Next unseen</button>
       <button class="fcbtn" onclick="moveFC(-APP.fi)">&#9199; Reset</button>
+      <button class="fcbtn" onclick="printFC()">&#128424;&#65039; Print</button>
       <button class="fcbtn fcstar-btn" id="fcstar" onclick="toggleFcFav()" title="Star this card for review">\u2606 Star</button>
       <button class="fcbtn" onclick="speakFC()" title="Read this card aloud">&#128266; Read</button>
       <button class="spk-btn" id="spk-tog" onclick="toggleSpeak()" title="Auto read-aloud on flip">Auto-read: <span id="spk-st">OFF</span></button>
@@ -3037,6 +3038,27 @@ function moveFC(d){
   if(APP.fCards&&APP.fCards.length===FLASHCARDS.length&&APP.fCards[APP.fi]){PROG.fcLast=APP.fCards[APP.fi].front;saveProg();}
 }
 
+function printFC(){
+  var cards=(APP.fCards&&APP.fCards.length)?APP.fCards:FLASHCARDS;
+  if(!cards.length){if(typeof mcToast==='function')mcToast('No cards to print','\uD83D\uDDA8\uFE0F');return;}
+  var rows=cards.map(function(c,i){
+    return '<tr><td class="n">'+(i+1)+'</td><td class="q">'+esc(c.front)+'</td><td class="a">'+esc(c.back)+'</td></tr>';
+  }).join('');
+  var win=window.open('','_blank');
+  if(!win){if(typeof mcToast==='function')mcToast('Pop-up blocked \u2014 allow pop-ups to print','\uD83D\uDDA8\uFE0F');return;}
+  var html='<html><head><title>CodeVitals Flashcards</title><style>'
+    +'body{font-family:system-ui,Arial,sans-serif;color:#1e293b;max-width:820px;margin:24px auto;padding:0 18px}'
+    +'h1{color:#0284c7;margin-bottom:2px}.sub{color:#64748b;margin-top:0;font-size:.9rem}'
+    +'table{width:100%;border-collapse:collapse;margin-top:14px}'
+    +'th,td{border:1px solid #cbd5e1;padding:7px 9px;text-align:left;vertical-align:top;font-size:.86rem}'
+    +'th{background:#0284c7;color:#fff}td.n{width:34px;text-align:center;color:#64748b}td.q{width:42%;font-weight:600}'
+    +'tr:nth-child(even) td{background:#f1f5f9}@media print{th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}'
+    +'</style></head><body><h1>CodeVitals \u2014 Flashcards</h1>'
+    +'<p class="sub">'+cards.length+' card'+(cards.length===1?'':'s')+' \u00b7 '+new Date().toLocaleDateString()+'</p>'
+    +'<table><thead><tr><th>#</th><th>Question / Term</th><th>Answer</th></tr></thead><tbody>'+rows+'</tbody></table>'
+    +'<script>window.onload=function(){setTimeout(function(){window.print();},250);};<\/script></body></html>';
+  win.document.write(html);win.document.close();
+}
 function searchFC(q){
   q=(q||'').trim().toLowerCase();
   document.querySelectorAll('.fctgbtn').forEach(function(b){b.classList.remove('on');});
