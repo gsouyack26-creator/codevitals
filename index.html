@@ -119,6 +119,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .dcd-pace{display:block;font-size:.72rem;color:var(--ac);margin-top:2px}
 .drec-ct{font-size:.72rem;color:var(--tx2);margin-left:4px}
 .jumpback.weak{border-color:var(--wn,#e0a800)}
+.jumpback.strong{border-color:var(--ok)}
 .dgreet-tip.urgent .dgreet-tip-l{color:var(--er)}
 .fcbtn.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 .drec-foot .ok{color:var(--ok);font-weight:700}
@@ -3899,6 +3900,22 @@ function _weakestHTML(){
     +'<div class="jb-s">'+esc(t)+' \u2014 a little review here will lift your score</div></div>'
     +'<div class="jb-go">Review \u2192</div></div>';
 }
+
+function _strongestHTML(){
+  if(typeof MODULES==='undefined'||typeof moduleMastery!=='function')return '';
+  var best=null,bestAcc=0;
+  MODULES.forEach(function(m){
+    var mm=moduleMastery(m);
+    if(mm.acc!=null&&mm.acc>bestAcc){bestAcc=mm.acc;best=m;}
+  });
+  if(!best||bestAcc<0.85)return '';
+  var t=best.title.split('&amp;').join('&');
+  var pc=Math.round(bestAcc*100);
+  return '<div class="jumpback strong" onclick="showMod(\''+best.id+'\')"><div class="jb-ic">\uD83D\uDCAA</div>'
+    +'<div class="jb-tx"><div class="jb-t">Strongest area \u00b7 '+pc+'% accuracy</div>'
+    +'<div class="jb-s">'+esc(t)+' \u2014 you have this one down</div></div>'
+    +'<div class="jb-go">Open \u2192</div></div>';
+}
 function moduleHeatmap(){
   const cells=MODULES.map((m,i)=>{
     const s=moduleMastery(m);
@@ -6179,6 +6196,7 @@ function dashboard(){
     ${(typeof _jumpBackHTML==='function')?_jumpBackHTML():''}
     ${(typeof _recommendHTML==='function')?_recommendHTML():''}
     ${(typeof _weakestHTML==='function')?_weakestHTML():''}
+    ${(typeof _strongestHTML==='function')?_strongestHTML():''}
     ${(typeof _reviewNudgeHTML==='function')?_reviewNudgeHTML():''}
     ${(typeof _weekActivityHTML==='function')?_weekActivityHTML():''}
     ${(typeof _studyPlanHTML==='function')?_studyPlanHTML():''}
