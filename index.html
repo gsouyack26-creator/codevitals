@@ -3394,8 +3394,17 @@ function _greetHTML(){
   var part=h<12?'Good morning':(h<18?'Good afternoon':'Good evening');
   var name='';
   try{ if(typeof ceLearner==='function'){var nm=ceLearner(false); if(nm&&nm.trim())name=', '+nm.trim().split(/\s+/)[0];} }catch(e){}
-  var streak=((PROG.streak||{}).days)||0;
-  var sub=streak>0?('\uD83D\uDD25 '+streak+'-day streak \u2014 keep it going!'):'Ready for a productive study session?';
+  var st=PROG.streak||{};
+  var streak=st.days||0; var best=st.best||0;
+  var sub;
+  if(streak>0){
+    sub='\uD83D\uDD25 '+streak+'-day streak \u2014 keep it going!';
+    if(best>streak)sub+=' (best: '+best+')';
+  } else if(best>1){
+    sub='Your best streak was '+best+' days \u2014 start a new one today!';
+  } else {
+    sub='Ready for a productive study session?';
+  }
   return '<div class="dgreet"><div class="dgreet-t">'+part+esc(name)+'</div><div class="dgreet-s">'+sub+'</div></div>';
 }
 function _masteryStatHTML(){
@@ -5605,6 +5614,7 @@ function bumpStreak(){
   else if(PROG.streak.last===y2&&PROG.streak.freezes>0){PROG.streak.freezes--;PROG.streak.days++;if(typeof mcToast==='function')mcToast('Streak freeze used \u2014 streak saved!','\u2744\uFE0F');}
   else{PROG.streak.days=1;}
   PROG.streak.last=today;
+  if(typeof PROG.streak.best!=='number'||PROG.streak.days>PROG.streak.best)PROG.streak.best=PROG.streak.days;
   if(PROG.streak.days>0&&PROG.streak.days%7===0)PROG.streak.freezes=Math.min(3,(PROG.streak.freezes||0)+1);
 }
 function readiness(){
