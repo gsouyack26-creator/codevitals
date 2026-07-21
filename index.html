@@ -677,7 +677,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dterm-l{font-weight:700;font-size:12px;opacity:.85}
 .dterm-cat{font-size:10.5px;color:var(--tx2);border:1px solid var(--bd);border-radius:9px;padding:1px 7px}
 .dterm-t{font-weight:700;font-size:15px;margin-bottom:3px}
-.dterm-d{font-size:12.5px;color:var(--tx2);line-height:1.5}.dterm-foot{margin-top:8px;font-size:12px;color:var(--accent,#4a9);cursor:pointer;font-weight:600}.dterm-foot:hover{text-decoration:underline}
+.dterm-d{font-size:12.5px;color:var(--tx2);line-height:1.5}.dterm-foot{margin-top:8px;font-size:12px;color:var(--accent,#4a9);cursor:pointer;font-weight:600}.gq-card{background:var(--cardbg,#fff);border:1px solid var(--bd,#ddd);border-radius:14px;padding:22px 18px;margin:12px 0;text-align:center}.gq-cat{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:8px}.gq-def{font-size:1.05rem;line-height:1.5;margin-bottom:16px}.gq-term{font-size:1.4rem;font-weight:800;color:var(--ac);margin-top:6px}.dterm-foot:hover{text-decoration:underline}
 </style>
 <body>
 <div id="hdr">
@@ -6445,6 +6445,34 @@ function copyGlossShown(){
   if(!r.n){if(typeof mcToast==='function')mcToast('No terms to copy','\u26A0');return;}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(r.txt).then(function(){if(typeof mcToast==='function')mcToast(r.n+' terms copied','\uD83D\uDCCB');}).catch(function(){});}
 }
+function glossaryQuiz(){
+  if(typeof GLOSSARY==='undefined'||!GLOSSARY.length)return;
+  var cat=(APP&&APP.gcat)||'All';
+  var si=document.getElementById('gsrch'); var term=(si&&si.value||'').toLowerCase();
+  var savedMode=(cat==='__saved__');
+  var list=GLOSSARY.filter(function(g){return (cat==='All'||savedMode||g.cat===cat)&&(!savedMode||(typeof bmHasG==='function'&&bmHasG(g.term)))&&(!term||g.term.toLowerCase().indexOf(term)>=0||g.def.toLowerCase().indexOf(term)>=0);});
+  if(list.length<2)list=GLOSSARY.slice();
+  list=list.slice().sort(function(){return Math.random()-0.5;});
+  APP.gquiz={list:list,i:0,revealed:false};
+  gqRender();
+}
+function gqRender(){
+  var q=APP.gquiz; if(!q)return;
+  var g=q.list[q.i]; if(!g){glossaryView();return;}
+  var revealed=q.revealed;
+  var html='<div class="ecenter"><h2 class="etitle">\uD83E\uDDE0 Glossary Quiz</h2>'
+    +'<p class="eintro">Read the definition and recall the term. '+(q.i+1)+' of '+q.list.length+'.</p>'
+    +'<div class="gq-card"><div class="gq-cat">'+esc(g.cat)+'</div>'
+    +'<div class="gq-def">'+esc(g.def)+'</div>'
+    +(revealed?'<div class="gq-term">'+esc(g.term)+'</div>':'<button class="qbtn" onclick="gqReveal()">\uD83D\uDC41\uFE0F Reveal term</button>')
+    +'</div>'
+    +'<div class="dcta" style="margin-top:14px">'
+    +(revealed?'<button class="qbtn" onclick="gqNext()">Next \u2192</button>':'')
+    +'<button class="qbtn sec" onclick="glossaryView()">\u2190 Back to glossary</button></div></div>';
+  fullView(html);
+}
+function gqReveal(){ if(APP.gquiz){APP.gquiz.revealed=true;gqRender();} }
+function gqNext(){ var q=APP.gquiz; if(!q)return; q.i++; q.revealed=false; if(q.i>=q.list.length){q.i=0;q.list=q.list.slice().sort(function(){return Math.random()-0.5;});if(typeof mcToast==='function')mcToast('Deck complete \u2014 reshuffled','\uD83E\uDDE0');} gqRender(); }
 function glossaryRandom(){
   if(typeof GLOSSARY==='undefined'||!GLOSSARY.length)return;
   var g=GLOSSARY[Math.floor(Math.random()*GLOSSARY.length)];
@@ -6470,7 +6498,7 @@ function glossaryView(){
   const chips=cats.map(c=>`<button class="gchip${c==='All'?' on':''}" data-cat="${esc(c)}" onclick="glossaryFilter('${esc(c)}','')">${esc(c)}</button>`).join('');
   const _savedN=(typeof _bm==='function')?Object.keys(_bm().gloss||{}).length:0;
   const savedChip=_savedN?`<button class="gchip gchip-saved" data-cat="__saved__" onclick="glossaryFilter('__saved__','')">\u2605 Saved (${_savedN})</button>`:'';
-  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div style="margin:8px 0"><button class="qbtn sec sm" onclick="exportGloss()">\uD83D\uDCE4 Export shown terms</button> <button class="qbtn sec sm" onclick="copyGlossShown()">\uD83D\uDCCB Copy shown</button> <button class="qbtn sec sm" onclick="glossaryRandom()">\uD83C\uDFB2 Random term</button></div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
+  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div style="margin:8px 0"><button class="qbtn sec sm" onclick="exportGloss()">\uD83D\uDCE4 Export shown terms</button> <button class="qbtn sec sm" onclick="copyGlossShown()">\uD83D\uDCCB Copy shown</button> <button class="qbtn sec sm" onclick="glossaryRandom()">\uD83C\uDFB2 Random term</button> <button class="qbtn sec sm" onclick="glossaryQuiz()">\uD83E\uDDE0 Quiz me</button></div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
   APP.gcat='All';glossaryFilter('All','');
 }
 function glossaryFilter(cat,term){
