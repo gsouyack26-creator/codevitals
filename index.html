@@ -542,6 +542,12 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .fc-seenfill{height:100%;width:0;background:var(--ac);border-radius:4px;transition:width .3s}
 .fc-seentxt{text-align:center;font-size:.72rem;color:var(--tx2);margin-top:5px}
 .mr-cert{background:transparent;border:1px solid var(--ac);color:var(--ac)}
+.rhdr{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:.9rem;margin-bottom:10px}
+.rhdr-n{font-weight:600;font-size:.78rem;color:var(--ac)}
+.rc-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.rc-chk{font-size:.72rem;color:var(--tx2);display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
+.rcrd.rc-done{border-color:var(--ok)}
+.rcrd.rc-done .rtit::after{content:" \2713";color:var(--ok)}
 </style>
 <body>
 <div id="hdr">
@@ -2926,12 +2932,33 @@ function labToggle(id,btn,showLbl,hideLbl){
 }
 
 function renderRes(m){
-  document.getElementById('rv').innerHTML=`<div class="rlist">${m.resources.map(r=>`
-    <div class="rcrd">
+  const rd=(PROG[m.id]||{}).resDone||{};
+  const tot=(m.resources||[]).length;
+  const done=Object.keys(rd).filter(function(k){return rd[k];}).length;
+  const hdr=tot?`<div class="rhdr"><span>\uD83D\uDCDA Resources</span><span class="rhdr-n">${done} of ${tot} reviewed</span></div>`:'';
+  document.getElementById('rv').innerHTML=hdr+`<div class="rlist">${m.resources.map((r,i)=>`
+    <div class="rcrd${rd[i]?' rc-done':''}">
       <div class="rico">${r.icon}</div>
       <div class="rinfo"><div class="rtit">${esc(r.title)}</div><div class="rdsc">${esc(r.desc)}</div></div>
-      <button class="rbtn" onclick="window.open('${r.url}','_blank')">Visit &#8599;</button>
+      <div class="rc-actions">
+        <button class="rbtn" onclick="visitRes('${m.id}',${i},'${r.url}')">Visit &#8599;</button>
+        <label class="rc-chk"><input type="checkbox" ${rd[i]?'checked':''} onchange="resToggle('${m.id}',${i})"> Reviewed</label>
+      </div>
     </div>`).join('')}</div>`;
+}
+function resToggle(mid,idx){
+  if(!PROG[mid])PROG[mid]={};
+  if(!PROG[mid].resDone)PROG[mid].resDone={};
+  PROG[mid].resDone[idx]=!PROG[mid].resDone[idx];
+  if(typeof saveProg==='function')saveProg();
+  var m=(typeof MODULES!=='undefined')?MODULES.find(function(x){return x.id===mid;}):null;
+  if(m)renderRes(m);
+}
+function visitRes(mid,idx,url){
+  window.open(url,'_blank');
+  if(!PROG[mid])PROG[mid]={};
+  if(!PROG[mid].resDone)PROG[mid].resDone={};
+  if(!PROG[mid].resDone[idx]){PROG[mid].resDone[idx]=true;if(typeof saveProg==='function')saveProg();var m=(typeof MODULES!=='undefined')?MODULES.find(function(x){return x.id===mid;}):null;if(m)renderRes(m);}
 }
 
 const EXAM_SCENARIOS=[
