@@ -32,6 +32,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .mi.sel{background:var(--ac);color:#fff}
 .mi.sel .mmet{color:rgba(255,255,255,.7)}.mpct{opacity:.85}.mbar{height:3px;border-radius:3px;background:rgba(255,255,255,.15);margin-top:4px;overflow:hidden}.mbar-fill{height:100%;border-radius:3px;background:var(--ac);transition:width .3s}.mbar-fill.full{background:var(--ok)}
 .mchip{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.02em;padding:1px 6px;border-radius:8px;margin-top:4px;text-transform:uppercase}.mchip.done{background:rgba(52,211,153,.22);color:#6ee7b7}.mchip.almost{background:rgba(96,165,250,.22);color:#93c5fd}.mchip.prog{background:rgba(251,191,36,.2);color:#fcd34d}
+.mi-next{position:relative}.mi-next:not(.sel){box-shadow:inset 3px 0 0 var(--ac)}.mi-nextpill{display:inline-block;margin-left:6px;font-size:.55rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:8px;background:var(--ac);color:#fff;vertical-align:middle}
 .lread{margin:6px 0 14px;padding:10px 12px;background:var(--cardbg,rgba(127,127,127,.06));border:1px solid var(--bd);border-radius:10px}.lread-lbl{display:flex;justify-content:space-between;font-size:.75rem;font-weight:600;color:var(--tx2,#888);margin-bottom:5px}.lread-bar{height:5px;border-radius:5px;background:rgba(127,127,127,.2);overflow:hidden}.lread-fill{height:100%;border-radius:5px;background:var(--ac);transition:width .3s}.lread-fill.full{background:var(--ok)}
 .lread-cont{margin-top:9px;font-size:.74rem;font-weight:700;color:#fff;background:var(--ac);border:none;padding:6px 12px;border-radius:8px;cursor:pointer}.lread-cont:hover{opacity:.9}.les-flash{animation:lesflash 1.6s ease}@keyframes lesflash{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 3px var(--ac)}}
 .les-badge{display:none;width:16px;height:16px;border-radius:50%;background:var(--ok);color:#fff;font-size:.62rem;font-weight:700;align-items:center;justify-content:center;margin-right:6px;vertical-align:middle}.les-read .les-badge{display:inline-flex}.les-read .lhd{color:var(--tx2)}
@@ -2348,7 +2349,10 @@ function init(){
 function buildSB(){
   const ml=document.getElementById('ml');
   let done=0;
+  const _rec=(typeof _recommendModule==='function')?_recommendModule():null;
+  const _recId=_rec&&_rec.m?_rec.m.id:null;
   ml.innerHTML=MODULES.map(m=>{
+    const isNext=(m.id===_recId);
     const isDone=(PROG[m.id]||{}).done;
     if(isDone)done++;
     const mm=(typeof moduleMastery==='function')?moduleMastery(m):{pct:isDone?100:0};
@@ -2358,9 +2362,9 @@ function buildSB(){
     if(isDone)chip='<span class="mchip done">✓ Done</span>';
     else if(mm.pct>=50)chip='<span class="mchip almost">Almost there</span>';
     else if(started)chip='<span class="mchip prog">In progress</span>';
-    return `<div class="mi" id="mi-${m.id}" onclick="showMod('${m.id}')">
+    return `<div class="mi${isNext?' mi-next':''}" id="mi-${m.id}" onclick="showMod('${m.id}')">
       <div class="mdot${isDone?' done':''}"></div>
-      <div class="minfo"><div class="mtit">${esc(m.title.split('&amp;').join('&'))}</div>
+      <div class="minfo"><div class="mtit">${esc(m.title.split('&amp;').join('&'))}${isNext?'<span class="mi-nextpill">Next</span>':''}</div>
       <div class="mmet">${m.time} &middot; <span>${m.level}</span> &middot; <span class="mpct">${mm.pct}%</span></div>
       <div class="mbar"><div class="mbar-fill${mm.pct>=100?' full':''}" style="width:${mm.pct}%"></div></div>${chip}</div></div>`;
   }).join('');
