@@ -6150,6 +6150,7 @@ function dashboard(){
         <div class="dstat"><div class="dsn">${r.passed}/${r.ek.length||0}</div><div class="dsl">Exams passed</div></div>
         <div class="dstat"><div class="dsn">\uD83D\uDD25 ${streak}</div><div class="dsl">Day streak</div></div>
         <div class="dstat"><div class="dsn">${misses}</div><div class="dsl">In miss bank</div></div>
+        <div class="dstat"><div class="dsn">\u2605 ${(typeof _fcFavCount==='function')?_fcFavCount():0}</div><div class="dsl">Starred cards</div></div>
       </div>
     </div>
     <div class="dcta">
