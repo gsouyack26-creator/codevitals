@@ -557,6 +557,13 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .mnote-ct{font-size:.72rem;color:var(--tx2)}
 .mnote-btn{background:var(--ac);color:#fff;border:0;border-radius:7px;padding:7px 15px;font-size:.82rem;cursor:pointer;margin-left:6px}
 .mnote-btn.sec{background:transparent;border:1px solid var(--bd);color:var(--tx2)}
+.dnotes{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.dnotes-hd{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:.95rem;margin-bottom:10px}
+.dnotes-n{font-weight:600;font-size:.75rem;color:var(--ac)}
+.dnote-row{padding:9px 11px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.dnote-row:hover{border-color:var(--ac)}
+.dnote-t{font-weight:600;font-size:.84rem;margin-bottom:3px}
+.dnote-s{font-size:.76rem;color:var(--tx2);line-height:1.4}
 </style>
 <body>
 <div id="hdr">
@@ -3271,6 +3278,18 @@ function achievementsView(){
 }
 
 /* ===== MODULE MASTERY HEATMAP ===== */
+function _notesHTML(){
+  if(typeof MODULES==='undefined')return '';
+  var items=MODULES.filter(function(m){var n=(PROG[m.id]||{}).note;return n&&n.trim().length;});
+  if(!items.length)return '';
+  var rows=items.map(function(m){
+    var n=(PROG[m.id]||{}).note.trim();
+    var snip=n.length>90?n.slice(0,90)+'\u2026':n;
+    var title=m.title.split('&amp;').join('&');
+    return '<div class="dnote-row" onclick="showMod(\''+m.id+'\')"><div class="dnote-t">'+esc(title)+'</div><div class="dnote-s">'+esc(snip)+'</div></div>';
+  }).join('');
+  return '<div class="dnotes"><div class="dnotes-hd"><span>\uD83D\uDCDD My Notes</span><span class="dnotes-n">'+items.length+' module'+(items.length===1?'':'s')+'</span></div>'+rows+'</div>';
+}
 function _masteryStatHTML(){
   if(typeof MODULES==='undefined')return '';
   var tot=MODULES.length;
@@ -5546,6 +5565,7 @@ function dashboard(){
     ${(typeof _weekActivityHTML==='function')?_weekActivityHTML():''}
     ${(typeof _studyPlanHTML==='function')?_studyPlanHTML():''}
     ${(typeof _masteryStatHTML==='function')?_masteryStatHTML():''}
+    ${(typeof _notesHTML==='function')?_notesHTML():''}
     <h2 class="etitle">\uD83D\uDCCA Readiness Dashboard</h2>
     <div class="dgrid">
       <div class="dcard dring-card">
