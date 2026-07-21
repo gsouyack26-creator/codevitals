@@ -5753,9 +5753,13 @@ document.addEventListener('click',e=>{
 });
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'&&document.getElementById('fv')&&document.getElementById('fv').classList.contains('on'))moveFC(1);
-  if(e.key==='ArrowLeft'&&document.getElementById('fv')&&document.getElementById('fv').classList.contains('on'))moveFC(-1);
-  if(e.key===' '&&document.getElementById('fci'))flipFC();
+  var fv=document.getElementById('fv');
+  var active=fv&&fv.classList.contains('on');
+  if(!active)return;
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||''))return;
+  if(e.key==='ArrowRight'){moveFC(1);e.preventDefault();}
+  else if(e.key==='ArrowLeft'){moveFC(-1);e.preventDefault();}
+  else if(e.key===' '&&document.getElementById('fci')){flipFC();e.preventDefault();}
 });
 
 document.addEventListener('DOMContentLoaded',init);
