@@ -4396,6 +4396,7 @@ function bmStar(q){
   const on=bmHasQ(q);
   return `<button class="bm-star${on?' on':''}" title="Save to study later" onclick='bmToggleQ(${JSON.stringify({q:q.q,opts:q.opts,ans:q.ans,exp:q.exp,mod:q.mod||(APP.mod&&APP.mod.id)}).split("'").join("&#39;")},this)'>${on?'\u2605':'\u2606'}</button>`;
 }
+function _gweak(){ PROG.glossWeak=PROG.glossWeak||{}; return PROG.glossWeak; }
 function bmToggleQ(q,btn){
   const b=_bm(); const id=qid(q);
   if(b.q[id]){delete b.q[id];btn.classList.remove('on');btn.textContent='\u2606';}
@@ -6484,8 +6485,8 @@ function gqRender(){
   fullView(html);
 }
 function gqReveal(){ if(APP.gquiz){APP.gquiz.revealed=true;gqRender();} }
-function gqGot(){ var q=APP.gquiz; if(!q)return; q.got=(q.got||0)+1; gqNext(); }
-function gqMissed(){ var q=APP.gquiz; if(!q)return; q.missed=(q.missed||0)+1; var g=q.list[q.i]; if(g){ if(!q.missedList)q.missedList=[]; if(q.missedList.indexOf(g.term)<0)q.missedList.push(g.term); if(typeof _bm==='function'&&!_bm().gloss[g.term]){_bm().gloss[g.term]={term:g.term,def:g.def,cat:g.cat}; if(typeof saveProg==='function')saveProg();} } gqNext(); }
+function gqGot(){ var q=APP.gquiz; if(!q)return; q.got=(q.got||0)+1; var g=q.list[q.i]; if(g&&typeof _gweak==='function'&&_gweak()[g.term]){delete _gweak()[g.term]; if(typeof saveProg==='function')saveProg();} gqNext(); }
+function gqMissed(){ var q=APP.gquiz; if(!q)return; q.missed=(q.missed||0)+1; var g=q.list[q.i]; if(g){ if(!q.missedList)q.missedList=[]; if(q.missedList.indexOf(g.term)<0)q.missedList.push(g.term); if(typeof _gweak==='function'){_gweak()[g.term]={term:g.term,def:g.def,cat:g.cat}; if(typeof saveProg==='function')saveProg();} if(typeof _bm==='function'&&!_bm().gloss[g.term]){_bm().gloss[g.term]={term:g.term,def:g.def,cat:g.cat}; if(typeof saveProg==='function')saveProg();} } gqNext(); }
 function gqSave(){
   var q=APP.gquiz; if(!q)return; var g=q.list[q.i]; if(!g)return;
   var btn=document.getElementById('gq-star');
@@ -6499,6 +6500,7 @@ function gqHear(){
 function gqNext(){ var q=APP.gquiz; if(!q)return; q.i++; q.revealed=false; if(q.i>=q.list.length){q.done=true;} gqRender(); }
 function gqRestart(){ var q=APP.gquiz; if(!q)return; q.list=q.list.slice().sort(function(){return Math.random()-0.5;}); q.i=0; q.revealed=false; q.done=false; q.got=0; q.missed=0; q.missedList=[]; gqRender(); }
 function gqMissedQuiz(){ var q=APP.gquiz; if(!q||!q.missedList||!q.missedList.length)return; var terms=q.missedList.slice(); var list=GLOSSARY.filter(function(g){return terms.indexOf(g.term)>=0;}); if(!list.length)return; list=list.slice().sort(function(){return Math.random()-0.5;}); APP.gquiz={list:list,i:0,revealed:false,got:0,missed:0,missedList:[]}; if(typeof mcToast==='function')mcToast('Quizzing '+list.length+' missed term'+(list.length===1?'':'s'),'\uD83D\uDD01'); gqRender(); }
+function glossaryQuizWeak(){ if(typeof _gweak!=='function')return; var wk=_gweak(); var keys=Object.keys(wk); if(!keys.length){if(typeof mcToast==='function')mcToast('No weak terms \u2014 quiz to build the list','\uD83E\uDDE0');return;} var list=keys.map(function(k){return wk[k];}); list=list.slice().sort(function(){return Math.random()-0.5;}); APP.gquiz={list:list,i:0,revealed:false,got:0,missed:0,missedList:[]}; if(typeof gotoTab==='function'){} if(typeof mcToast==='function')mcToast('Quizzing '+list.length+' weak term'+(list.length===1?'':'s'),'\u26a0\uFE0F'); gqRender(); }
 function glossaryRandom(){
   if(typeof GLOSSARY==='undefined'||!GLOSSARY.length)return;
   var g=GLOSSARY[Math.floor(Math.random()*GLOSSARY.length)];
@@ -6524,7 +6526,9 @@ function glossaryView(){
   const chips=cats.map(c=>`<button class="gchip${c==='All'?' on':''}" data-cat="${esc(c)}" onclick="glossaryFilter('${esc(c)}','')">${esc(c)}</button>`).join('');
   const _savedN=(typeof _bm==='function')?Object.keys(_bm().gloss||{}).length:0;
   const savedChip=_savedN?`<button class="gchip gchip-saved" data-cat="__saved__" onclick="glossaryFilter('__saved__','')">\u2605 Saved (${_savedN})</button>`:'';
-  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div style="margin:8px 0"><button class="qbtn sec sm" onclick="exportGloss()">\uD83D\uDCE4 Export shown terms</button> <button class="qbtn sec sm" onclick="copyGlossShown()">\uD83D\uDCCB Copy shown</button> <button class="qbtn sec sm" onclick="glossaryRandom()">\uD83C\uDFB2 Random term</button> <button class="qbtn sec sm" onclick="glossaryQuiz()">\uD83E\uDDE0 Quiz me</button></div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
+  const _weakN=(typeof _gweak==='function')?Object.keys(_gweak()||{}).length:0;
+  const weakBtn=_weakN?` <button class="qbtn sec sm" onclick="glossaryQuizWeak()">\u26a0\uFE0F Weak terms (${_weakN})</button>`:'';
+  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div style="margin:8px 0"><button class="qbtn sec sm" onclick="exportGloss()">\uD83D\uDCE4 Export shown terms</button> <button class="qbtn sec sm" onclick="copyGlossShown()">\uD83D\uDCCB Copy shown</button> <button class="qbtn sec sm" onclick="glossaryRandom()">\uD83C\uDFB2 Random term</button> <button class="qbtn sec sm" onclick="glossaryQuiz()">\uD83E\uDDE0 Quiz me</button>${weakBtn}</div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
   APP.gcat='All';glossaryFilter('All','');
 }
 function glossaryFilter(cat,term){
