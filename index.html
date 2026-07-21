@@ -3458,7 +3458,7 @@ function examCenter(){
       <div class="etop"><div class="ename">${esc(d.name)}</div>${badge}</div>
       <div class="esub">${esc(d.sub)}</div>
       <div class="emeta">\uD83D\uDCDD ${n} questions &bull; \u23F1\uFE0F ${d.min} min &bull; \uD83C\uDFAF Pass ${Math.round(d.pass*100)}%</div>
-      ${(best&&best.attempts)?`<div class="emeta" style="opacity:.85">\uD83D\uDD01 ${best.attempts} attempt${best.attempts===1?'':'s'}${best.lastScore!=null?' &bull; last '+best.lastScore+'%':''}</div>`:''}
+      ${(best&&best.attempts)?`<div class="emeta" style="opacity:.85">\uD83D\uDD01 ${best.attempts} attempt${best.attempts===1?'':'s'}${best.lastScore!=null?' &bull; last '+best.lastScore+'%'+((best.attempts>1&&best.lastScore>best.score-0.0001&&best.lastScore>=best.score)?' <span style="color:var(--ok)">\u25B2 best</span>':(best.attempts>1&&best.lastScore<best.score)?' <span style="color:var(--tx2)">\u25BC from '+best.score+'%</span>':''):''}</div>`:''}
       <button class="qbtn" style="margin-top:10px;width:100%" onclick="examStart('${d.id}')">${(best&&best.attempts)?'Retake Exam':'Start Exam'}</button>
     </div>`;
   }).join('');
