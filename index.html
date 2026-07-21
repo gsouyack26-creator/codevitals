@@ -677,7 +677,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dterm-l{font-weight:700;font-size:12px;opacity:.85}
 .dterm-cat{font-size:10.5px;color:var(--tx2);border:1px solid var(--bd);border-radius:9px;padding:1px 7px}
 .dterm-t{font-weight:700;font-size:15px;margin-bottom:3px}
-.dterm-d{font-size:12.5px;color:var(--tx2);line-height:1.5}.dterm-foot{margin-top:8px;font-size:12px;color:var(--accent,#4a9);cursor:pointer;font-weight:600}.gq-card{background:var(--cardbg,#fff);border:1px solid var(--bd,#ddd);border-radius:14px;padding:22px 18px;margin:12px 0;text-align:center}.gq-cat{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:8px}.gq-def{font-size:1.05rem;line-height:1.5;margin-bottom:16px}.gq-term{font-size:1.4rem;font-weight:800;color:var(--ac);margin-top:6px}.gq-acts{margin-top:10px;display:flex;gap:8px;justify-content:center}.dterm-foot:hover{text-decoration:underline}
+.dterm-d{font-size:12.5px;color:var(--tx2);line-height:1.5}.dterm-foot{margin-top:8px;font-size:12px;color:var(--accent,#4a9);cursor:pointer;font-weight:600}.gq-card{background:var(--cardbg,#fff);border:1px solid var(--bd,#ddd);border-radius:14px;padding:22px 18px;margin:12px 0;text-align:center}.gq-cat{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:8px}.gq-def{font-size:1.05rem;line-height:1.5;margin-bottom:16px}.gq-term{font-size:1.4rem;font-weight:800;color:var(--ac);margin-top:6px}.gq-acts{margin-top:10px;display:flex;gap:8px;justify-content:center}.gq-hint{font-size:11px;color:var(--tx2);text-align:center;margin-top:10px}.dterm-foot:hover{text-decoration:underline}
 </style>
 <body>
 <div id="hdr">
@@ -6468,7 +6468,7 @@ function gqRender(){
     +'</div>'
     +'<div class="dcta" style="margin-top:14px">'
     +(revealed?'<button class="qbtn" onclick="gqNext()">Next \u2192</button>':'')
-    +'<button class="qbtn sec" onclick="glossaryView()">\u2190 Back to glossary</button></div></div>';
+    +'<button class="qbtn sec" onclick="glossaryView()">\u2190 Back to glossary</button></div>'+'<p class="gq-hint">'+(revealed?'<b>Space</b> or <b>\u2192</b> next \u00b7 <b>S</b> save':'<b>Space</b> reveal')+'</p></div>';
   fullView(html);
 }
 function gqReveal(){ if(APP.gquiz){APP.gquiz.revealed=true;gqRender();} }
@@ -6530,6 +6530,16 @@ document.addEventListener('keydown',e=>{
   else if(k==='f'){examFlag();e.preventDefault();}
   else if('1234'.includes(k)){const n=+k-1;if(n<ex.qs[ex.i].opts.length){examSelect(n);e.preventDefault();}}
   else if('abcd'.includes(k)){const n=k.charCodeAt(0)-97;if(n<ex.qs[ex.i].opts.length){examSelect(n);e.preventDefault();}}
+});
+
+/* glossary quiz keyboard shortcuts */
+document.addEventListener('keydown',e=>{
+  if(!APP.gquiz||!document.querySelector('.gq-card'))return;
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test((e.target.tagName||'')))return;
+  const k=e.key.toLowerCase();
+  if(k===' '||k==='enter'){ if(!APP.gquiz.revealed){gqReveal();}else{gqNext();} e.preventDefault(); }
+  else if(k==='arrowright'){ if(APP.gquiz.revealed){gqNext();} e.preventDefault(); }
+  else if(k==='s'){ if(APP.gquiz.revealed){gqSave();} e.preventDefault(); }
 });
 
 function toggleTheme(){
