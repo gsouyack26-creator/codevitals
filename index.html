@@ -36,6 +36,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .lread-cont{margin-top:9px;font-size:.74rem;font-weight:700;color:#fff;background:var(--ac);border:none;padding:6px 12px;border-radius:8px;cursor:pointer}.lread-cont:hover{opacity:.9}.les-flash{animation:lesflash 1.6s ease}@keyframes lesflash{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 3px var(--ac)}}
 .les-badge{display:none;width:16px;height:16px;border-radius:50%;background:var(--ok);color:#fff;font-size:.62rem;font-weight:700;align-items:center;justify-content:center;margin-right:6px;vertical-align:middle}.les-read .les-badge{display:inline-flex}.les-read .lhd{color:var(--tx2)}
 .modprog{display:flex;gap:8px;margin:10px 0 6px}.mp-cell{flex:1;display:flex;align-items:center;gap:7px;padding:9px 10px;border:1px solid var(--bd);border-radius:10px;background:var(--cardbg,rgba(127,127,127,.05))}.mp-cell.full{border-color:var(--ok);background:rgba(52,211,153,.08)}.mp-ic{font-size:1.05rem}.mp-tx{display:flex;flex-direction:column;line-height:1.15}.mp-tx b{font-size:.72rem}.mp-tx span{font-size:.72rem;color:var(--tx2);font-weight:600}.mp-cell.full .mp-tx span{color:var(--ok)}
+.mastered{margin:10px 0 4px;padding:11px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(52,211,153,.18),rgba(96,165,250,.14));border:1px solid var(--ok);font-size:.83rem;line-height:1.4}
 .weekact{margin:6px 0 14px;padding:12px 14px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--cardbg,rgba(127,127,127,.05))}.weekact.ok{border-left-color:var(--ok)}.weekact.wn{border-left-color:var(--wn)}.wa-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.wa-ttl{font-weight:700;font-size:.92rem}.wa-cnt{font-size:.8rem;font-weight:700;color:var(--tx2)}.wa-msg{font-size:.82rem;color:var(--tx2);line-height:1.4}.wa-pills{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px}.wa-pill{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:10px;background:rgba(127,127,127,.14);color:var(--tx2)}
 .studyplan{margin:6px 0 14px;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--cardbg,rgba(127,127,127,.05))}.studyplan.all{border-color:var(--ok)}.sp-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.sp-ttl{font-weight:700;font-size:.92rem}.sp-cnt{font-size:.8rem;font-weight:700;color:var(--tx2)}.sp-bar{height:5px;border-radius:5px;background:rgba(127,127,127,.2);overflow:hidden;margin-bottom:8px}.sp-fill{height:100%;border-radius:5px;background:var(--ac);transition:width .3s}.sp-fill.full{background:var(--ok)}.sp-row{display:flex;align-items:center;gap:9px;padding:7px 4px;cursor:pointer;border-radius:8px;font-size:.83rem}.sp-row:hover{background:rgba(127,127,127,.08)}.sp-ck{width:20px;height:20px;flex-shrink:0;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff}.sp-row.done .sp-ck{background:var(--ok);border-color:var(--ok)}.sp-row.done .sp-lbl{color:var(--tx2);text-decoration:line-through}
 .mdot{width:9px;height:9px;border-radius:50%;border:2px solid var(--bd);flex-shrink:0;transition:all .25s;margin-top:5px}
@@ -2437,6 +2438,15 @@ function _nextModCTA(m){
     +'<div class="nm-row"><div class="nm-t">Put it all together in the Exam Center</div>'
     +'<div class="nm-go">Take an exam \u2192</div></div></div>';
 }
+function _masteredRibbon(m){
+  var pr=PROG[m.id]||{};
+  var oc=pr.obj||{}, lr=pr.lread||{};
+  var oT=(m.objectives||[]).length, oD=Object.keys(oc).filter(function(k){return oc[k];}).length;
+  var lT=(m.lessons||[]).length, lD=Object.keys(lr).filter(function(k){return lr[k];}).length;
+  var full=pr.done&&(oT===0||oD>=oT)&&(lT===0||lD>=lT);
+  if(!full)return '';
+  return '<div class="mastered">\uD83C\uDF96\uFE0F <b>Module mastered!</b> Objectives, lectures, and quiz all complete. Scroll down for your next step.</div>';
+}
 function _modProgressRow(m){
   var pr=PROG[m.id]||{};
   var oc=pr.obj||{}, lr=pr.lread||{};
@@ -2454,7 +2464,7 @@ function renderLearn(m){
   const rc=m.recap;
   document.getElementById('lv').innerHTML=
     `<div class="mhdr"><h2>${esc(m.title.split('&amp;').join('&'))}</h2>
-    <p>${m.time} &middot; <span class="badge ${m.level}">${m.level}</span></p></div>${_modProgressRow(m)}${eliBox(m)}
+    <p>${m.time} &middot; <span class="badge ${m.level}">${m.level}</span></p></div>${_masteredRibbon(m)}${_modProgressRow(m)}${eliBox(m)}
     <div class="secttl">Learning Objectives</div>
     <ul class="objl">${m.objectives.map((o,i)=>`<li onclick="ckObj('${m.id}',${i})">
       <div class="ocb${oc[i]?' ck':''}">${oc[i]?'&#10003;':''}</div><span>${esc(o)}</span></li>`).join('')}</ul>
