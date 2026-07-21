@@ -32,6 +32,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .mi.sel{background:var(--ac);color:#fff}
 .mi.sel .mmet{color:rgba(255,255,255,.7)}.mpct{opacity:.85}.mbar{height:3px;border-radius:3px;background:rgba(255,255,255,.15);margin-top:4px;overflow:hidden}.mbar-fill{height:100%;border-radius:3px;background:var(--ac);transition:width .3s}.mbar-fill.full{background:var(--ok)}
 .mchip{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.02em;padding:1px 6px;border-radius:8px;margin-top:4px;text-transform:uppercase}.mchip.done{background:rgba(52,211,153,.22);color:#6ee7b7}.mchip.almost{background:rgba(96,165,250,.22);color:#93c5fd}.mchip.prog{background:rgba(251,191,36,.2);color:#fcd34d}
+.lread{margin:6px 0 14px;padding:10px 12px;background:var(--cardbg,rgba(127,127,127,.06));border:1px solid var(--bd);border-radius:10px}.lread-lbl{display:flex;justify-content:space-between;font-size:.75rem;font-weight:600;color:var(--tx2,#888);margin-bottom:5px}.lread-bar{height:5px;border-radius:5px;background:rgba(127,127,127,.2);overflow:hidden}.lread-fill{height:100%;border-radius:5px;background:var(--ac);transition:width .3s}.lread-fill.full{background:var(--ok)}
 .mdot{width:9px;height:9px;border-radius:50%;border:2px solid var(--bd);flex-shrink:0;transition:all .25s;margin-top:5px}
 .mdot.done{background:var(--ok);border-color:var(--ok)}
 .minfo{flex:1;min-width:0}
@@ -2440,9 +2441,9 @@ function renderLearn(m){
     <div class="secttl">Learning Objectives</div>
     <ul class="objl">${m.objectives.map((o,i)=>`<li onclick="ckObj('${m.id}',${i})">
       <div class="ocb${oc[i]?' ck':''}">${oc[i]?'&#10003;':''}</div><span>${esc(o)}</span></li>`).join('')}</ul>
-    <div class="secttl">📖 Lecture</div>`+
+    <div class="secttl">📖 Lecture</div>${_lreadBar(m)}`+
     m.lessons.map((l,i)=>`<div class="les">
-      <div class="lhd" onclick="togLes(this)"><span>${esc(l.title)}</span><span>${i?'&#9660;':'&#9650;'}</span></div>
+      <div class="lhd" onclick="togLes(this,'${m.id}',${i})"><span>${esc(l.title)}</span><span>${i?'&#9660;':'&#9650;'}</span></div>
       <div class="lbd${i?'':' op'}">${l.body}</div></div>`).join('')+
     `<div class="bridge">
       <div class="bridge-num">2</div>
@@ -2501,10 +2502,36 @@ function ckObj(mid,idx){
   renderLearn(APP.mod);
 }
 
-function togLes(hd){
+function togLes(hd,mid,i){
   const bd=hd.nextElementSibling;
   bd.classList.toggle('op');
   hd.querySelector('span:last-child').innerHTML=bd.classList.contains('op')?'&#9650;':'&#9660;';
+  if(bd.classList.contains('op')&&mid!=null&&i!=null)markLesRead(mid,i);
+}
+function _lreadBar(m){
+  const lr=(PROG[m.id]||{}).lread||{};
+  const tot=(m.lessons||[]).length; if(!tot)return '';
+  const rd=Object.keys(lr).filter(function(k){return lr[k];}).length;
+  const pct=Math.round(rd/tot*100);
+  return `<div class="lread" id="lread-${m.id}"><div class="lread-lbl"><span>${rd} of ${tot} lessons read</span><span>${pct}%</span></div><div class="lread-bar"><div class="lread-fill${pct>=100?' full':''}" style="width:${pct}%"></div></div></div>`;
+}
+function markLesRead(mid,i){
+  if(!PROG[mid])PROG[mid]={};
+  if(!PROG[mid].lread)PROG[mid].lread={};
+  if(PROG[mid].lread[i])return;
+  PROG[mid].lread[i]=true;
+  if(typeof saveProg==='function')saveProg();
+  const mod=(typeof MODULES!=='undefined')?MODULES.find(function(x){return x.id===mid;}):null;
+  if(!mod)return;
+  const tot=(mod.lessons||[]).length;
+  const rd=Object.keys(PROG[mid].lread).filter(function(k){return PROG[mid].lread[k];}).length;
+  const el=document.getElementById('lread-'+mid);
+  if(el){var pct=Math.round(rd/tot*100);el.querySelector('.lread-lbl').innerHTML='<span>'+rd+' of '+tot+' lessons read</span><span>'+pct+'%</span>';var f=el.querySelector('.lread-fill');f.style.width=pct+'%';if(pct>=100)f.classList.add('full');}
+  if(tot>0&&rd===tot&&!PROG[mid].lreadDone){
+    PROG[mid].lreadDone=true; if(typeof saveProg==='function')saveProg();
+    if(typeof celebrate==='function')celebrate('📖 Lecture complete!','You read every lesson in '+mod.title.split('&amp;').join('&')+'. Now take the quiz to lock it in.',true);
+    else if(typeof mcToast==='function')mcToast('Lecture complete — all lessons read!','📖');
+  }
 }
 
 function initQuiz(m){
