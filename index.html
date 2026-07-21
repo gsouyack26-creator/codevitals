@@ -34,6 +34,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .mchip{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.02em;padding:1px 6px;border-radius:8px;margin-top:4px;text-transform:uppercase}.mchip.done{background:rgba(52,211,153,.22);color:#6ee7b7}.mchip.almost{background:rgba(96,165,250,.22);color:#93c5fd}.mchip.prog{background:rgba(251,191,36,.2);color:#fcd34d}
 .lread{margin:6px 0 14px;padding:10px 12px;background:var(--cardbg,rgba(127,127,127,.06));border:1px solid var(--bd);border-radius:10px}.lread-lbl{display:flex;justify-content:space-between;font-size:.75rem;font-weight:600;color:var(--tx2,#888);margin-bottom:5px}.lread-bar{height:5px;border-radius:5px;background:rgba(127,127,127,.2);overflow:hidden}.lread-fill{height:100%;border-radius:5px;background:var(--ac);transition:width .3s}.lread-fill.full{background:var(--ok)}
 .lread-cont{margin-top:9px;font-size:.74rem;font-weight:700;color:#fff;background:var(--ac);border:none;padding:6px 12px;border-radius:8px;cursor:pointer}.lread-cont:hover{opacity:.9}.les-flash{animation:lesflash 1.6s ease}@keyframes lesflash{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 3px var(--ac)}}
+.les-badge{display:none;width:16px;height:16px;border-radius:50%;background:var(--ok);color:#fff;font-size:.62rem;font-weight:700;align-items:center;justify-content:center;margin-right:6px;vertical-align:middle}.les-read .les-badge{display:inline-flex}.les-read .lhd{color:var(--tx2)}
 .weekact{margin:6px 0 14px;padding:12px 14px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--cardbg,rgba(127,127,127,.05))}.weekact.ok{border-left-color:var(--ok)}.weekact.wn{border-left-color:var(--wn)}.wa-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.wa-ttl{font-weight:700;font-size:.92rem}.wa-cnt{font-size:.8rem;font-weight:700;color:var(--tx2)}.wa-msg{font-size:.82rem;color:var(--tx2);line-height:1.4}.wa-pills{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px}.wa-pill{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:10px;background:rgba(127,127,127,.14);color:var(--tx2)}
 .studyplan{margin:6px 0 14px;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--cardbg,rgba(127,127,127,.05))}.studyplan.all{border-color:var(--ok)}.sp-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.sp-ttl{font-weight:700;font-size:.92rem}.sp-cnt{font-size:.8rem;font-weight:700;color:var(--tx2)}.sp-bar{height:5px;border-radius:5px;background:rgba(127,127,127,.2);overflow:hidden;margin-bottom:8px}.sp-fill{height:100%;border-radius:5px;background:var(--ac);transition:width .3s}.sp-fill.full{background:var(--ok)}.sp-row{display:flex;align-items:center;gap:9px;padding:7px 4px;cursor:pointer;border-radius:8px;font-size:.83rem}.sp-row:hover{background:rgba(127,127,127,.08)}.sp-ck{width:20px;height:20px;flex-shrink:0;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff}.sp-row.done .sp-ck{background:var(--ok);border-color:var(--ok)}.sp-row.done .sp-lbl{color:var(--tx2);text-decoration:line-through}
 .mdot{width:9px;height:9px;border-radius:50%;border:2px solid var(--bd);flex-shrink:0;transition:all .25s;margin-top:5px}
@@ -2445,9 +2446,9 @@ function renderLearn(m){
     <ul class="objl">${m.objectives.map((o,i)=>`<li onclick="ckObj('${m.id}',${i})">
       <div class="ocb${oc[i]?' ck':''}">${oc[i]?'&#10003;':''}</div><span>${esc(o)}</span></li>`).join('')}</ul>
     <div class="secttl">📖 Lecture</div>${_lreadBar(m)}`+
-    m.lessons.map((l,i)=>`<div class="les">
-      <div class="lhd" onclick="togLes(this,'${m.id}',${i})"><span>${esc(l.title)}</span><span>${i?'&#9660;':'&#9650;'}</span></div>
-      <div class="lbd${i?'':' op'}">${l.body}</div></div>`).join('')+
+    m.lessons.map((l,i)=>{const _rd=((PROG[m.id]||{}).lread||{})[i];return `<div class="les${_rd?' les-read':''}" id="les-${m.id}-${i}">
+      <div class="lhd" onclick="togLes(this,'${m.id}',${i})"><span><span class="les-badge">&#10003;</span>${esc(l.title)}</span><span>${i?'&#9660;':'&#9650;'}</span></div>
+      <div class="lbd${i?'':' op'}">${l.body}</div></div>`;}).join('')+
     `<div class="bridge">
       <div class="bridge-num">2</div>
       <div class="bridge-body">
@@ -2541,6 +2542,7 @@ function markLesRead(mid,i){
   if(PROG[mid].lread[i])return;
   PROG[mid].lread[i]=true;
   if(typeof saveProg==='function')saveProg();
+  var _le=document.getElementById('les-'+mid+'-'+i); if(_le)_le.classList.add('les-read');
   const mod=(typeof MODULES!=='undefined')?MODULES.find(function(x){return x.id===mid;}):null;
   if(!mod)return;
   const tot=(mod.lessons||[]).length;
