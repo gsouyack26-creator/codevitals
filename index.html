@@ -3010,6 +3010,7 @@ function filtFCFav(btn){
   var _si=document.getElementById('fc-srch-in');if(_si)_si.value='';
   document.querySelectorAll('.fctgbtn').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
+  if(typeof _fcSrchAct==='function')_fcSrchAct('');
   var fav=(PROG.fcFav)||{};
   APP.fCards=FLASHCARDS.filter(function(c){return fav[c.front];});
   APP.fi=0;APP.fcSeen={};APP._fcAllSeen=false;
@@ -3149,6 +3150,7 @@ function filtFC(tag,btn){
   APP.fi=0;APP.fcSeen={};APP._fcAllSeen=false;
   showFC();
   document.getElementById('fc-ctr').textContent='1 / '+APP.fCards.length;
+  if(typeof _fcSrchAct==='function')_fcSrchAct(tag?'tag':'');
 }
 
 function shuffleFC(){
