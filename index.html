@@ -2343,7 +2343,23 @@ function init(){
   if(typeof _initSyncPill==='function')_initSyncPill();
   if(typeof _initExamKeys==='function')_initExamKeys();
   if(typeof showWelcome==='function')setTimeout(showWelcome,400);
+  if(typeof _welcomeBackNudge==='function')setTimeout(_welcomeBackNudge,1800);
   if(typeof pwaInit==='function')pwaInit();
+}
+function _welcomeBackNudge(){
+  try{
+    if(document.getElementById('welcome-ov'))return;
+    var days=((PROG.streak||{}).days)||0;
+    var q=(typeof todayCount==='function')?todayCount():0;
+    var ds=new Date(); ds.setHours(0,0,0,0); var dayStart=ds.getTime();
+    var studiedToday=false;
+    if(typeof MODULES!=='undefined')MODULES.forEach(function(m){var ls=(PROG[m.id]||{}).lastStudied;if(ls&&ls>=dayStart)studiedToday=true;});
+    if(studiedToday||q>0)return;
+    var msg, emo;
+    if(days>=1){msg='Welcome back! Keep your '+days+'-day streak alive \u2014 study a module today.';emo='\uD83D\uDD25';}
+    else {msg='Welcome back! Pick a module and log a little study time today.';emo='\uD83D\uDC4B';}
+    if(typeof mcToast==='function')mcToast(msg,emo);
+  }catch(e){}
 }
 
 function buildSB(){
