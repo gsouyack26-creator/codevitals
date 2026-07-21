@@ -2929,7 +2929,7 @@ function renderQ(){
 function ckAns(idx){
   const q=APP.qa[APP.qi];
   logAnswer(q,idx===q.ans,APP.mod?APP.mod.title.replace(/&amp;/g,'&'):'General');bumpStreak();
-  if(typeof logTiming==='function'){logTiming(APP.mod?APP.mod.title.split('&amp;').join('&'):'General',Date.now()-(APP.qStart||Date.now()));logCalib(APP.conf,idx===q.ans);}
+  if(typeof logTiming==='function'){var _tp=APP.mod?APP.mod.title.split('&amp;').join('&'):'General';logTiming(_tp,Date.now()-(APP.qStart||Date.now()));logCalib(APP.conf,idx===q.ans);if(typeof logTopicAcc==='function')logTopicAcc(_tp,idx===q.ans);}
   saveProg();if(typeof snd==='function')snd(idx===q.ans?'ok':'no');
   document.querySelectorAll('.opt').forEach((o,i)=>{
     o.disabled=true;
@@ -4901,6 +4901,9 @@ function logTiming(topic,ms){
   const a=_an(); a.time.sum+=ms; a.time.n++;
   const bt=a.byTopic[topic]=a.byTopic[topic]||{sum:0,n:0}; bt.sum+=ms; bt.n++;
 }
+function logTopicAcc(topic,ok){
+  const a=_an(); const bt=a.byTopic[topic]=a.byTopic[topic]||{sum:0,n:0}; bt.a=(bt.a||0)+1; bt.c=(bt.c||0)+(ok?1:0);
+}
 function logCalib(level,ok){
   if(!level)return; const a=_an(); const c=a.calib[level]; if(!c)return; c.t++; if(ok)c.c++;
 }
@@ -4916,6 +4919,8 @@ function analyticsView(){
   const topics=Object.keys(a.byTopic).map(k=>({k,avg:a.byTopic[k].sum/a.byTopic[k].n,n:a.byTopic[k].n})).filter(x=>x.n>=1).sort((x,y)=>y.avg-x.avg);
   const maxT=topics.length?Math.max(...topics.map(t=>t.avg)):1;
   const bars=topics.slice(0,10).map(t=>`<div class="tbar"><div class="tbl"><span>${esc(t.k)}</span><span>${_fmtT(t.avg)} avg &middot; ${t.n} q</span></div><div class="tbg"><div class="tbf" style="width:${Math.round(t.avg/maxT*100)}%;background:var(--ac)"></div></div></div>`).join('')||'<p style="color:var(--tx2);font-size:.85rem">Answer some module-quiz questions to see your pace per topic.</p>';
+  const accTopics=Object.keys(a.byTopic).map(k=>({k,a:a.byTopic[k].a||0,c:a.byTopic[k].c||0})).filter(x=>x.a>=1).map(x=>({k:x.k,pct:Math.round(x.c/x.a*100),a:x.a,c:x.c})).sort((x,y)=>x.pct-y.pct);
+  const accBars=accTopics.slice(0,10).map(t=>`<div class="tbar"><div class="tbl"><span>${esc(t.k)}</span><span>${t.c}/${t.a} &middot; ${t.pct}%</span></div><div class="tbg"><div class="tbf" style="width:${t.pct}%;background:${t.pct>=70?'var(--ok)':t.pct>=50?'var(--ac)':'var(--er)'}"></div></div></div>`).join('')||'<p style="color:var(--tx2);font-size:.85rem">Answer some module-quiz questions to see your accuracy per topic.</p>';
   const cal=a.calib; const levels=[['confident','\uD83D\uDE0E Confident'],['unsure','\uD83E\uDD14 Unsure'],['guess','\uD83D\uDE30 Guessed']];
   const calRows=levels.map(([k,lbl])=>{const c=cal[k];const acc=c.t?Math.round(c.c/c.t*100):null;return `<tr><td>${lbl}</td><td>${c.t?c.c+'/'+c.t:'\u2014'}</td><td style="font-weight:700;color:${acc==null?'var(--tx2)':(acc>=70?'var(--ok)':'var(--er)')}">${acc==null?'\u2014':acc+'%'}</td></tr>`;}).join('');
   const totalCal=cal.guess.t+cal.unsure.t+cal.confident.t;
@@ -4928,8 +4933,9 @@ function analyticsView(){
       <div class="tstat"><div class="tsn">${a.time.n}</div><div class="tsl">Timed answers</div></div>
       <div class="tstat"><div class="tsn">${totalCal}</div><div class="tsl">Confidence tags</div></div>
     </div>
+    <div class="dsec"><h3>\uD83C\uDFAF Accuracy by topic (weakest first)</h3>${accBars}</div>
     <div class="dsec"><h3>\u23F1\uFE0F Pace by topic (slowest first)</h3>${bars}</div>
-    <div class="dsec"><h3>\uD83C\uDFAF Confidence calibration</h3><table class="pbtbl"><thead><tr><th>Felt</th><th>Correct</th><th>Accuracy</th></tr></thead><tbody>${calRows}</tbody></table>${insight}</div>
+    <div class="dsec"><h3>\uD83E\uDDED Confidence calibration</h3><table class="pbtbl"><thead><tr><th>Felt</th><th>Correct</th><th>Accuracy</th></tr></thead><tbody>${calRows}</tbody></table>${insight}</div>
     <div class="dcta" style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>
   </div>`);
 }
