@@ -3644,6 +3644,14 @@ const MODIFIERS=[
   {m:"79",n:"Unrelated procedure by the same physician during the postop period",ex:"Cataract surgery on the left eye during the global period of the right-eye cataract surgery."},
   {m:"76",n:"Repeat procedure by the same physician",ex:"A second chest X-ray by the same physician later the same day."},
   {m:"77",n:"Repeat procedure by a different physician",ex:"A repeat EKG performed by a different physician on the same date."}
+ ]},
+
+ {cat:"HCPCS Anatomic Specificity",items:[
+  {m:"LT / RT",n:"Left side / Right side (identifies the side of a paired structure)",ex:"A procedure on the right ear = RT; on the left knee = LT."},
+  {m:"E1\u2013E4",n:"Eyelid modifiers: upper left, lower left, upper right, lower right",ex:"A lesion excision of the upper left eyelid is reported with E1."},
+  {m:"FA, F1\u2013F9",n:"Finger modifiers (FA = left thumb through F9 = right fifth finger)",ex:"A nail procedure on the left index finger uses F1."},
+  {m:"TA, T1\u2013T9",n:"Toe modifiers (TA = left great toe through T9 = right fifth toe)",ex:"A matrixectomy of the right great toe uses T5."},
+  {m:"LC, LD, RC, LM",n:"Coronary artery modifiers (left circumflex, left anterior descending, right coronary, left main)",ex:"A stent placed in the LAD is reported with modifier LD."}
  ]}
 ];
 const GUIDES=[
@@ -3673,6 +3681,13 @@ const GUIDES=[
   {t:"NEC vs NOS",d:"NEC (Not Elsewhere Classifiable) = the documentation is specific but no distinct code exists (\u2018other specified\u2019). NOS (Not Otherwise Specified) = the documentation is vague (\u2018unspecified\u2019).",ex:"A named-but-uncoded organism is NEC; \u2018pneumonia\u2019 with no organism is NOS."},
   {t:"And / With conventions",d:"In ICD-10-CM, \u2018and\u2019 means and/or. \u2018With\u2019 in the Alphabetic Index or a code title presumes a causal link between the two conditions unless documentation states otherwise.",ex:"\u2018Diabetes with chronic kidney disease\u2019 is coded as a combination even if the provider did not explicitly link them."},
   {t:"Laterality default",d:"When laterality is documented, use the specific left/right code. If not documented, use the unspecified-side code \u2014 do not assume a side.",ex:"\u2018Right knee osteoarthritis\u2019 = M17.11; documentation silent on side = M17.10 unspecified."}
+ ]},
+
+ {cat:"Documentation, Queries & Sequencing",items:[
+  {t:"When to query the provider",d:"A physician query is warranted when documentation is <b>ambiguous, incomplete, conflicting, or imprecise</b> and it affects code assignment. Queries must be <b>non-leading</b> \u2014 they present clinical facts and ask for clarification, never suggesting a specific diagnosis for reimbursement.",ex:"Two notes list different stages of CKD; a compliant query asks the provider to clarify the current stage rather than telling them which to pick."},
+  {t:"Principal vs first-listed diagnosis",d:"<b>Principal diagnosis</b> (inpatient) = the condition established after study chiefly responsible for the admission. <b>First-listed diagnosis</b> (outpatient) = the main reason for the encounter. They follow different rules \u2014 uncertain diagnoses may be coded as principal for inpatients but NOT for outpatients.",ex:"An outpatient 'rule-out MI' is coded by symptoms; an inpatient work-up documented as 'probable MI' at discharge may be coded as the principal diagnosis."},
+  {t:"Two-midnight rule (inpatient vs observation)",d:"Medicare's two-midnight benchmark guides whether a stay is billed as inpatient (expected to span two midnights of medically necessary care) versus outpatient/observation. It affects the claim type (UB-04 inpatient vs outpatient) and payment system (IPPS vs OPPS).",ex:"A patient expected to need care spanning two midnights supports an inpatient admission order; a shorter expected stay is typically observation."},
+  {t:"Sequencing of Z-codes",d:"Some Z-codes may only be first-listed (e.g., Z51.11 chemo encounter), some only secondary (e.g., many status/history Z-codes), and some either. Always check the guideline notes for a Z-code's permitted sequencing.",ex:"Z51.11 is first-listed for a chemo-administration visit, while Z85.- personal history codes are secondary."}
  ]}
 ];
 const HYCODES=[
