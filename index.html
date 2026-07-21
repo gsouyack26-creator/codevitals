@@ -5982,10 +5982,11 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='ArrowLeft'){moveFC(-1);e.preventDefault();}
   else if(e.key===' '&&document.getElementById('fci')){flipFC();e.preventDefault();}
   else if((e.key==='s'||e.key==='S')&&typeof toggleFcFav==='function'){toggleFcFav();e.preventDefault();}
+  else if(e.key==='/'){var si=document.getElementById('fc-srch-in');if(si){si.focus();e.preventDefault();}}
 });
 
 var _KBDHELP=[
-  {sec:'Flashcards',rows:[['\u2190 / \u2192','Previous / next card'],['Space','Flip card'],['S','Star / unstar card']]},
+  {sec:'Flashcards',rows:[['\u2190 / \u2192','Previous / next card'],['Space','Flip card'],['S','Star / unstar card'],['/','Search cards']]},
   {sec:'Quiz',rows:[['1 \u2013 9','Pick answer by number'],['A \u2013 I','Pick answer by letter']]},
   {sec:'Practice exam',rows:[['\u2190 / \u2192','Previous / next question'],['1 \u2013 9','Pick answer']]},
   {sec:'Anywhere',rows:[['?','Show / hide this help']]}
