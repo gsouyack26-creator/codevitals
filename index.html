@@ -2971,6 +2971,7 @@ function _updateFcStar(){
   btn.innerHTML=on?'\u2605 Starred':'\u2606 Star';
 }
 function filtFCFav(btn){
+  var _si=document.getElementById('fc-srch-in');if(_si)_si.value='';
   document.querySelectorAll('.fctgbtn').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
   var fav=(PROG.fcFav)||{};
@@ -3045,6 +3046,7 @@ function searchFC(q){
   if(ctr)ctr.textContent='1 / '+APP.fCards.length;
 }
 function filtFC(tag,btn){
+  var _si=document.getElementById('fc-srch-in');if(_si)_si.value='';
   document.querySelectorAll('.fctgbtn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
   APP.fCards=tag?FLASHCARDS.filter(c=>c.tag===tag):[...FLASHCARDS];
