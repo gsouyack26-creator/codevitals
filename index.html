@@ -3731,9 +3731,10 @@ function _countdownHTML(){
   var pretty=d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
   var msg,cls;
   var pace='';
+  if(typeof readiness==='function'){var _rd=readiness().pct;pace+='<span class="dcd-pace">You\u2019re '+_rd+'% ready</span>';}
   if(days>1&&typeof MODULES!=='undefined'&&typeof moduleMastery==='function'){
     var left=MODULES.filter(function(m){return moduleMastery(m).pct<100;}).length;
-    if(left>0){var per=(left/days);var perTxt=per<=1?('about 1 module every '+Math.max(1,Math.round(days/left))+' day'+(Math.round(days/left)===1?'':'s')):('about '+Math.ceil(per)+' modules a day');pace='<span class="dcd-pace">'+left+' module'+(left===1?'':'s')+' left \u00b7 '+perTxt+'</span>';}
+    if(left>0){var per=(left/days);var perTxt=per<=1?('about 1 module every '+Math.max(1,Math.round(days/left))+' day'+(Math.round(days/left)===1?'':'s')):('about '+Math.ceil(per)+' modules a day');pace+='<span class="dcd-pace">'+left+' module'+(left===1?'':'s')+' left \u00b7 '+perTxt+'</span>';}
   }
   if(days>1){msg='<b>'+days+'</b> days until your CPC exam'+pace;cls='';}
   else if(days===1){msg='Your CPC exam is <b>tomorrow</b> \u2014 you\u2019ve got this!';cls='soon';}
