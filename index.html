@@ -506,7 +506,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 @media(max-width:640px){.ekeys{display:none}}
 .certgrid{display:grid;gap:12px;grid-template-columns:1fr}@media(min-width:680px){.certgrid{grid-template-columns:1fr 1fr}}.certcard{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px}.certtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}.certcode{font-weight:800;font-size:1.05rem;color:var(--ac);letter-spacing:.03em}.certbody{font-size:.7rem;font-weight:700;color:var(--tx2);border:1px solid var(--bd);border-radius:20px;padding:1px 8px}.certtag{font-size:.66rem;font-weight:700;border-radius:20px;padding:2px 9px;margin-left:auto;color:#fff}.certtag.start{background:var(--ok)}.certtag.pop{background:var(--ac)}.certtag.adv{background:color-mix(in srgb,var(--tx2) 70%,transparent)}.certname{font-weight:600;font-size:.92rem;margin-bottom:8px;color:var(--tx)}.certrow{font-size:.82rem;line-height:1.5;color:var(--tx);margin-bottom:5px}.certrow b{color:var(--tx2);font-weight:700}.certlink{display:inline-block;margin-top:6px;font-size:.82rem;font-weight:700;color:var(--ac);text-decoration:none}.certlink:hover{text-decoration:underline}
 .resume-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;background:color-mix(in srgb,var(--ac) 12%,var(--card));border:1px solid var(--ac);border-radius:14px;padding:12px 16px;margin-bottom:16px}.rb-txt b{font-size:.95rem;color:var(--tx)}.rb-sub{font-size:.8rem;color:var(--tx2);margin-top:2px}.rb-btns{display:flex;gap:8px}.rb-btns .qbtn{margin:0;padding:8px 16px}
-.jumpback{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:0 0 16px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--c2);cursor:pointer;transition:transform .12s,box-shadow .12s}.jumpback:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18)}.jumpback.exam{border-left-color:var(--wn)}.jumpback.rec{border-left-color:var(--ok)}.jb-ic{font-size:1.6rem;line-height:1}.jb-tx{flex:1}.jb-t{font-weight:700}.jb-s{color:var(--tx2);font-size:.85rem;margin-top:2px}.jb-go{margin-left:auto;color:var(--ac);font-weight:600;white-space:nowrap}
+.jumpback{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:0 0 16px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--c2);cursor:pointer;transition:transform .12s,box-shadow .12s}.jumpback:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18)}.jumpback.exam{border-left-color:var(--wn)}.jumpback.rec{border-left-color:var(--ok)}.nextmod{margin:22px 0 4px;padding:14px 16px;border:1px solid var(--bd);border-radius:12px;background:var(--c2);cursor:pointer;transition:transform .12s,box-shadow .12s}.nextmod:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18)}.nextmod.done{border-color:var(--ok)}.nm-lbl{font-size:.78rem;color:var(--tx2);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}.nm-row{display:flex;align-items:center;gap:10px}.nm-t{font-weight:700;flex:1}.nm-go{color:var(--ac);font-weight:600;white-space:nowrap}.jb-ic{font-size:1.6rem;line-height:1}.jb-tx{flex:1}.jb-t{font-weight:700}.jb-s{color:var(--tx2);font-size:.85rem;margin-top:2px}.jb-go{margin-left:auto;color:var(--ac);font-weight:600;white-space:nowrap}
 .mod-cat{font-weight:700;margin:18px 0 6px;color:var(--ac);font-size:.95rem;border-bottom:1px solid var(--bd);padding-bottom:4px}.mod-tbl{width:100%;border-collapse:collapse;margin-bottom:4px}.mod-tbl td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}.mod-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:var(--ac);white-space:nowrap;width:1%}.mod-mean b{font-weight:600}.mod-ex{color:var(--tx2);font-size:.85rem;margin-top:3px}
 .gd-tbl td{padding:12px 10px}.gd-t{font-weight:700;color:var(--ac)}.gd-d{margin-top:4px}.gd-ex{margin-top:6px;color:var(--tx2);font-size:.85rem}
 .hy-search{width:100%;box-sizing:border-box;padding:10px 12px;margin:4px 0 8px;border:1px solid var(--bd);border-radius:8px;background:var(--c2);color:var(--tx);font-size:.95rem}
@@ -2407,6 +2407,22 @@ function spAll(btn){
   btn.textContent=anyUp?'Hide all':'Flip all';
 }
 
+function _nextModCTA(m){
+  if(typeof MODULES==='undefined')return '';
+  var i=MODULES.findIndex(function(x){return x.id===m.id;});
+  if(i<0)return '';
+  if(i<MODULES.length-1){
+    var nx=MODULES[i+1];
+    return '<div class="nextmod" onclick="showMod(\''+nx.id+'\')">'
+      +'<div class="nm-lbl">Up next \u00b7 Module '+(i+2)+' of '+MODULES.length+'</div>'
+      +'<div class="nm-row"><div class="nm-t">'+esc(nx.title.split('&amp;').join('&'))+'</div>'
+      +'<div class="nm-go">Continue \u2192</div></div></div>';
+  }
+  return '<div class="nextmod done" onclick="examCenter()">'
+    +'<div class="nm-lbl">\uD83C\uDF89 Final module \u2014 you\u2019ve reached the end of the curriculum</div>'
+    +'<div class="nm-row"><div class="nm-t">Put it all together in the Exam Center</div>'
+    +'<div class="nm-go">Take an exam \u2192</div></div></div>';
+}
 function renderLearn(m){
   const oc=(PROG[m.id]||{}).obj||{};
   const rc=m.recap;
@@ -2455,7 +2471,7 @@ function renderLearn(m){
         <button class="lab-hint-btn" onclick="spAll(this)">Flip all</button>
       </div>`:''}
       <button class="bridge-btn" onclick="gotoTab('qv')">❓ Prove it — take the Quiz →</button>
-    </div>`:'');
+    </div>`:'')+_nextModCTA(m);
 }
 
 function ckObj(mid,idx){
