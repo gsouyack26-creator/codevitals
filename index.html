@@ -3001,7 +3001,7 @@ function renderFC(){
       <button class="fcbtn" onclick="shuffleFC()">&#128256; Shuffle</button>
       <button class="fcbtn" onclick="nextUnseenFC()">&#128269; Next unseen</button>
       <button class="fcbtn" onclick="moveFC(-APP.fi)">&#9199; Reset</button>
-      <button class="fcbtn" id="fc-rev" onclick="toggleReverse()">&#128257; Reverse</button>
+      <button class="fcbtn${APP.fcReverse?' on':''}" id="fc-rev" onclick="toggleReverse()">&#128257; Reverse</button>
       <button class="fcbtn" onclick="printFC()">&#128424;&#65039; Print</button>
       <button class="fcbtn" onclick="exportFcFav()">&#11088;&#8595; Export stars</button>
       <button class="fcbtn" onclick="copyFcFav()">&#11088;&#128203; Copy stars</button>
