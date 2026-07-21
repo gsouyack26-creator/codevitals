@@ -506,7 +506,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 @media(max-width:640px){.ekeys{display:none}}
 .certgrid{display:grid;gap:12px;grid-template-columns:1fr}@media(min-width:680px){.certgrid{grid-template-columns:1fr 1fr}}.certcard{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px}.certtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}.certcode{font-weight:800;font-size:1.05rem;color:var(--ac);letter-spacing:.03em}.certbody{font-size:.7rem;font-weight:700;color:var(--tx2);border:1px solid var(--bd);border-radius:20px;padding:1px 8px}.certtag{font-size:.66rem;font-weight:700;border-radius:20px;padding:2px 9px;margin-left:auto;color:#fff}.certtag.start{background:var(--ok)}.certtag.pop{background:var(--ac)}.certtag.adv{background:color-mix(in srgb,var(--tx2) 70%,transparent)}.certname{font-weight:600;font-size:.92rem;margin-bottom:8px;color:var(--tx)}.certrow{font-size:.82rem;line-height:1.5;color:var(--tx);margin-bottom:5px}.certrow b{color:var(--tx2);font-weight:700}.certlink{display:inline-block;margin-top:6px;font-size:.82rem;font-weight:700;color:var(--ac);text-decoration:none}.certlink:hover{text-decoration:underline}
 .resume-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;background:color-mix(in srgb,var(--ac) 12%,var(--card));border:1px solid var(--ac);border-radius:14px;padding:12px 16px;margin-bottom:16px}.rb-txt b{font-size:.95rem;color:var(--tx)}.rb-sub{font-size:.8rem;color:var(--tx2);margin-top:2px}.rb-btns{display:flex;gap:8px}.rb-btns .qbtn{margin:0;padding:8px 16px}
-.jumpback{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:0 0 16px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--c2);cursor:pointer;transition:transform .12s,box-shadow .12s}.jumpback:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18)}.jumpback.exam{border-left-color:var(--wn)}.jb-ic{font-size:1.6rem;line-height:1}.jb-tx{flex:1}.jb-t{font-weight:700}.jb-s{color:var(--tx2);font-size:.85rem;margin-top:2px}.jb-go{margin-left:auto;color:var(--ac);font-weight:600;white-space:nowrap}
+.jumpback{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:0 0 16px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--c2);cursor:pointer;transition:transform .12s,box-shadow .12s}.jumpback:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18)}.jumpback.exam{border-left-color:var(--wn)}.jumpback.rec{border-left-color:var(--ok)}.jb-ic{font-size:1.6rem;line-height:1}.jb-tx{flex:1}.jb-t{font-weight:700}.jb-s{color:var(--tx2);font-size:.85rem;margin-top:2px}.jb-go{margin-left:auto;color:var(--ac);font-weight:600;white-space:nowrap}
 .mod-cat{font-weight:700;margin:18px 0 6px;color:var(--ac);font-size:.95rem;border-bottom:1px solid var(--bd);padding-bottom:4px}.mod-tbl{width:100%;border-collapse:collapse;margin-bottom:4px}.mod-tbl td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}.mod-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:var(--ac);white-space:nowrap;width:1%}.mod-mean b{font-weight:600}.mod-ex{color:var(--tx2);font-size:.85rem;margin-top:3px}
 .gd-tbl td{padding:12px 10px}.gd-t{font-weight:700;color:var(--ac)}.gd-d{margin-top:4px}.gd-ex{margin-top:6px;color:var(--tx2);font-size:.85rem}
 .hy-search{width:100%;box-sizing:border-box;padding:10px 12px;margin:4px 0 8px;border:1px solid var(--bd);border-radius:8px;background:var(--c2);color:var(--tx);font-size:.95rem}
@@ -4966,6 +4966,49 @@ function _resumeBannerHTML(){
 
 function _rememberMod(id){ try{ localStorage.setItem('mc_last',JSON.stringify({id:id,at:Date.now()})); }catch(e){} }
 function _lastMod(){ try{ var r=localStorage.getItem('mc_last'); if(!r)return null; var o=JSON.parse(r); if(!o||!o.id)return null; return o; }catch(e){ return null; } }
+function _recommendModule(){
+  if(typeof MODULES==='undefined'||!MODULES.length)return null;
+  var i,m,pr,oc,checked,total;
+  var started=[];
+  for(i=0;i<MODULES.length;i++){
+    m=MODULES[i];pr=PROG[m.id]||{};oc=pr.obj||{};
+    checked=Object.keys(oc).filter(function(k){return oc[k];}).length;
+    total=(m.objectives||[]).length;
+    if(checked>0&&checked<total){started.push({m:m,reason:'Finish what you started \u2014 '+checked+'/'+total+' objectives done'});}
+  }
+  if(started.length)return {m:started[0].m,reason:started[0].reason};
+  var weakest=null,weakAcc=1,a,tp,key;
+  for(i=0;i<MODULES.length;i++){
+    m=MODULES[i];key=m.title.split('&amp;').join('&');
+    tp=(PROG.topics||{})[key];
+    if(tp&&tp.t>=3){a=tp.c/tp.t;if(a<0.7&&a<weakAcc){weakAcc=a;weakest=m;}}
+  }
+  if(weakest)return {m:weakest,reason:'Strengthen a weak area \u2014 '+Math.round(weakAcc*100)+'% on quizzes here'};
+  for(i=0;i<MODULES.length;i++){
+    m=MODULES[i];pr=PROG[m.id]||{};oc=pr.obj||{};
+    checked=Object.keys(oc).filter(function(k){return oc[k];}).length;
+    if(!pr.done&&checked===0)return {m:m,reason:'New module \u2014 keep your progression going'};
+  }
+  var lo=null,loPct=101,mm;
+  for(i=0;i<MODULES.length;i++){
+    mm=(typeof moduleMastery==='function')?moduleMastery(MODULES[i]):{pct:0};
+    if(mm.pct<loPct){loPct=mm.pct;lo=MODULES[i];}
+  }
+  if(lo&&loPct<100)return {m:lo,reason:'Boost your lowest-mastery module ('+loPct+'%)'};
+  return null;
+}
+function _recommendHTML(){
+  var r=(typeof _recommendModule==='function')?_recommendModule():null;
+  if(!r)return '';
+  var savedExam=(typeof _examSaved==='function')&&_examSaved();
+  var last=(typeof _lastMod==='function')?_lastMod():null;
+  if(last&&last.id===r.m.id&&!savedExam)return '';
+  var mm=(typeof moduleMastery==='function')?moduleMastery(r.m):{pct:0};
+  return '<div class="jumpback rec" onclick="showMod(\''+r.m.id+'\')"><div class="jb-ic">\uD83C\uDFAF</div>'
+    +'<div class="jb-tx"><div class="jb-t">Recommended for you \u00b7 '+mm.pct+'% complete</div>'
+    +'<div class="jb-s">'+esc(r.m.title)+' \u2014 '+esc(r.reason)+'</div></div>'
+    +'<div class="jb-go">Study \u2192</div></div>';
+}
 function _jumpBackHTML(){
   if(typeof _examSaved==='function'){
     var snap=_examSaved();
@@ -5062,6 +5105,7 @@ function dashboard(){
   const exRows=Object.keys(ex).map(k=>{const d=EXAM_DEFS.find(x=>x.id===k);return `<tr><td>${esc(d?d.name:k)}</td><td style="color:${ex[k].pass?'var(--ok)':'var(--er)'};font-weight:600">${ex[k].score}%</td><td>${ex[k].pass?'\u2713 Pass':'Fail'}</td></tr>`;}).join('')||'<tr><td colspan="3" style="color:var(--tx2)">No exams taken yet.</td></tr>';
   fullView(`<div class="dash">
     ${(typeof _jumpBackHTML==='function')?_jumpBackHTML():''}
+    ${(typeof _recommendHTML==='function')?_recommendHTML():''}
     <h2 class="etitle">\uD83D\uDCCA Readiness Dashboard</h2>
     <div class="dgrid">
       <div class="dcard dring-card">
