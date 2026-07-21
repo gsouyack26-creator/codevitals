@@ -582,6 +582,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dgreet{margin-bottom:14px}
 .dgreet-t{font-size:1.3rem;font-weight:800;color:var(--tx)}
 .dgreet-s{font-size:.85rem;color:var(--tx2);margin-top:3px}
+.tab-done{color:var(--ok);font-weight:800}
 </style>
 <body>
 <div id="hdr">
@@ -2460,7 +2461,7 @@ function showMod(id){
   const mv=document.getElementById('mod-view');
   mv.innerHTML=`<div class="tabs">
     <button class="tab on" onclick="stab(this,'lv')">📖 Learn</button>
-    <button class="tab" onclick="stab(this,'qv')">❓ Quiz (${m.questions.length} Q)</button>
+    <button class="tab" onclick="stab(this,'qv')">❓ Quiz (${m.questions.length} Q)${(PROG[m.id]||{}).done?' <span class="tab-done">\u2713</span>':''}</button>
     <button class="tab" onclick="stab(this,'fv')">🃏 Flashcards</button>
     <button class="tab" onclick="stab(this,'rv')">🔗 Resources</button>
     <button class="tab" onclick="stab(this,'labv')">🧪 Lab</button>
