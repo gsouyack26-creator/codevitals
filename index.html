@@ -4412,6 +4412,27 @@ function bmToggleG(term,btn){
   else{const g=GLOSSARY.find(x=>x.term===term);b.gloss[term]=g?{term:g.term,def:g.def,cat:g.cat}:{term};btn.classList.add('on');btn.textContent='\u2605';mcToast('Term saved','\uD83D\uDD16');}
   saveProg();
 }
+function _bmTermsText(){
+  var g=_bm().gloss||{}; var ks=Object.keys(g);
+  ks.sort();
+  var txt='CodeVitals \u2014 My Saved Terms ('+ks.length+')\n\n'+ks.map(function(k){var t=g[k];return t.term+(t.cat?' ['+t.cat+']':'')+'\n  '+(t.def||'');}).join('\n\n')+'\n';
+  return {n:ks.length,txt:txt};
+}
+function bmExportTerms(){
+  var r=_bmTermsText();
+  if(!r.n){if(typeof mcToast==='function')mcToast('No saved terms','\u26A0');return;}
+  var blob=new Blob([r.txt],{type:'text/plain'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download='codevitals-saved-terms.txt';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+  if(typeof mcToast==='function')mcToast(r.n+' terms exported','\uD83D\uDCE4');
+}
+function bmCopyTerms(){
+  var r=_bmTermsText();
+  if(!r.n){if(typeof mcToast==='function')mcToast('No saved terms','\u26A0');return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(r.txt).then(function(){if(typeof mcToast==='function')mcToast(r.n+' terms copied','\uD83D\uDCCB');}).catch(function(){});}
+}
 function bookmarksView(){
   const b=_bm();
   const qs=Object.keys(b.q), gs=Object.keys(b.gloss);
@@ -4422,7 +4443,7 @@ function bookmarksView(){
     <p class="eintro">Everything you starred, in one place. ${qs.length} question${qs.length===1?'':'s'} and ${gs.length} term${gs.length===1?'':'s'}.</p>
     ${qs.length?`<button class="qbtn" style="margin-bottom:14px" onclick="bmDrill()">\uD83C\uDFAF Drill ${qs.length} saved question${qs.length===1?'':'s'}</button>`:''}
     <div class="dsec"><h3>\u2753 Saved Questions</h3>${qcards}</div>
-    <div class="dsec"><h3>\uD83D\uDCD6 Saved Terms</h3>${gcards}</div>
+    <div class="dsec"><h3>\uD83D\uDCD6 Saved Terms</h3>${gs.length?`<div style="margin:8px 0"><button class="qbtn sec sm" onclick="bmExportTerms()">\uD83D\uDCE4 Export terms</button> <button class="qbtn sec sm" onclick="bmCopyTerms()">\uD83D\uDCCB Copy terms</button></div>`:''}${gcards}</div>
     <div class="dcta"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>
   </div>`);
 }
