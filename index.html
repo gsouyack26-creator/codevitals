@@ -587,6 +587,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .q-kbdhint b{color:var(--tx);font-weight:600}
 #scrolltop{position:fixed;right:18px;bottom:18px;width:42px;height:42px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s,transform .2s;z-index:40}
 #scrolltop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+#readprog{position:sticky;top:0;left:0;height:3px;width:100%;background:transparent;z-index:35;pointer-events:none}
+#readprog-fill{height:100%;width:0;background:var(--ac);transition:width .1s linear}
 </style>
 <body>
 <div id="hdr">
@@ -630,6 +632,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 </div>
 </nav>
 <main id="main">
+<div id="readprog"><div id="readprog-fill"></div></div>
 <div id="mod-view"></div>
 <div id="all-quiz-view" style="display:none;padding:16px"></div>
 <button id="scrolltop" aria-label="Scroll to top" title="Back to top" onclick="_scrollMainTop()">↑</button>
@@ -5874,7 +5877,11 @@ function _scrollMainTop(){var m=document.getElementById('main');if(m)m.scrollTo(
   function wire(){
     var m=document.getElementById('main'),btn=document.getElementById('scrolltop');
     if(!m||!btn)return;
-    m.addEventListener('scroll',function(){btn.classList.toggle('show',m.scrollTop>400);});
+    var rp=document.getElementById('readprog-fill');
+    m.addEventListener('scroll',function(){
+      btn.classList.toggle('show',m.scrollTop>400);
+      if(rp){var max=m.scrollHeight-m.clientHeight;var pc=max>40?Math.min(100,Math.round(m.scrollTop/max*100)):0;rp.style.width=pc+'%';}
+    });
   }
   if(document.readyState!=='loading')wire();
   else document.addEventListener('DOMContentLoaded',wire);
