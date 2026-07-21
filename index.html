@@ -31,6 +31,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .mi:hover{background:var(--bg)}
 .mi.sel{background:var(--ac);color:#fff}
 .mi.sel .mmet{color:rgba(255,255,255,.7)}.mpct{opacity:.85}.mbar{height:3px;border-radius:3px;background:rgba(255,255,255,.15);margin-top:4px;overflow:hidden}.mbar-fill{height:100%;border-radius:3px;background:var(--ac);transition:width .3s}.mbar-fill.full{background:var(--ok)}
+.mchip{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.02em;padding:1px 6px;border-radius:8px;margin-top:4px;text-transform:uppercase}.mchip.done{background:rgba(52,211,153,.22);color:#6ee7b7}.mchip.almost{background:rgba(96,165,250,.22);color:#93c5fd}.mchip.prog{background:rgba(251,191,36,.2);color:#fcd34d}
 .mdot{width:9px;height:9px;border-radius:50%;border:2px solid var(--bd);flex-shrink:0;transition:all .25s;margin-top:5px}
 .mdot.done{background:var(--ok);border-color:var(--ok)}
 .minfo{flex:1;min-width:0}
@@ -2343,11 +2344,17 @@ function buildSB(){
     const isDone=(PROG[m.id]||{}).done;
     if(isDone)done++;
     const mm=(typeof moduleMastery==='function')?moduleMastery(m):{pct:isDone?100:0};
+    const pr=PROG[m.id]||{};
+    const started=(pr.obj&&Object.keys(pr.obj).some(function(k){return pr.obj[k];}))||pr.lastStudied||mm.pct>0;
+    let chip='';
+    if(isDone)chip='<span class="mchip done">✓ Done</span>';
+    else if(mm.pct>=50)chip='<span class="mchip almost">Almost there</span>';
+    else if(started)chip='<span class="mchip prog">In progress</span>';
     return `<div class="mi" id="mi-${m.id}" onclick="showMod('${m.id}')">
       <div class="mdot${isDone?' done':''}"></div>
       <div class="minfo"><div class="mtit">${esc(m.title.split('&amp;').join('&'))}</div>
       <div class="mmet">${m.time} &middot; <span>${m.level}</span> &middot; <span class="mpct">${mm.pct}%</span></div>
-      <div class="mbar"><div class="mbar-fill${mm.pct>=100?' full':''}" style="width:${mm.pct}%"></div></div></div></div>`;
+      <div class="mbar"><div class="mbar-fill${mm.pct>=100?' full':''}" style="width:${mm.pct}%"></div></div>${chip}</div></div>`;
   }).join('');
   const pct=Math.round(done/MODULES.length*100);
   document.getElementById('ovr-fill').style.width=pct+'%';
