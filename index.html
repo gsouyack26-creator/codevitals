@@ -3886,6 +3886,15 @@ const MODIFIERS=[
   {m:"GX",n:"Notice of liability issued voluntarily for a statutorily excluded/non-covered service",ex:"A service Medicare never covers, with a voluntary ABN given, is reported with GX."},
   {m:"XE, XS, XP, XU",n:"NCCI 'X{EPSU}' subsets of modifier 59 \u2014 separate Encounter, Structure, Practitioner, or Unusual non-overlapping service",ex:"Two distinct services at separate encounters the same day may use XE instead of the broad modifier 59."},
   {m:"GT / 95",n:"Telehealth delivery \u2014 GT (interactive audio-video, some payers) or 95 (synchronous telemedicine)",ex:"A real-time video visit is reported with modifier 95 and an appropriate telehealth place of service."}
+ ]},
+
+ {cat:"Laboratory & Component Modifiers",items:[
+  {m:"90",n:"Reference (outside) laboratory \u2014 lab work performed by a party other than the billing/treating physician",ex:"A physician bills a lab test actually run by an outside reference lab, appending modifier 90."},
+  {m:"91",n:"Repeat clinical diagnostic laboratory test \u2014 medically necessary repeat of the SAME test on the same day",ex:"Serial potassium levels drawn hours apart the same day use modifier 91 on the repeat."},
+  {m:"92",n:"Alternative laboratory platform testing (e.g., a kit/transportable instrument)",ex:"A single-use, disposable HIV test kit is reported with modifier 92."},
+  {m:"26",n:"Professional component \u2014 the physician's interpretation and report only",ex:"A radiologist reading a hospital's imaging bills the code with modifier 26."},
+  {m:"TC",n:"Technical component \u2014 equipment, supplies, and technologist only",ex:"The facility that owns the CT scanner bills the same code with modifier TC."},
+  {m:"99",n:"Multiple modifiers \u2014 indicates that two or more modifiers are needed to describe the service",ex:"When more modifiers apply than a payer field allows, modifier 99 signals multiple modifiers reported."}
  ]}
 ];
 const GUIDES=[
@@ -3929,6 +3938,13 @@ const GUIDES=[
   {t:"Signs & symptoms integral to a disease",d:"Do not code signs and symptoms that are <b>routinely associated with (integral to)</b> a confirmed diagnosis. DO code additional symptoms that are not typically part of the disease process.",ex:"Do not separately code abdominal pain with appendicitis (integral); do code an unrelated symptom the disease would not normally cause."},
   {t:"Acute vs chronic \u2014 same condition",d:"When the same condition is documented as both acute (subacute) and chronic, and separate subentries exist in the Alphabetic Index at the same indentation level, code <b>both</b> and sequence the <b>acute</b> code first.",ex:"Acute and chronic cholecystitis: assign both codes, listing the acute code first."},
   {t:"Laterality \u2014 unspecified vs bilateral",d:"When ICD-10-CM provides laterality, code the documented side. If no bilateral code exists but both sides are affected, assign separate right and left codes. Use the unspecified-side code only when the record truly does not state the side.",ex:"Bilateral primary osteoarthritis of the knee has a specific bilateral code; if only 'right' is documented, use the right-side code, never unspecified."}
+ ]},
+
+ {cat:"Combination Codes & PCS Root Operations",items:[
+  {t:"Combination codes",d:"A single ICD-10-CM code may capture two diagnoses, a diagnosis with a manifestation, or a diagnosis with a complication. Assign the <b>combination code</b> when the Index/Tabular directs it or when it fully describes the conditions; do not additionally code the components separately.",ex:"K80.10 (calculus of gallbladder with chronic cholecystitis) is one combination code, not two separate codes."},
+  {t:"Presumed causal relationships",d:"ICD-10-CM presumes a causal link for certain condition pairs even without explicit provider linkage: hypertension WITH heart failure (I11), hypertension WITH chronic kidney disease (I12), and diabetes with many manifestations (the 'with' convention). Some links, such as hypertension and stroke, are NOT presumed and require documentation.",ex:"A note listing 'HTN' and 'CHF' is coded I11.0 + I50.- because the relationship is presumed."},
+  {t:"Root operation: Replacement vs Supplement",d:"In ICD-10-PCS, <b>Replacement</b> puts in material that takes the place of a body part (total joint, heart valve). <b>Supplement</b> puts in material that only reinforces or augments a body part (hernia mesh, joint lining). Excision of the native part is inherent to Replacement and not coded separately.",ex:"A total knee arthroplasty is Replacement; a hernia repair with mesh is Supplement."},
+  {t:"Root operation: Excision vs Resection",d:"<b>Excision</b> cuts out a PORTION of a body part; <b>Resection</b> cuts out ALL of a body part (or an entire independent structure with its own PCS body-part value). This distinction is heavily tested.",ex:"A partial lobectomy is Excision; removing an entire lung lobe (a PCS body part) or the whole gallbladder is Resection."}
  ]}
 ];
 const HYCODES=[
