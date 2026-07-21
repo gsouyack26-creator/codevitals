@@ -630,6 +630,16 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .fc-srch input:focus{outline:none;border-color:var(--ac,#2d6cdf)}
 
 .dtrend-avg{margin-top:9px;font-size:12px;opacity:.65;text-align:center;font-weight:600}
+
+.drec{background:var(--card,#fff);border:1px solid var(--line,#e3e3e8);border-radius:12px;padding:12px 14px;margin:10px 0}
+.drec-hd{font-weight:700;font-size:14px;margin-bottom:8px}
+.drec-row{display:flex;align-items:center;gap:9px;padding:5px 0;border-bottom:1px solid var(--line,#eee);font-size:13px}
+.drec-row:last-child{border-bottom:none}
+.drec-ic{font-size:15px;flex-shrink:0}
+.drec-lb{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drec-pc{font-weight:700;flex-shrink:0}
+.drec-pc.ok{color:#1a9c53}.drec-pc.lo{color:#d1435b}
+.drec-dt{font-size:11px;opacity:.5;flex-shrink:0;min-width:58px;text-align:right}
 </style>
 <body>
 <div id="hdr">
@@ -3493,6 +3503,20 @@ function reviewStarred(){
     setTimeout(function(){var fb=document.querySelector('.fctg-fav');if(typeof filtFCFav==='function')filtFCFav(fb);},120);
   },60);
 }
+function _recentHTML(){
+  var log=(PROG.runlog||[]).slice(0,5);
+  if(!log.length)return '';
+  var icons={'exam':'\uD83D\uDCDD','boss rush':'\uD83D\uDC79','daily':'\uD83D\uDCC5','chart':'\uD83D\uDCCA','ce':'\uD83C\uDF93'};
+  var rows=log.map(function(r){
+    var ic=icons[r.type]||'\u2705';
+    var pcls=r.pct>=70?'ok':'lo';
+    return '<div class="drec-row"><span class="drec-ic">'+ic+'</span>'
+      +'<span class="drec-lb">'+esc(r.label||r.type)+'</span>'
+      +'<span class="drec-pc '+pcls+'">'+r.pct+'%</span>'
+      +'<span class="drec-dt">'+(typeof _relDay==='function'?_relDay(r.ts):'')+'</span></div>';
+  }).join('');
+  return '<div class="drec"><div class="drec-hd">\uD83D\uDD52 Recent activity</div>'+rows+'</div>';
+}
 function _examTrendHTML(){
   var log=(PROG.runlog||[]).filter(function(r){return r.type==='exam';});
   if(log.length<2)return '';
@@ -5843,6 +5867,7 @@ function dashboard(){
     ${(typeof _notesHTML==='function')?_notesHTML():''}
     ${(typeof _fcFavHTML==='function')?_fcFavHTML():''}
     ${(typeof _examTrendHTML==='function')?_examTrendHTML():''}
+    ${(typeof _recentHTML==='function')?_recentHTML():''}
     <h2 class="etitle">\uD83D\uDCCA Readiness Dashboard</h2>
     <div class="dgrid">
       <div class="dcard dring-card">
