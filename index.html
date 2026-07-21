@@ -215,7 +215,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .gcount{font-size:.72rem;color:var(--tx2);margin-bottom:8px}
 .gitem{background:var(--sf);border:1px solid var(--bd);border-radius:6px;padding:9px 12px;margin-bottom:6px}
 .gterm{font-weight:700;font-size:.85rem}
-.gcat{font-size:.64rem;font-weight:600;color:var(--ac2);background:rgba(2,132,199,.1);padding:1px 6px;border-radius:8px;margin-left:5px}
+.gcat{font-size:.64rem;font-weight:600;color:var(--ac2);background:rgba(2,132,199,.1);padding:1px 6px;border-radius:8px;margin-left:5px}.gcopy{background:none;border:none;cursor:pointer;opacity:.5;font-size:.85em;margin-left:4px;padding:0 2px}.gcopy:hover{opacity:1}
 .gdef{font-size:.79rem;color:var(--tx2);margin-top:2px;line-height:1.5}
 .navrow{display:flex;gap:5px;padding:6px 0 0;flex-wrap:wrap}
 .navrow .abtn{width:auto;flex:1;min-width:0;padding:7px 4px;font-size:.72rem}
@@ -6376,6 +6376,12 @@ function opnoteAns(i,j,k){
   document.querySelectorAll('#opq-'+j+' .opt').forEach((o,x)=>{o.disabled=true;if(x===q.ans)o.classList.add('cor');else if(x===k&&x!==q.ans)o.classList.add('wrg');});
   document.getElementById('opexp-'+j).classList.add('sh');
 }
+function copyGloss(term){
+  var g=(typeof GLOSSARY!=='undefined')&&GLOSSARY.find(function(x){return x.term===term;});
+  if(!g)return;
+  var txt=g.term+': '+g.def;
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof mcToast==='function')mcToast('Copied','\uD83D\uDCCB');}).catch(function(){});}
+}
 function glossaryView(){
   if(typeof GLOSSARY==='undefined'){fullView('<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Glossary</h2><p class="eintro">Coming soon.</p><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>');return;}
   const cats=['All'].concat(Array.from(new Set(GLOSSARY.map(g=>g.cat))).sort());
@@ -6391,7 +6397,7 @@ function glossaryFilter(cat,term){
   const savedMode=(cat==='__saved__');
   let list=GLOSSARY.filter(g=>(cat==='All'||savedMode||g.cat===cat)&&(!savedMode||(typeof bmHasG==='function'&&bmHasG(g.term)))&&(!term||g.term.toLowerCase().includes(term)||g.def.toLowerCase().includes(term)));
   list=list.slice().sort((a,b)=>a.term.localeCompare(b.term));
-  const html=list.map(g=>`<div class="gitem"><div class="gterm">${bmStarG(g.term)}${esc(g.term)} <span class="gcat">${esc(g.cat)}</span></div><div class="gdef">${esc(g.def)}</div>${eliGloss(g.term)}</div>`).join('')||'<p style="font-size:.8rem;color:var(--tx2)">No matches.</p>';
+  const html=list.map(g=>`<div class="gitem"><div class="gterm">${bmStarG(g.term)}${esc(g.term)} <span class="gcat">${esc(g.cat)}</span><button class="gcopy" title="Copy term" onclick="copyGloss('${String(g.term).split("'").join("\\'")}')">\uD83D\uDCCB</button></div><div class="gdef">${esc(g.def)}</div>${eliGloss(g.term)}</div>`).join('')||'<p style="font-size:.8rem;color:var(--tx2)">No matches.</p>';
   const el=document.getElementById('glist');if(el)el.innerHTML=`<div class="gcount">${list.length} term${list.length===1?'':'s'}</div>`+html;
 }
 /* exam keyboard shortcuts */
