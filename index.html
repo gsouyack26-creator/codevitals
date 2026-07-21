@@ -37,6 +37,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .lread-cont{margin-top:9px;font-size:.74rem;font-weight:700;color:#fff;background:var(--ac);border:none;padding:6px 12px;border-radius:8px;cursor:pointer}.lread-cont:hover{opacity:.9}.les-flash{animation:lesflash 1.6s ease}@keyframes lesflash{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 3px var(--ac)}}
 .les-badge{display:none;width:16px;height:16px;border-radius:50%;background:var(--ok);color:#fff;font-size:.62rem;font-weight:700;align-items:center;justify-content:center;margin-right:6px;vertical-align:middle}.les-read .les-badge{display:inline-flex}.les-read .lhd{color:var(--tx2)}
 .modprog{display:flex;gap:8px;margin:10px 0 6px}.mp-cell{flex:1;display:flex;align-items:center;gap:7px;padding:9px 10px;border:1px solid var(--bd);border-radius:10px;background:var(--cardbg,rgba(127,127,127,.05))}.mp-cell.full{border-color:var(--ok);background:rgba(52,211,153,.08)}.mp-ic{font-size:1.05rem}.mp-tx{display:flex;flex-direction:column;line-height:1.15}.mp-tx b{font-size:.72rem}.mp-tx span{font-size:.72rem;color:var(--tx2);font-weight:600}.mp-cell.full .mp-tx span{color:var(--ok)}
+.mp-cta{width:100%;margin-top:8px;padding:10px;border:none;border-radius:10px;background:var(--ok);color:#fff;font-size:.85rem;font-weight:700;cursor:pointer}.mp-cta:hover{opacity:.92}
 .mastered{margin:10px 0 4px;padding:11px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(52,211,153,.18),rgba(96,165,250,.14));border:1px solid var(--ok);font-size:.83rem;line-height:1.4}
 .lhd-r{display:inline-flex;align-items:center;gap:9px;flex-shrink:0}.les-min{font-size:.68rem;font-weight:600;color:var(--tx2);opacity:.8}
 .weekact{margin:6px 0 14px;padding:12px 14px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--cardbg,rgba(127,127,127,.05))}.weekact.ok{border-left-color:var(--ok)}.weekact.wn{border-left-color:var(--wn)}.wa-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.wa-ttl{font-weight:700;font-size:.92rem}.wa-cnt{font-size:.8rem;font-weight:700;color:var(--tx2)}.wa-msg{font-size:.82rem;color:var(--tx2);line-height:1.4}.wa-pills{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px}.wa-pill{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:10px;background:rgba(127,127,127,.14);color:var(--tx2)}
@@ -2478,7 +2479,13 @@ function _modProgressRow(m){
     var full=(t>0&&d>=t)||done;
     return '<div class="mp-cell'+(full?' full':'')+'"><span class="mp-ic">'+icon+'</span><span class="mp-tx"><b>'+lbl+'</b>'+(t!=null?('<span>'+d+'/'+t+'</span>'):('<span>'+(done?'Passed':'Not yet')+'</span>'))+'</span></div>';
   }
-  return '<div class="modprog">'+cell('\uD83C\uDFAF','Objectives',oD,oT)+cell('\uD83D\uDCD6','Lessons',lD,lT)+cell('\u2705','Quiz',null,null,qDone)+'</div>';
+  var objFull=(oT===0||oD>=oT), lesFull=(lT===0||lD>=lT);
+  var cta=(objFull&&lesFull&&!qDone)?'<button class="mp-cta" onclick="gotoModuleQuiz()">\u2705 You\u2019re ready \u2014 take the quiz &rarr;</button>':'';
+  return '<div class="modprog">'+cell('\uD83C\uDFAF','Objectives',oD,oT)+cell('\uD83D\uDCD6','Lessons',lD,lT)+cell('\u2705','Quiz',null,null,qDone)+'</div>'+cta;
+}
+function gotoModuleQuiz(){
+  var tabs=document.querySelectorAll('.tabs .tab');
+  for(var i=0;i<tabs.length;i++){ if(/Quiz/.test(tabs[i].textContent)){ stab(tabs[i],'qv'); tabs[i].scrollIntoView({behavior:'smooth',block:'nearest'}); return; } }
 }
 function renderLearn(m){
   const oc=(PROG[m.id]||{}).obj||{};
