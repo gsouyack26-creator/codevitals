@@ -3850,7 +3850,7 @@ function _dailyTipHTML(){
     }
   }
   var idx=Math.floor(Date.now()/864e5)%CPC_TIPS.length;
-  return '<div class="dgreet-tip"><span class="dgreet-tip-l">\uD83D\uDCA1 Tip of the day</span> <span id="dgreet-tip-tx">'+esc(CPC_TIPS[idx])+'</span> <button class="tip-more" onclick="shuffleTip(event)">\uD83D\uDD00 Another</button></div>';
+  return '<div class="dgreet-tip"><span class="dgreet-tip-l">\uD83D\uDCA1 Tip of the day</span> <span id="dgreet-tip-tx">'+esc(CPC_TIPS[idx])+'</span> <button class="tip-more" onclick="shuffleTip(event)">\uD83D\uDD00 Another</button> <button class="tip-more" onclick="copyTip(event)">\uD83D\uDCCB Copy</button></div>';
 }
 function shuffleTip(e){
   if(e&&e.stopPropagation)e.stopPropagation();
@@ -3859,6 +3859,15 @@ function shuffleTip(e){
   var cur=el.textContent, tip=cur, guard=0;
   while(tip===cur&&guard<25){tip=CPC_TIPS[Math.floor(Math.random()*CPC_TIPS.length)];guard++;}
   el.textContent=tip;
+}
+function copyTip(e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  var el=document.getElementById('dgreet-tip-tx');
+  if(!el)return;
+  var txt=el.textContent;
+  function done(){if(typeof mcToast==='function')mcToast('Tip copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
 }
 function _masteryStatHTML(){
   if(typeof MODULES==='undefined')return '';
