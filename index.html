@@ -118,6 +118,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .dcd-pace{display:block;font-size:.72rem;color:var(--ac);margin-top:2px}
 .drec-ct{font-size:.72rem;color:var(--tx2);margin-left:4px}
 .jumpback.weak{border-color:var(--wn,#e0a800)}
+.dgreet-tip.urgent .dgreet-tip-l{color:var(--er)}
 .drec-foot .ok{color:var(--ok);font-weight:700}
 .drec-foot .lo{color:var(--er);font-weight:700}
 .fctgbtn.on .fctg-star{color:#fff}
@@ -3772,6 +3773,17 @@ var CPC_TIPS=[
   'Pace yourself: ~2 minutes per CPC question \u2014 flag hard ones and return rather than stalling.'
 ];
 function _dailyTipHTML(){
+  if(PROG.examDate){
+    var d=new Date(PROG.examDate+'T00:00:00'); var now=new Date(); now.setHours(0,0,0,0);
+    var days=Math.round((d.getTime()-now.getTime())/864e5);
+    if(days>=0&&days<=7){
+      var msg;
+      if(days===0)msg='Exam day \u2014 trust your prep, read each question twice, and pace yourself.';
+      else if(days<=2)msg='Final stretch \u2014 review your missed questions and starred flashcards, not new material.';
+      else msg='Under a week to go \u2014 focus on timed practice exams and your weakest topics.';
+      return '<div class="dgreet-tip urgent"><span class="dgreet-tip-l">\uD83C\uDF93 Exam '+(days===0?'today':(days+' day'+(days===1?'':'s')+' away'))+'</span> '+esc(msg)+'</div>';
+    }
+  }
   var idx=Math.floor(Date.now()/864e5)%CPC_TIPS.length;
   return '<div class="dgreet-tip"><span class="dgreet-tip-l">\uD83D\uDCA1 Tip of the day</span> '+esc(CPC_TIPS[idx])+'</div>';
 }
