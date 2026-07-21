@@ -513,6 +513,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .drill-chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}.drill-chip{background:var(--c2);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:5px 12px;font-size:.82rem;cursor:pointer}.drill-chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}.drill-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--tx2);font-size:.8rem;margin-bottom:8px}.drill-tag{color:var(--ac);font-weight:600}.drill-card{background:var(--c2);border:1px solid var(--bd);border-radius:14px;padding:34px 22px;min-height:120px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;cursor:pointer;transition:transform .1s}.drill-card:hover{transform:translateY(-2px)}.drill-card.flipped{border-color:var(--ac);border-left:4px solid var(--ac)}.drill-face-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:10px}.drill-face-txt{font-size:1.15rem;font-weight:600;line-height:1.4}.drill-grade{display:flex;gap:10px;justify-content:center;margin-top:14px}.qbtn.good{background:var(--ok);color:#fff}.qbtn.bad{background:var(--er);color:#fff}.drill-done{text-align:center;padding:24px}.drill-score{font-size:2.6rem;font-weight:800;color:var(--ac)}.drill-sub{color:var(--tx2);margin-top:4px}
 #hbg{display:none;font-size:1.15rem;line-height:1;padding:3px 10px}#sb-ov{display:none}
 @media(max-width:760px){#hbg{display:inline-flex;align-items:center}#sb{position:fixed;top:50px;left:0;bottom:0;z-index:60;transform:translateX(-100%);transition:transform .2s ease;width:80%;max-width:300px;box-shadow:2px 0 16px rgba(0,0,0,.3)}#app.sb-open #sb{transform:none}#sb-ov{position:fixed;top:50px;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:55}#app.sb-open #sb-ov{display:block}.mod-tbl{table-layout:fixed}.mod-code{white-space:normal;word-break:break-word}}
+.ce-obj{margin:6px 0 0;padding-left:20px}.ce-obj li{margin:4px 0;font-size:.9rem;color:var(--tx)}.ce-disc{font-size:.82rem;line-height:1.5}
 </style>
 <body>
 <div id="hdr">
@@ -3760,6 +3761,305 @@ function certGuide(){
 }
 
 
+
+/* ============================================================
+   CERTIFIED LEARNING TRACKS  (CE-scaffold / prior-approval ready)
+   Titled module -> locked assessment -> completion certificate ->
+   persisted, cloud-synced score record. Honest: awards NO CEUs
+   until AAPC/AHIMA prior approval; approval != endorsement.
+   ============================================================ */
+const CE_MODULES=[
+  {id:"ce-fundamentals",
+   title:"Medical Coding Fundamentals",
+   currentAs:2026,
+   blurb:"Code sets, terminology, and the anatomy/physiology base every coder needs.",
+   effort:"1.5",
+   topics:["Introduction to Medical Coding","Medical Terminology","Anatomy & Physiology Essentials"],
+   objectives:[
+     "Identify the major code sets (ICD-10-CM, ICD-10-PCS, CPT, HCPCS Level II) and who maintains each",
+     "Apply core medical terminology: prefixes, suffixes, roots, and combining vowels",
+     "Use directional and anatomical terms to locate procedures and diagnoses",
+     "Describe the coder's role in the revenue cycle and the two main credentialing bodies"],
+   overview:"<p>This track establishes the foundation for accurate coding: the code sets and their update cycles (ICD-10-CM Oct 1, CPT Jan 1), the language of medicine, and the body-system knowledge needed to read a chart. Master this before moving to diagnosis and procedure coding.</p>",
+   minQ:12,pass:.80},
+  {id:"ce-icd10cm",
+   title:"ICD-10-CM Diagnosis Coding",
+   currentAs:2026,
+   blurb:"Conventions, sequencing, 7th characters, and combination codes for accurate diagnoses.",
+   effort:"2.0",
+   topics:["ICD-10-CM Fundamentals"],
+   objectives:[
+     "Apply ICD-10-CM Official Guideline conventions: Excludes1 vs Excludes2, code first, use additional code",
+     "Assign 7th characters for injuries and other applicable categories",
+     "Sequence principal vs secondary diagnoses and symptoms integral to a condition",
+     "Use combination codes and the And/With linkage assumptions correctly"],
+   overview:"<p>Diagnosis coding is governed by the ICD-10-CM Official Guidelines for Coding and Reporting. This track drills the conventions the exam tests most heavily and reinforces that guidelines change annually \u2014 always verify against the current edition.</p>",
+   minQ:12,pass:.80},
+  {id:"ce-cpt-modifiers",
+   title:"CPT Procedure Coding & Modifiers",
+   currentAs:2026,
+   blurb:"CPT structure, the surgical package, E/M leveling, and correct modifier use.",
+   effort:"2.0",
+   topics:["CPT Coding","HCPCS Level II","Evaluation & Management (E&M)"],
+   objectives:[
+     "Navigate CPT sections, categories (I/II/III), add-on codes, and the semicolon convention",
+     "Apply the global surgical package and distinguish separately reportable services",
+     "Level E/M services using 2021+ MDM or total time",
+     "Append CPT/HCPCS modifiers (25, 59, 50, 51, 26/TC, 54/55) correctly"],
+   overview:"<p>Procedure coding requires knowing what a code bundles and when a modifier is needed to tell the payer's story. This track covers CPT structure, the surgical package, 2021+ E/M rules, and the high-frequency modifiers \u2014 verify against current CPT guidelines and payer policy, which change every year.</p>",
+   minQ:12,pass:.80},
+  {id:"ce-reimbursement",
+   title:"Billing, Reimbursement & Inpatient Payment",
+   currentAs:2026,
+   blurb:"The revenue cycle, claim forms, fee schedules, DRGs, and ICD-10-PCS.",
+   effort:"1.5",
+   topics:["Billing & Reimbursement","DRGs & Inpatient Reimbursement","ICD-10-PCS"],
+   objectives:[
+     "Distinguish CMS-1500 vs UB-04 and describe clean-claim, EOB, and COB concepts",
+     "Explain fee schedules, RVUs/RBRVS, and the Medicare conversion factor",
+     "Describe MS-DRG assignment, POA indicators, CCs/MCCs, and HACs",
+     "Build ICD-10-PCS 7-character codes and select the correct root operation"],
+   overview:"<p>Coding drives payment. This track connects codes to the money: outpatient vs inpatient claim forms, physician fee schedules, and the inpatient DRG methodology, plus the structure of ICD-10-PCS procedure codes.</p>",
+   minQ:12,pass:.80},
+  {id:"ce-compliance",
+   title:"Coding Compliance, Auditing & Risk Adjustment",
+   currentAs:2026,
+   blurb:"HIPAA, fraud vs abuse, NCCI edits, auditing, and HCC/MEAT documentation.",
+   effort:"2.0",
+   topics:["Career & Compliance","Coding Audits & Denial Prevention","Risk Adjustment & HCC Coding"],
+   objectives:[
+     "Differentiate fraud from abuse and identify upcoding and unbundling",
+     "Apply HIPAA Privacy Rule concepts: TPO, minimum necessary, and the 7 OIG compliance elements",
+     "Use NCCI edits and audit chart documentation for medical necessity",
+     "Support HCC risk-adjustment coding with MEAT (Monitor, Evaluate, Assess, Treat)"],
+   overview:"<p>Compliant coding protects the coder, the provider, and the patient. This track covers the legal framework (HIPAA, False Claims Act, Stark), what auditors look for, and the documentation standards behind risk-adjustment (HCC) coding.</p>",
+   minQ:12,pass:.80}
+];
+
+function ceRec(id){ return (PROG.ce&&PROG.ce[id])||null; }
+function ceLearner(force){
+  var n=(PROG.learner||'').trim();
+  if(!n||force){
+    var v=prompt('Enter the name to print on your completion certificate:', n||'');
+    if(v===null) return n||null;
+    v=(v||'').trim().slice(0,60);
+    PROG.learner=v; saveProg();
+    return v;
+  }
+  return n;
+}
+function ceSerial(id){
+  var d=new Date();
+  var y=d.getFullYear();
+  var rnd=Math.abs((Date.now()^Math.floor(Math.random()*1e9))>>>0).toString(36).toUpperCase().slice(0,6);
+  var pre=(id||'CE').replace(/[^a-z]/gi,'').slice(0,3).toUpperCase()||'CE';
+  return 'CV-'+pre+'-'+y+'-'+rnd;
+}
+function ceAssembleQs(m){
+  var pool=(typeof examPool==='function')?examPool():[];
+  var wanted=m.topics.map(function(t){return t.toLowerCase();});
+  var match=pool.filter(function(q){
+    var hay=((q.mod||'')+' '+(q.q||'')).toLowerCase();
+    return wanted.some(function(t){return hay.indexOf(t)>=0;});
+  });
+  match=match.slice().sort(function(){return Math.random()-.5;});
+  var need=m.minQ||10;
+  if(match.length<need){
+    var have={}; match.forEach(function(q){have[q.q]=1;});
+    var extra=pool.filter(function(q){return !have[q.q];}).sort(function(){return Math.random()-.5;});
+    match=match.concat(extra.slice(0,need-match.length));
+  }
+  return match.slice(0,need);
+}
+
+function ceTracks(){
+  var cards=CE_MODULES.map(function(m){
+    var rec=ceRec(m.id);
+    var badge=rec?('<div class="ebadge '+(rec.pass?'pass':'fail')+'">Best '+rec.best+'%'+(rec.pass?' \u2713':'')+'</div>'):'';
+    var certBtn=(rec&&rec.pass)?('<button class="qbtn" style="margin-top:8px;width:100%" onclick="ceCert(\''+m.id+'\')">\uD83D\uDCDC View Certificate</button>'):'';
+    return '<div class="ecard">'
+      +'<div class="etop"><div class="ename">'+esc(m.title)+'</div>'+badge+'</div>'
+      +'<div class="esub">'+esc(m.blurb)+'</div>'
+      +'<div class="emeta">\uD83D\uDCD8 '+m.objectives.length+' objectives &bull; \uD83D\uDCDD '+m.minQ+'-question assessment &bull; \uD83C\uDFAF Pass '+Math.round(m.pass*100)+'% &bull; \uD83D\uDDD3\uFE0F Current as of '+m.currentAs+'</div>'
+      +'<button class="qbtn '+((rec&&rec.pass)?'sec':'')+'" style="margin-top:10px;width:100%" onclick="ceOpen(\''+m.id+'\')">'+((rec&&rec.pass)?'Review Track':'Open Track')+'</button>'
+      +certBtn
+      +'</div>';
+  }).join('');
+  var done=CE_MODULES.filter(function(m){var r=ceRec(m.id);return r&&r.pass;}).length;
+  fullView('<div class="ecenter">'
+    +'<h2 class="etitle">\uD83C\uDF93 Certified Learning Tracks</h2>'
+    +'<p class="eintro">Structured, titled study tracks \u2014 each with clear learning objectives, a content overview, and a locked assessment you must pass to earn a dated completion certificate with a unique serial number. Progress is saved and synced across your devices. '+done+' of '+CE_MODULES.length+' tracks completed.</p>'
+    +'<div class="tip ce-disc" style="margin-bottom:14px"><b>\u2139\uFE0F Important \u2014 please read:</b> These tracks are a <b>study and self-assessment</b> tool. Completing one earns a <b>Certificate of Completion</b> for your own records. CodeVitals is <b>not affiliated with, approved by, or endorsed by AAPC or AHIMA</b>, and these certificates <b>do not award CEUs</b>. CEU eligibility requires prior approval by AAPC or AHIMA, which this program has not obtained. Per AAPC\u2019s own rules, even approval would not constitute endorsement.</div>'
+    +'<div class="egrid">'+cards+'</div>'
+    +'<div class="dcta" style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
+    +'</div>');
+}
+
+function ceOpen(id){
+  var m=CE_MODULES.find(function(x){return x.id===id;}); if(!m)return;
+  var rec=ceRec(id);
+  var obj=m.objectives.map(function(o){return '<li>'+esc(o)+'</li>';}).join('');
+  var status=rec?('<div class="tip" style="margin:10px 0"><b>'+(rec.pass?'\u2705 Completed':'\uD83D\uDCAA In progress')+'</b> \u2014 best score '+rec.best+'% on '+esc(rec.date)+(rec.attempts?(' \u2022 '+rec.attempts+' attempt'+(rec.attempts>1?'s':'')):'')+(rec.pass?(' \u2022 Serial '+esc(rec.serial)):'')+'</div>'):'';
+  fullView('<div class="ecenter" style="text-align:left">'
+    +'<h2 class="etitle" style="text-align:center">'+esc(m.title)+'</h2>'
+    +'<p class="eintro">'+esc(m.blurb)+' <span style="opacity:.7">(Content current as of '+m.currentAs+' code sets \u2014 verify against current official guidelines.)</span></p>'
+    +status
+    +'<h3 style="margin:14px 0 6px">Learning objectives</h3>'
+    +'<ul class="ce-obj">'+obj+'</ul>'
+    +'<h3 style="margin:14px 0 6px">Overview</h3>'
+    +m.overview
+    +'<div class="tip" style="margin:12px 0"><b>How the assessment works:</b> '+m.minQ+' questions, no feedback until you submit, drawn fresh each attempt from the topics above. Score '+Math.round(m.pass*100)+'% or higher to pass and earn your dated certificate. You can retake it as many times as you like \u2014 your best score is kept.</div>'
+    +'<div class="dcta" style="justify-content:center;margin-top:8px">'
+    +'<button class="qbtn" onclick="ceAssess(\''+m.id+'\')">\uD83D\uDCDD '+(rec&&rec.pass?'Retake Assessment':'Begin Assessment')+'</button>'
+    +(rec&&rec.pass?('<button class="qbtn sec" onclick="ceCert(\''+m.id+'\')">\uD83D\uDCDC View Certificate</button>'):'')
+    +'<button class="qbtn sec" onclick="ceTracks()">\u2190 All Tracks</button>'
+    +'</div></div>');
+}
+
+function ceAssess(id){
+  var m=CE_MODULES.find(function(x){return x.id===id;}); if(!m)return;
+  var qs=ceAssembleQs(m);
+  if(!qs.length){ alert('No assessment questions available for this track yet.'); return; }
+  APP.ce={id:id,m:m,qs:qs,ans:new Array(qs.length).fill(null),i:0,submitted:false};
+  cerender();
+}
+function cerender(){
+  var c=APP.ce; var q=c.qs[c.i];
+  var answered=c.ans.filter(function(a){return a!==null;}).length;
+  var opts=q.opts.map(function(o,i){return '<button class="opt'+(c.ans[c.i]===i?' sel':'')+'" onclick="ceSelect('+i+')">'+String.fromCharCode(65+i)+'. '+esc(o)+'</button>';}).join('');
+  var pal=c.qs.map(function(_,i){return '<button class="pdot'+(i===c.i?' cur':'')+(c.ans[i]!==null?' ans':'')+'" onclick="ceGo('+i+')">'+(i+1)+'</button>';}).join('');
+  fullView('<div class="ewrap">'
+    +'<div class="ebar"><span class="etimer">\uD83C\uDF93 '+esc(c.m.title)+'</span><span class="ecount">'+answered+'/'+c.qs.length+' answered</span></div>'
+    +'<div class="qprog">Question '+(c.i+1)+' of '+c.qs.length+' &bull; locked assessment (no feedback until submit)</div>'
+    +'<div class="qcard"><div class="qq">'+esc(q.q)+'</div>'+opts+'</div>'
+    +'<div class="enav">'
+    +'<button class="qbtn sec" onclick="ceGo('+(c.i-1)+')" '+(c.i===0?'disabled':'')+'>&#8592; Prev</button>'
+    +'<button class="qbtn sec" onclick="ceGo('+(c.i+1)+')" '+(c.i===c.qs.length-1?'disabled':'')+'>Next &#8594;</button>'
+    +'<button class="qbtn" onclick="ceConfirm()">&#10003; Submit</button>'
+    +'</div>'
+    +'<div class="palette">'+pal+'</div>'
+    +'<div class="dcta" style="margin-top:10px"><button class="qbtn sec" onclick="ceExit()">\u2190 Exit (discard attempt)</button></div>'
+    +'</div>');
+}
+function ceSelect(i){ APP.ce.ans[APP.ce.i]=i; ceender_safe(); }
+function ceender_safe(){ cerender(); }
+function ceGo(i){ if(i<0||i>=APP.ce.qs.length)return; APP.ce.i=i; cerender(); }
+function ceExit(){ if(confirm('Exit the assessment? Your answers this attempt will be discarded.')){ APP.ce=null; ceTracks(); } }
+function ceConfirm(){
+  var c=APP.ce; var un=c.ans.filter(function(a){return a===null;}).length;
+  var msg=un>0?('You have '+un+' unanswered question(s). Submit and score anyway?'):'Submit your assessment for scoring?';
+  if(confirm(msg)) ceSubmit();
+}
+function ceSubmit(){
+  var c=APP.ce; if(c.submitted)return; c.submitted=true;
+  var correct=0;
+  c.qs.forEach(function(q,i){
+    var ok=c.ans[i]===q.ans; if(ok)correct++;
+    if(typeof logAnswer==='function')logAnswer(q,ok,'CE: '+c.m.title);
+  });
+  if(typeof bumpStreak==='function')bumpStreak();
+  var pctv=Math.round(correct/c.qs.length*100);
+  var passed=pctv>=Math.round(c.m.pass*100);
+  PROG.ce=PROG.ce||{};
+  var rec=PROG.ce[c.id]||{best:0,attempts:0,pass:false,serial:null,date:null};
+  rec.attempts=(rec.attempts||0)+1;
+  rec.score=pctv;
+  rec.date=new Date().toISOString().slice(0,10);
+  if(pctv>(rec.best||0))rec.best=pctv;
+  if(passed){
+    rec.pass=true;
+    if(!rec.serial)rec.serial=ceSerial(c.id);
+    if(!rec.passDate)rec.passDate=rec.date;
+  }
+  PROG.ce[c.id]=rec;
+  if(typeof logRun==='function')logRun('ce',c.m.title,correct,c.qs.length);
+  saveProg();
+  if(typeof checkAchievements==='function')checkAchievements();
+  if(passed&&typeof celebrate==='function')setTimeout(function(){celebrate('Track Complete!',c.m.title+' \u2014 '+pctv+'%',pctv>=100);},250);
+  fullView('<div class="ewrap"><div class="sc" style="max-width:440px">'
+    +'<h3>'+(passed?'\uD83C\uDF89 Track Passed!':'\uD83D\uDCAA Not Yet \u2014 Keep Studying')+'</h3>'
+    +'<div class="scn '+(passed?'pass':'fail')+'">'+pctv+'%</div>'
+    +'<p style="font-size:.82rem;color:var(--tx2)">'+correct+' of '+c.qs.length+' correct &bull; need '+Math.round(c.m.pass*100)+'% to pass</p>'
+    +(passed?('<div class="tip" style="margin:12px 0;text-align:left"><b>\uD83D\uDCDC Certificate earned.</b> Serial '+esc(PROG.ce[c.id].serial)+'. This is a study record only \u2014 it awards no CEUs and is not AAPC/AHIMA affiliated.</div>'):'')
+    +'<div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">'
+    +(passed?('<button class="qbtn" onclick="ceCert(\''+c.id+'\')">\uD83D\uDCDC View Certificate</button>'):'')
+    +'<button class="qbtn sec" onclick="ceReview()">&#128269; Review Answers</button>'
+    +'<button class="qbtn sec" onclick="ceAssess(\''+c.id+'\')">&#8635; Retake</button>'
+    +'<button class="qbtn sec" onclick="ceTracks()">\uD83C\uDF93 All Tracks</button>'
+    +'</div></div></div>');
+}
+function ceReview(){
+  var c=APP.ce; if(!c)return;
+  var items=c.qs.map(function(q,i){
+    var ua=c.ans[i]; var ok=ua===q.ans;
+    var opts=q.opts.map(function(o,j){
+      var cls='ropt'; if(j===q.ans)cls+=' cor'; else if(j===ua)cls+=' wrg';
+      var tag=j===q.ans?' \u2713':(j===ua?' \u2717 your answer':'');
+      return '<div class="'+cls+'">'+String.fromCharCode(65+j)+'. '+esc(o)+tag+'</div>';
+    }).join('');
+    return '<div class="qcard"><div class="qprog">Q'+(i+1)+' &bull; <b style="color:'+(ok?'var(--ok)':'var(--er)')+'">'+(ok?'Correct':(ua===null?'Skipped':'Incorrect'))+'</b></div>'
+      +'<div class="qq">'+esc(q.q)+'</div>'+opts
+      +'<div class="exp sh" style="margin-top:8px">'+esc(q.exp)+'</div></div>';
+  }).join('');
+  fullView('<div class="ewrap"><h3 style="margin-bottom:4px">&#128269; Answer Review</h3>'
+    +'<p class="qprog" style="margin-bottom:12px">Correct answers are green; your incorrect picks are red.</p>'
+    +items
+    +'<button class="qbtn sec" style="margin:8px 0 20px" onclick="ceTracks()">\uD83C\uDF93 Back to Tracks</button></div>');
+}
+
+function ceCert(id){
+  var m=CE_MODULES.find(function(x){return x.id===id;}); if(!m)return;
+  var rec=ceRec(id);
+  if(!rec||!rec.pass){ alert('Pass the assessment first to earn this certificate.'); return; }
+  var name=ceLearner(false);
+  if(name===null||name===''){ name='(Your name)'; }
+  var win=window.open('','_blank');
+  var dateStr=new Date(rec.passDate||rec.date).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+  var objList=m.objectives.map(function(o){return '<li>'+esc(o)+'</li>';}).join('');
+  var html='<html><head><title>Certificate \u2014 '+esc(m.title)+'</title><style>'
+    +'body{font-family:Georgia,\'Times New Roman\',serif;color:#1e293b;margin:0;padding:28px;background:#f1f5f9}'
+    +'.cert{max-width:820px;margin:0 auto;background:#fff;border:3px solid #0284c7;border-radius:12px;padding:40px 46px;box-shadow:0 10px 30px rgba(0,0,0,.08)}'
+    +'.cert-inner{border:1px solid #bae6fd;border-radius:8px;padding:30px 34px}'
+    +'.brand{text-align:center;color:#0284c7;letter-spacing:3px;font-size:.8rem;text-transform:uppercase;font-family:system-ui,Arial,sans-serif}'
+    +'h1{text-align:center;font-size:1.9rem;margin:6px 0 2px;color:#0f172a}'
+    +'.coc{text-align:center;color:#64748b;font-size:.95rem;margin:0 0 18px;font-style:italic}'
+    +'.awarded{text-align:center;color:#64748b;font-size:.9rem;margin:14px 0 2px}'
+    +'.who{text-align:center;font-size:1.6rem;font-weight:700;color:#0284c7;border-bottom:2px solid #e2e8f0;display:inline-block;padding:2px 26px;margin:0 auto}'
+    +'.center{text-align:center}'
+    +'.track{text-align:center;font-size:1.15rem;font-weight:700;margin:16px 0 2px}'
+    +'.meta{text-align:center;color:#475569;font-size:.9rem;margin:2px 0}'
+    +'.obj{font-family:system-ui,Arial,sans-serif;font-size:.82rem;color:#334155;background:#f8fafc;border-radius:8px;padding:12px 18px;margin:18px 0}'
+    +'.obj b{display:block;margin-bottom:4px;color:#0f172a}'
+    +'.obj ul{margin:0;padding-left:18px}.obj li{margin:2px 0}'
+    +'.foot{display:flex;justify-content:space-between;font-family:system-ui,Arial,sans-serif;font-size:.75rem;color:#64748b;margin-top:22px;border-top:1px solid #e2e8f0;padding-top:12px;gap:16px;flex-wrap:wrap}'
+    +'.serial{font-family:ui-monospace,Menlo,Consolas,monospace;color:#0f172a}'
+    +'.disc{font-family:system-ui,Arial,sans-serif;font-size:.72rem;color:#94a3b8;text-align:center;margin-top:16px;line-height:1.5}'
+    +'.btns{text-align:center;margin-top:18px}'
+    +'button{background:#0284c7;color:#fff;border:0;padding:10px 20px;border-radius:8px;font-size:.9rem;cursor:pointer;margin:0 6px;font-family:system-ui,Arial,sans-serif}'
+    +'@media print{body{background:#fff;padding:0}.btns{display:none}.cert{border-color:#0284c7;box-shadow:none}}'
+    +'</style></head><body>'
+    +'<div class="cert"><div class="cert-inner">'
+    +'<div class="brand">\uD83E\uDE7A CodeVitals</div>'
+    +'<h1>Certificate of Completion</h1>'
+    +'<p class="coc">Study &amp; Self-Assessment Record</p>'
+    +'<p class="awarded">This certifies that</p>'
+    +'<div class="center"><span class="who">'+esc(name)+'</span></div>'
+    +'<div class="track">'+esc(m.title)+'</div>'
+    +'<p class="meta">completed the track assessment with a score of <b>'+rec.best+'%</b> (passing standard '+Math.round(m.pass*100)+'%)</p>'
+    +'<p class="meta">Content current as of '+m.currentAs+' code sets &bull; Completed '+esc(dateStr)+'</p>'
+    +'<div class="obj"><b>Learning objectives covered:</b><ul>'+objList+'</ul></div>'
+    +'<div class="foot"><div>Issued by CodeVitals study application</div><div class="serial">Serial: '+esc(rec.serial)+'</div></div>'
+    +'<div class="disc">CodeVitals is a study companion and is <b>not affiliated with, approved by, or endorsed by AAPC or AHIMA</b>. '
+    +'This certificate documents completion of a self-assessment and <b>does not award Continuing Education Units (CEUs)</b> or count toward any credential or recertification. '
+    +'CEU eligibility requires prior approval by the issuing body (e.g., AAPC or AHIMA), which this program has not obtained.</div>'
+    +'</div></div>'
+    +'<div class="btns"><button onclick="window.print()">\uD83D\uDDA8\uFE0F Print / Save as PDF</button>'
+    +'<button onclick="window.close()">Close</button></div>'
+    +'</body></html>';
+  win.document.write(html); win.document.close();
+}
+
+
 function _examSave(){
   try{
     var ex=APP.exam;
@@ -3920,6 +4220,7 @@ function dashboard(){
     <div class="dcta">
       ${misses?`<button class="qbtn" onclick="reviewStart()">\uD83C\uDFAF Drill ${misses} missed question${misses>1?'s':''}</button>`:''}
       <button class="qbtn sec" onclick="examCenter()">\uD83D\uDCDD Exam Center</button>
+      <button class="qbtn" onclick="ceTracks()">\uD83C\uDF93 Certified Tracks</button>
       <button class="qbtn sec" onclick="dailyChallenge()">\uD83C\uDF93 Daily Challenge</button>
       <button class="qbtn sec" onclick="quizBuilder()">\uD83D\uDD00 Custom Quiz</button>
       <button class="qbtn sec" onclick="studyCalendar()">\uD83D\uDCC5 Calendar</button>
