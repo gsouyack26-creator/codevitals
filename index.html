@@ -2661,12 +2661,17 @@ function ckAns(idx){
 }
 
 function showScore(m){
+  var _i=(typeof MODULES!=='undefined')?MODULES.findIndex(function(x){return x.id===m.id;}):-1;
+  var _next='';
+  if(_i>=0&&_i<MODULES.length-1){var _nx=MODULES[_i+1];_next='<button class="qbtn" style="margin-top:14px" onclick="showMod(\''+_nx.id+'\')">\u27A1\uFE0F Next module: '+esc(_nx.title.split('&amp;').join('&'))+'</button>';}
+  else if(_i>=0){_next='<button class="qbtn" style="margin-top:14px" onclick="examCenter()">\uD83C\uDFAF You finished the last module \u2014 try a full exam</button>';}
   document.getElementById('qv').innerHTML=`<div class="sc">
     <h3>&#127881; Quiz Complete!</h3>
     <p style="font-size:.81rem;color:var(--tx2);margin-top:3px">${esc(m.title.split('&amp;').join('&'))}</p>
     <div class="scn pass">${m.questions.length}/${m.questions.length}</div>
     <p style="font-size:.81rem;color:var(--tx2)">All questions answered!</p>
-    <button class="qbtn" style="margin-top:14px" onclick="initQuiz(APP.mod)">&#8635; Retake Quiz</button>
+    ${_next}
+    <button class="qbtn sec" style="margin-top:8px" onclick="initQuiz(APP.mod)">&#8635; Retake Quiz</button>
     <button class="qbtn sec" style="margin-top:8px" onclick="examCenter()">&#128221; Open Exam Center</button>
   </div>`;
   if(!PROG[m.id])PROG[m.id]={};
