@@ -604,6 +604,18 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 
 #kbdfab{position:fixed;left:16px;bottom:16px;width:38px;height:38px;border-radius:50%;border:1px solid var(--line,#ccc);background:var(--card,#fff);color:var(--tx,#333);font-size:1.05rem;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.2);z-index:39;opacity:.75;transition:opacity .2s,transform .15s}
 #kbdfab:hover{opacity:1;transform:translateY(-2px)}
+
+.dtrend{background:var(--card,#fff);border:1px solid var(--line,#e3e3e8);border-radius:12px;padding:14px 16px;margin:10px 0}
+.dtrend-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.dtrend-t{font-weight:700;font-size:14.5px}
+.dtrend-d{font-size:12.5px;font-weight:700}
+.dtrend-d.up{color:#1a9c53}.dtrend-d.down{color:#d1435b}.dtrend-d.flat{opacity:.6}
+.dtrend-bars{display:flex;align-items:flex-end;gap:5px;height:56px}
+.dtrend-bar{flex:1;min-width:6px;background:var(--ac,#2d6cdf);border-radius:4px 4px 0 0;position:relative;opacity:.85;transition:height .3s}
+.dtrend-bar.fail{background:#d1435b}
+.dtrend-bar .dtrend-v{position:absolute;top:-15px;left:0;right:0;text-align:center;font-size:9.5px;font-weight:700;opacity:.7}
+.dtrend-x{display:flex;gap:5px;margin-top:5px}
+.dtrend-x span{flex:1;min-width:6px;text-align:center;font-size:9px;opacity:.5}
 </style>
 <body>
 <div id="hdr">
@@ -3391,6 +3403,23 @@ function reviewStarred(){
     setTimeout(function(){var fb=document.querySelector('.fctg-fav');if(typeof filtFCFav==='function')filtFCFav(fb);},120);
   },60);
 }
+function _examTrendHTML(){
+  var log=(PROG.runlog||[]).filter(function(r){return r.type==='exam';});
+  if(log.length<2)return '';
+  var runs=log.slice(0,8).reverse();
+  var last=runs[runs.length-1].pct, prev=runs[runs.length-2].pct, delta=last-prev;
+  var dcls=delta>0?'up':(delta<0?'down':'flat');
+  var dtxt=delta>0?('\u25B2 +'+delta+'%'):(delta<0?('\u25BC '+delta+'%'):'\u2013 no change');
+  var bars=runs.map(function(r){
+    var h=Math.max(8,Math.round(r.pct*0.52));
+    var fail=r.pct<70?' fail':'';
+    return '<div class="dtrend-bar'+fail+'" style="height:'+h+'px" title="'+esc(r.label)+': '+r.pct+'%"><span class="dtrend-v">'+r.pct+'</span></div>';
+  }).join('');
+  var xs=runs.map(function(r){return '<span>'+_relDay(r.ts)+'</span>';}).join('');
+  return '<div class="dtrend"><div class="dtrend-h"><div class="dtrend-t">\uD83D\uDCC8 Exam score trend</div>'
+    +'<div class="dtrend-d '+dcls+'">'+dtxt+'</div></div>'
+    +'<div class="dtrend-bars">'+bars+'</div><div class="dtrend-x">'+xs+'</div></div>';
+}
 function _fcFavHTML(){
   var n=(typeof _fcFavCount==='function')?_fcFavCount():0;
   if(!n)return '';
@@ -5708,6 +5737,7 @@ function dashboard(){
     ${(typeof _masteryStatHTML==='function')?_masteryStatHTML():''}
     ${(typeof _notesHTML==='function')?_notesHTML():''}
     ${(typeof _fcFavHTML==='function')?_fcFavHTML():''}
+    ${(typeof _examTrendHTML==='function')?_examTrendHTML():''}
     <h2 class="etitle">\uD83D\uDCCA Readiness Dashboard</h2>
     <div class="dgrid">
       <div class="dcard dring-card">
