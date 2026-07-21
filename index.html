@@ -2969,6 +2969,7 @@ function renderFC(){
       <button class="fcbtn" onclick="moveFC(-APP.fi)">&#9199; Reset</button>
       <button class="fcbtn" onclick="printFC()">&#128424;&#65039; Print</button>
       <button class="fcbtn fcstar-btn" id="fcstar" onclick="toggleFcFav()" title="Star this card for review">\u2606 Star</button>
+      <button class="fcbtn" onclick="copyFC()" title="Copy this card">&#128203; Copy</button>
       <button class="fcbtn" onclick="speakFC()" title="Read this card aloud">&#128266; Read</button>
       <button class="spk-btn" id="spk-tog" onclick="toggleSpeak()" title="Auto read-aloud on flip">Auto-read: <span id="spk-st">OFF</span></button>
     </div>
@@ -3048,6 +3049,13 @@ function moveFC(d){
   if(APP.fCards&&APP.fCards.length===FLASHCARDS.length&&APP.fCards[APP.fi]){PROG.fcLast=APP.fCards[APP.fi].front;saveProg();}
 }
 
+function copyFC(){
+  var c=APP.fCards[APP.fi]; if(!c){if(typeof mcToast==='function')mcToast('No card to copy','\uD83D\uDCCB');return;}
+  var txt=c.front+'\n\n'+c.back;
+  function done(){if(typeof mcToast==='function')mcToast('Card copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
+}
 function printFC(){
   var cards=(APP.fCards&&APP.fCards.length)?APP.fCards:FLASHCARDS;
   if(!cards.length){if(typeof mcToast==='function')mcToast('No cards to print','\uD83D\uDDA8\uFE0F');return;}
@@ -6048,10 +6056,11 @@ document.addEventListener('keydown',e=>{
   else if((e.key==='s'||e.key==='S')&&typeof toggleFcFav==='function'){toggleFcFav();e.preventDefault();}
   else if(e.key==='/'){var si=document.getElementById('fc-srch-in');if(si){si.focus();e.preventDefault();}}
   else if((e.key==='p'||e.key==='P')&&typeof printFC==='function'){printFC();e.preventDefault();}
+  else if((e.key==='c'||e.key==='C')&&typeof copyFC==='function'){copyFC();e.preventDefault();}
 });
 
 var _KBDHELP=[
-  {sec:'Flashcards',rows:[['\u2190 / \u2192','Previous / next card'],['Space','Flip card'],['S','Star / unstar card'],['/','Search cards'],['P','Print study sheet']]},
+  {sec:'Flashcards',rows:[['\u2190 / \u2192','Previous / next card'],['Space','Flip card'],['S','Star / unstar card'],['/','Search cards'],['P','Print study sheet'],['C','Copy this card']]},
   {sec:'Quiz',rows:[['1 \u2013 9','Pick answer by number'],['A \u2013 I','Pick answer by letter']]},
   {sec:'Practice exam',rows:[['\u2190 / \u2192','Previous / next question'],['1 \u2013 9','Pick answer']]},
   {sec:'Anywhere',rows:[['?','Show / hide this help']]}
