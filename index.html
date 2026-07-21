@@ -107,6 +107,9 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .fctgbtn{padding:3px 9px;border:1px solid var(--bd);border-radius:11px;background:none;font-size:.73rem;color:var(--tx2)}
 .fctgbtn.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 .fctg-star{color:var(--wn,#e0a800);font-weight:700}
+.drec-foot{margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:.8rem;color:var(--tx2);text-align:center}
+.drec-foot .ok{color:var(--ok);font-weight:700}
+.drec-foot .lo{color:var(--er);font-weight:700}
 .fctgbtn.on .fctg-star{color:#fff}
 .fcd{perspective:1000px;height:205px;margin-bottom:13px;cursor:pointer}
 .fci{width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d;position:relative}
@@ -3607,7 +3610,11 @@ function _recentHTML(){
       +'<span class="drec-pc '+pcls+'">'+r.pct+'%</span>'
       +'<span class="drec-dt">'+(typeof _relDay==='function'?_relDay(r.ts):'')+'</span></div>';
   }).join('');
-  return '<div class="drec"><div class="drec-hd">\uD83D\uDD52 Recent activity</div>'+rows+'</div>';
+  var all=(PROG.runlog||[]);
+  var avg=all.length?Math.round(all.reduce(function(a,r){return a+(r.pct||0);},0)/all.length):0;
+  var acls=avg>=70?'ok':'lo';
+  var foot=all.length>1?'<div class="drec-foot">Average <span class="'+acls+'">'+avg+'%</span> across '+all.length+' session'+(all.length===1?'':'s')+'</div>':'';
+  return '<div class="drec"><div class="drec-hd">\uD83D\uDD52 Recent activity</div>'+rows+foot+'</div>';
 }
 function _examTrendHTML(){
   var log=(PROG.runlog||[]).filter(function(r){return r.type==='exam';});
