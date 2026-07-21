@@ -35,6 +35,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .lread{margin:6px 0 14px;padding:10px 12px;background:var(--cardbg,rgba(127,127,127,.06));border:1px solid var(--bd);border-radius:10px}.lread-lbl{display:flex;justify-content:space-between;font-size:.75rem;font-weight:600;color:var(--tx2,#888);margin-bottom:5px}.lread-bar{height:5px;border-radius:5px;background:rgba(127,127,127,.2);overflow:hidden}.lread-fill{height:100%;border-radius:5px;background:var(--ac);transition:width .3s}.lread-fill.full{background:var(--ok)}
 .lread-cont{margin-top:9px;font-size:.74rem;font-weight:700;color:#fff;background:var(--ac);border:none;padding:6px 12px;border-radius:8px;cursor:pointer}.lread-cont:hover{opacity:.9}.les-flash{animation:lesflash 1.6s ease}@keyframes lesflash{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 3px var(--ac)}}
 .weekact{margin:6px 0 14px;padding:12px 14px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--cardbg,rgba(127,127,127,.05))}.weekact.ok{border-left-color:var(--ok)}.weekact.wn{border-left-color:var(--wn)}.wa-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.wa-ttl{font-weight:700;font-size:.92rem}.wa-cnt{font-size:.8rem;font-weight:700;color:var(--tx2)}.wa-msg{font-size:.82rem;color:var(--tx2);line-height:1.4}.wa-pills{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px}.wa-pill{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:10px;background:rgba(127,127,127,.14);color:var(--tx2)}
+.studyplan{margin:6px 0 14px;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--cardbg,rgba(127,127,127,.05))}.studyplan.all{border-color:var(--ok)}.sp-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.sp-ttl{font-weight:700;font-size:.92rem}.sp-cnt{font-size:.8rem;font-weight:700;color:var(--tx2)}.sp-bar{height:5px;border-radius:5px;background:rgba(127,127,127,.2);overflow:hidden;margin-bottom:8px}.sp-fill{height:100%;border-radius:5px;background:var(--ac);transition:width .3s}.sp-fill.full{background:var(--ok)}.sp-row{display:flex;align-items:center;gap:9px;padding:7px 4px;cursor:pointer;border-radius:8px;font-size:.83rem}.sp-row:hover{background:rgba(127,127,127,.08)}.sp-ck{width:20px;height:20px;flex-shrink:0;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff}.sp-row.done .sp-ck{background:var(--ok);border-color:var(--ok)}.sp-row.done .sp-lbl{color:var(--tx2);text-decoration:line-through}
 .mdot{width:9px;height:9px;border-radius:50%;border:2px solid var(--bd);flex-shrink:0;transition:all .25s;margin-top:5px}
 .mdot.done{background:var(--ok);border-color:var(--ok)}
 .minfo{flex:1;min-width:0}
@@ -5221,6 +5222,28 @@ function readiness(){
   let score=ek.length?(modPct*.35+acc*.30+examAvg*.35):(modPct*.5+acc*.5);
   return {pct:Math.round(score*100),modDone,modPct,acc,examAvg,ek,passed,st};
 }
+function _studyPlanHTML(){
+  var today=_todayStr();
+  var ds=new Date(); ds.setHours(0,0,0,0); var dayStart=ds.getTime();
+  var studiedMod=false;
+  if(typeof MODULES!=='undefined')MODULES.forEach(function(m){var ls=(PROG[m.id]||{}).lastStudied;if(ls&&ls>=dayStart)studiedMod=true;});
+  var qToday=(typeof todayCount==='function')?todayCount():0;
+  var quizDone=qToday>0;
+  var dcDone=((PROG.daily||{}).last===today);
+  var items=[
+    {ok:studiedMod,lbl:'Open a module & study',act:"gotoTab('learn')"},
+    {ok:quizDone,lbl:'Answer quiz questions'+(qToday?' ('+qToday+' today)':''),act:"gotoTab('learn')"},
+    {ok:dcDone,lbl:'Complete the Daily Challenge',act:"dailyChallenge()"}
+  ];
+  var doneN=items.filter(function(x){return x.ok;}).length;
+  var pct=Math.round(doneN/items.length*100);
+  var allDone=doneN===items.length;
+  var rows=items.map(function(it){
+    return '<div class="sp-row'+(it.ok?' done':'')+'" onclick="'+it.act+'"><span class="sp-ck">'+(it.ok?'\u2713':'')+'</span><span class="sp-lbl">'+it.lbl+'</span></div>';
+  }).join('');
+  var head=allDone?'\uD83C\uDF89 Study plan complete for today!':'\uD83D\uDCCB Today\u2019s Study Plan';
+  return '<div class="studyplan'+(allDone?' all':'')+'"><div class="sp-hd"><span class="sp-ttl">'+head+'</span><span class="sp-cnt">'+doneN+' / '+items.length+'</span></div><div class="sp-bar"><div class="sp-fill'+(allDone?' full':'')+'" style="width:'+pct+'%"></div></div>'+rows+'</div>';
+}
 function _weekActivityHTML(){
   if(typeof MODULES==='undefined')return '';
   var now=Date.now(), wk=7*24*60*60*1000;
@@ -5252,6 +5275,7 @@ function dashboard(){
     ${(typeof _recommendHTML==='function')?_recommendHTML():''}
     ${(typeof _reviewNudgeHTML==='function')?_reviewNudgeHTML():''}
     ${(typeof _weekActivityHTML==='function')?_weekActivityHTML():''}
+    ${(typeof _studyPlanHTML==='function')?_studyPlanHTML():''}
     <h2 class="etitle">\uD83D\uDCCA Readiness Dashboard</h2>
     <div class="dgrid">
       <div class="dcard dring-card">
