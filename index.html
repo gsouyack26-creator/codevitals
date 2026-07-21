@@ -2929,7 +2929,7 @@ function renderQ(){
 function ckAns(idx){
   const q=APP.qa[APP.qi];
   logAnswer(q,idx===q.ans,APP.mod?APP.mod.title.replace(/&amp;/g,'&'):'General');bumpStreak();
-  if(typeof logTiming==='function'){var _tp=APP.mod?APP.mod.title.split('&amp;').join('&'):'General';logTiming(_tp,Date.now()-(APP.qStart||Date.now()));logCalib(APP.conf,idx===q.ans);if(typeof logTopicAcc==='function')logTopicAcc(_tp,idx===q.ans);}
+  if(typeof logTiming==='function'){var _tp=APP.mod?APP.mod.title.split('&amp;').join('&'):'General';logTiming(_tp,Date.now()-(APP.qStart||Date.now()));logCalib(APP.conf,idx===q.ans);}
   saveProg();if(typeof snd==='function')snd(idx===q.ans?'ok':'no');
   document.querySelectorAll('.opt').forEach((o,i)=>{
     o.disabled=true;
@@ -4901,9 +4901,6 @@ function logTiming(topic,ms){
   const a=_an(); a.time.sum+=ms; a.time.n++;
   const bt=a.byTopic[topic]=a.byTopic[topic]||{sum:0,n:0}; bt.sum+=ms; bt.n++;
 }
-function logTopicAcc(topic,ok){
-  const a=_an(); const bt=a.byTopic[topic]=a.byTopic[topic]||{sum:0,n:0}; bt.a=(bt.a||0)+1; bt.c=(bt.c||0)+(ok?1:0);
-}
 function logCalib(level,ok){
   if(!level)return; const a=_an(); const c=a.calib[level]; if(!c)return; c.t++; if(ok)c.c++;
 }
@@ -4919,7 +4916,8 @@ function analyticsView(){
   const topics=Object.keys(a.byTopic).map(k=>({k,avg:a.byTopic[k].sum/a.byTopic[k].n,n:a.byTopic[k].n})).filter(x=>x.n>=1).sort((x,y)=>y.avg-x.avg);
   const maxT=topics.length?Math.max(...topics.map(t=>t.avg)):1;
   const bars=topics.slice(0,10).map(t=>`<div class="tbar"><div class="tbl"><span>${esc(t.k)}</span><span>${_fmtT(t.avg)} avg &middot; ${t.n} q</span></div><div class="tbg"><div class="tbf" style="width:${Math.round(t.avg/maxT*100)}%;background:var(--ac)"></div></div></div>`).join('')||'<p style="color:var(--tx2);font-size:.85rem">Answer some module-quiz questions to see your pace per topic.</p>';
-  const accTopics=Object.keys(a.byTopic).map(k=>({k,a:a.byTopic[k].a||0,c:a.byTopic[k].c||0})).filter(x=>x.a>=1).map(x=>({k:x.k,pct:Math.round(x.c/x.a*100),a:x.a,c:x.c})).sort((x,y)=>x.pct-y.pct);
+  const _tps=PROG.topics||{};
+  const accTopics=Object.keys(_tps).map(k=>({k,a:_tps[k].t||0,c:_tps[k].c||0})).filter(x=>x.a>=1).map(x=>({k:x.k,pct:Math.round(x.c/x.a*100),a:x.a,c:x.c})).sort((x,y)=>x.pct-y.pct);
   const accBars=accTopics.slice(0,10).map(t=>`<div class="tbar"><div class="tbl"><span>${esc(t.k)}</span><span>${t.c}/${t.a} &middot; ${t.pct}%</span></div><div class="tbg"><div class="tbf" style="width:${t.pct}%;background:${t.pct>=70?'var(--ok)':t.pct>=50?'var(--ac)':'var(--er)'}"></div></div></div>`).join('')||'<p style="color:var(--tx2);font-size:.85rem">Answer some module-quiz questions to see your accuracy per topic.</p>';
   const _accReady=accTopics.filter(t=>t.a>=3);
   const accInsight=_accReady.length?(function(){var w=_accReady[0];var best=_accReady[_accReady.length-1];var msg=w.pct<70?('\uD83C\uDFAF Focus here: <b>'+esc(w.k)+'</b> at '+w.pct+'% \u2014 your weakest topic so far.'):('\u2705 Strong across the board \u2014 weakest is <b>'+esc(w.k)+'</b> at '+w.pct+'%.');return '<p class="eintro" style="margin-top:8px">'+msg+'</p>';})():'';
