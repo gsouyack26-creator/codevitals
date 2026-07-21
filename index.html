@@ -5223,9 +5223,13 @@ function _jumpBackHTML(){
   if(last&&typeof MODULES!=='undefined'){
     var m=MODULES.find(function(x){return x.id===last.id;});
     if(m){
+      var _lr=(PROG[m.id]||{}).lread||{};
+      var _rd=Object.keys(_lr).filter(function(k){return _lr[k];}).length;
+      var _lt=(m.lessons||[]).length;
+      var _prog=(_lt>0&&_rd>0&&_rd<_lt)?(' \u00b7 '+_rd+'/'+_lt+' lessons read'):'';
       return '<div class="jumpback" onclick="showMod(\''+m.id+'\')"><div class="jb-ic">\uD83D\uDCD6</div>'
         +'<div class="jb-tx"><div class="jb-t">Jump back in</div>'
-        +'<div class="jb-s">Continue \u2014 '+m.title+'</div></div>'
+        +'<div class="jb-s">Continue \u2014 '+m.title+_prog+'</div></div>'
         +'<div class="jb-go">Open \u2192</div></div>';
     }
   }
