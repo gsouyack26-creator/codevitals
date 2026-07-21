@@ -2552,8 +2552,9 @@ function _lreadBar(m){
   const tot=(m.lessons||[]).length; if(!tot)return '';
   const rd=Object.keys(lr).filter(function(k){return lr[k];}).length;
   const pct=Math.round(rd/tot*100);
+  const totMin=(m.lessons||[]).reduce(function(a,l){return a+parseInt(_lesMin(l),10);},0);
   const cont=(rd>0&&rd<tot)?`<button class="lread-cont" onclick="continueReading('${m.id}')">Continue reading &rarr;</button>`:'';
-  return `<div class="lread" id="lread-${m.id}"><div class="lread-lbl"><span>${rd} of ${tot} lessons read</span><span>${pct}%</span></div><div class="lread-bar"><div class="lread-fill${pct>=100?' full':''}" style="width:${pct}%"></div></div>${cont}</div>`;
+  return `<div class="lread" id="lread-${m.id}"><div class="lread-lbl"><span>${rd} of ${tot} lessons read &middot; ~${totMin} min total</span><span>${pct}%</span></div><div class="lread-bar"><div class="lread-fill${pct>=100?' full':''}" style="width:${pct}%"></div></div>${cont}</div>`;
 }
 function continueReading(mid){
   const mod=(typeof MODULES!=='undefined')?MODULES.find(function(x){return x.id===mid;}):null;
