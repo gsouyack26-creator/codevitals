@@ -4482,6 +4482,7 @@ function settingsView(){
     <div class="set-list" style="margin-top:16px">
       <div class="set-row"><div><b>\uD83D\uDCE5 Export progress</b><div class="set-sub">Download a backup JSON file of all your progress.</div></div><button class="qbtn sec" onclick="exportProg()">Export</button></div>
       <div class="set-row"><div><b>\uD83D\uDCE4 Import progress</b><div class="set-sub">Restore from a backup file.</div></div><label class="qbtn sec" style="cursor:pointer">Import<input type="file" accept="application/json" style="display:none" onchange="importProg(this)"></label></div>
+      <div class="set-row"><div><b>\uD83C\uDF93 Reset glossary progress</b><div class="set-sub">Clear mastered and needs-review glossary terms only.</div></div><button class="qbtn sec" onclick="resetGlossProg()">Clear</button></div>
       <div class="set-row"><div><b>\u267B\uFE0F Reset progress</b><div class="set-sub">Erase all progress and start fresh. Cannot be undone.</div></div><button class="qbtn" style="background:var(--er)" onclick="resetProg()">Reset</button></div>
     </div>
     <div class="dcta" style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>
@@ -4516,6 +4517,11 @@ function resetProg(){
   if(!confirm('Erase ALL progress and start fresh? This cannot be undone.'))return;
   Object.keys(PROG).forEach(k=>delete PROG[k]);
   saveProg(); buildSB(); mcToast('Progress reset','\u267B\uFE0F'); dashboard();
+}
+function resetGlossProg(){
+  if(!confirm('Clear glossary mastered and needs-review lists?'))return;
+  PROG.glossWeak={}; PROG.glossMastered={};
+  saveProg(); mcToast('Glossary progress cleared','\uD83C\uDF93'); settingsView();
 }
 
 /* ===== PRINTABLE SCORE REPORT ===== */
