@@ -3900,12 +3900,22 @@ function _savedTermsFoot(){
     return '<div class="dterm-foot" onclick="event.stopPropagation();bookmarksView()">\uD83D\uDD16 '+n+' saved term'+(n===1?'':'s')+' \u00b7 Review</div>';
   }catch(e){return '';}
 }
+function openTermInGlossary(){
+  var t=document.getElementById('dterm-t');
+  var term=t?t.textContent:'';
+  if(typeof glossaryView!=='function'){return;}
+  glossaryView();
+  if(term){ setTimeout(function(){
+    var si=document.getElementById('gsrch');
+    if(si){ si.value=term; if(typeof glossaryFilter==='function')glossaryFilter((APP&&APP.gcat)||'All',term); }
+  },30); }
+}
 function _termOfDayHTML(){
   if(typeof GLOSSARY==='undefined'||!GLOSSARY.length)return '';
   var idx=Math.floor(Date.now()/864e5)%GLOSSARY.length;
   var g=GLOSSARY[idx];
   if(!g)return '';
-  return '<div class="dterm" onclick="glossaryView()"><div class="dterm-h"><span class="dterm-l">\uD83D\uDCD6 Term of the day</span><span class="dterm-cat" id="dterm-cat">'+esc(g.cat)+'</span> <button class="bm-star'+(bmHasG(g.term)?' on':'')+'" id="dterm-star" title="Save term" onclick="saveTerm(event)">'+(bmHasG(g.term)?'\u2605':'\u2606')+'</button> <button class="tip-more" onclick="shuffleTerm(event)">\uD83D\uDD00 Another</button> <button class="tip-more" onclick="copyTerm(event)">\uD83D\uDCCB Copy</button> <button class="tip-more" onclick="sayTerm(event)">\uD83D\uDD0A Hear</button></div>'
+  return '<div class="dterm" onclick="openTermInGlossary()"><div class="dterm-h"><span class="dterm-l">\uD83D\uDCD6 Term of the day</span><span class="dterm-cat" id="dterm-cat">'+esc(g.cat)+'</span> <button class="bm-star'+(bmHasG(g.term)?' on':'')+'" id="dterm-star" title="Save term" onclick="saveTerm(event)">'+(bmHasG(g.term)?'\u2605':'\u2606')+'</button> <button class="tip-more" onclick="shuffleTerm(event)">\uD83D\uDD00 Another</button> <button class="tip-more" onclick="copyTerm(event)">\uD83D\uDCCB Copy</button> <button class="tip-more" onclick="sayTerm(event)">\uD83D\uDD0A Hear</button></div>'
     +'<div class="dterm-t" id="dterm-t">'+esc(g.term)+'</div>'
     +'<div class="dterm-d" id="dterm-d">'+esc(g.def)+'</div>'+_savedTermsFoot()+'</div>';
 }
