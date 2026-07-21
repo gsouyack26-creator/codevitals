@@ -570,6 +570,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dnotes-exp:hover{border-color:var(--ac);color:var(--ac)}
 .fcstar-btn.on{background:#f59e0b;color:#fff;border-color:#f59e0b}
 .fctg-fav.on{background:#f59e0b;color:#fff}
+.fc-kbdhint{text-align:center;font-size:.7rem;color:var(--tx2);margin-top:10px}
+.fc-kbdhint b{color:var(--tx);font-weight:600}
 </style>
 <body>
 <div id="hdr">
@@ -2869,6 +2871,7 @@ function renderFC(){
       <button class="fcbtn" onclick="speakFC()" title="Read this card aloud">&#128266; Read</button>
       <button class="spk-btn" id="spk-tog" onclick="toggleSpeak()" title="Auto read-aloud on flip">Auto-read: <span id="spk-st">OFF</span></button>
     </div>
+    <div class="fc-kbdhint">Keyboard: <b>\u2190/\u2192</b> prev/next &middot; <b>Space</b> flip &middot; <b>S</b> star</div>
   </div>`;
   const _sb=document.getElementById('spk-tog');if(_sb){_sb.classList.toggle('on',speakOn());var _ss=document.getElementById('spk-st');if(_ss)_ss.textContent=speakOn()?'ON':'OFF';}
   showFC();
@@ -5796,6 +5799,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'){moveFC(1);e.preventDefault();}
   else if(e.key==='ArrowLeft'){moveFC(-1);e.preventDefault();}
   else if(e.key===' '&&document.getElementById('fci')){flipFC();e.preventDefault();}
+  else if((e.key==='s'||e.key==='S')&&typeof toggleFcFav==='function'){toggleFcFav();e.preventDefault();}
 });
 
 document.addEventListener('DOMContentLoaded',init);
