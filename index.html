@@ -3784,7 +3784,19 @@ var CPC_TIPS=[
   'Sequence the principal diagnosis first \u2014 the condition chiefly responsible for the encounter.',
   'Anesthesia codes use base units plus time units \u2014 physical status modifiers can add more.',
   'A \u201cwith\u201d in ICD-10 assumes a causal link (e.g., diabetes with CKD) unless documentation says otherwise.',
-  'Pace yourself: ~2 minutes per CPC question \u2014 flag hard ones and return rather than stalling.'
+  'Pace yourself: ~2 minutes per CPC question \u2014 flag hard ones and return rather than stalling.',
+  'Modifier 51 (multiple procedures) is appended to the lesser procedure \u2014 the payer reduces its fee, not the primary.',
+  'Modifier 26 = professional component only; TC = technical component. Global has no modifier.',
+  'For E/M new vs established: a new patient hasn\u2019t been seen by the group/specialty in 3 years.',
+  'Add-on codes (marked +) are never reported alone \u2014 they always follow a primary procedure and skip modifier 51.',
+  'Sequence the ICD-10 code for the definitive diagnosis first; use symptom codes only when no diagnosis is confirmed.',
+  'CPT category III codes (T-suffix) are for emerging tech and take priority over an unlisted code when one exists.',
+  'When coding fractures, distinguish open vs closed treatment \u2014 it is about the repair method, not the fracture type.',
+  'Modifier 57 = decision for surgery (major, 90-day global); modifier 25 pairs with minor procedures instead.',
+  'HCPCS Level II J-codes report drugs \u2014 match the exact dosage/units billed to the documentation.',
+  'A screening colonoscopy that removes a polyp becomes a therapeutic code plus modifier PT.',
+  'Read modifier 59 alternatives (XE, XS, XP, XU) \u2014 payers increasingly require the specific X modifier.',
+  'On multiple-choice, eliminate answers with the wrong code category first \u2014 it usually leaves two codes to compare.'
 ];
 function _dailyTipHTML(){
   if(PROG.examDate){
