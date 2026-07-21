@@ -667,6 +667,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 
 .dgreet-tip{margin-top:10px;padding:9px 11px;background:var(--chip,rgba(0,0,0,.04));border-radius:9px;font-size:12.5px;line-height:1.5;opacity:.9}
 .dgreet-tip-l{font-weight:700;opacity:.85;margin-right:4px}
+.tip-more{margin-left:6px;padding:1px 8px;border:1px solid var(--bd);border-radius:9px;background:none;font-size:11px;color:var(--tx2);cursor:pointer;white-space:nowrap}
+.tip-more:hover{border-color:var(--ac);color:var(--ac)}
 </style>
 <body>
 <div id="hdr">
@@ -3848,7 +3850,15 @@ function _dailyTipHTML(){
     }
   }
   var idx=Math.floor(Date.now()/864e5)%CPC_TIPS.length;
-  return '<div class="dgreet-tip"><span class="dgreet-tip-l">\uD83D\uDCA1 Tip of the day</span> '+esc(CPC_TIPS[idx])+'</div>';
+  return '<div class="dgreet-tip"><span class="dgreet-tip-l">\uD83D\uDCA1 Tip of the day</span> <span id="dgreet-tip-tx">'+esc(CPC_TIPS[idx])+'</span> <button class="tip-more" onclick="shuffleTip(event)">\uD83D\uDD00 Another</button></div>';
+}
+function shuffleTip(e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  var el=document.getElementById('dgreet-tip-tx');
+  if(!el||typeof CPC_TIPS==='undefined'||!CPC_TIPS.length)return;
+  var cur=el.textContent, tip=cur, guard=0;
+  while(tip===cur&&guard<25){tip=CPC_TIPS[Math.floor(Math.random()*CPC_TIPS.length)];guard++;}
+  el.textContent=tip;
 }
 function _masteryStatHTML(){
   if(typeof MODULES==='undefined')return '';
