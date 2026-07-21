@@ -527,6 +527,15 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 #hbg{display:none;font-size:1.15rem;line-height:1;padding:3px 10px}#sb-ov{display:none}
 @media(max-width:760px){#hbg{display:inline-flex;align-items:center}#sb{position:fixed;top:50px;left:0;bottom:0;z-index:60;transform:translateX(-100%);transition:transform .2s ease;width:80%;max-width:300px;box-shadow:2px 0 16px rgba(0,0,0,.3)}#app.sb-open #sb{transform:none}#sb-ov{position:fixed;top:50px;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:55}#app.sb-open #sb-ov{display:block}.mod-tbl{table-layout:fixed}.mod-code{white-space:normal;word-break:break-word}}
 .ce-obj{margin:6px 0 0;padding-left:20px}.ce-obj li{margin:4px 0;font-size:.9rem;color:var(--tx)}.ce-disc{font-size:.82rem;line-height:1.5}
+.mstat-card{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.mstat-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.mstat-ic{font-size:1.1rem}
+.mstat-t{font-weight:700;font-size:.95rem}
+.mstat-row{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px}
+.mstat-n{font-weight:700;color:var(--ac)}
+.mstat-bg{height:8px;background:var(--bd);border-radius:5px;overflow:hidden}
+.mstat-bf{height:100%;background:var(--ac);border-radius:5px;transition:width .4s}
+.mstat-sub{display:flex;flex-wrap:wrap;gap:12px;font-size:.75rem;color:var(--tx2);margin-top:9px}
 </style>
 <body>
 <div id="hdr">
@@ -3118,6 +3127,28 @@ function achievementsView(){
 }
 
 /* ===== MODULE MASTERY HEATMAP ===== */
+function _masteryStatHTML(){
+  if(typeof MODULES==='undefined')return '';
+  var tot=MODULES.length;
+  var done=0,mastered=0,started=0,sumPct=0;
+  MODULES.forEach(function(m){
+    var mm=moduleMastery(m);
+    sumPct+=mm.pct;
+    if(mm.done)done++;
+    if(mm.pct>=100)mastered++;
+    var pr=PROG[m.id]||{};
+    if(mm.done||pr.lastStudied||(pr.lread&&Object.keys(pr.lread).length))started++;
+  });
+  if(started===0)return '';
+  var avg=Math.round(sumPct/tot);
+  var pc=Math.round(done/tot*100);
+  return '<div class="mstat-card">'+
+    '<div class="mstat-hd"><span class="mstat-ic">\uD83C\uDF93</span><span class="mstat-t">Module Progress</span></div>'+
+    '<div class="mstat-row"><span>Completed</span><span class="mstat-n">'+done+' / '+tot+'</span></div>'+
+    '<div class="mstat-bg"><div class="mstat-bf" style="width:'+pc+'%"></div></div>'+
+    '<div class="mstat-sub"><span>\uD83C\uDF1F '+mastered+' mastered</span><span>\uD83D\uDCD6 '+started+' started</span><span>\u2248 '+avg+'% avg mastery</span></div>'+
+  '</div>';
+}
 function moduleMastery(m){
   const done=(PROG[m.id]||{}).done?1:0;
   const key=m.title.split('&amp;').join('&');
@@ -5370,6 +5401,7 @@ function dashboard(){
     ${(typeof _reviewNudgeHTML==='function')?_reviewNudgeHTML():''}
     ${(typeof _weekActivityHTML==='function')?_weekActivityHTML():''}
     ${(typeof _studyPlanHTML==='function')?_studyPlanHTML():''}
+    ${(typeof _masteryStatHTML==='function')?_masteryStatHTML():''}
     <h2 class="etitle">\uD83D\uDCCA Readiness Dashboard</h2>
     <div class="dgrid">
       <div class="dcard dring-card">
