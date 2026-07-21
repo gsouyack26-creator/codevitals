@@ -3883,9 +3883,20 @@ function _termOfDayHTML(){
   var idx=Math.floor(Date.now()/864e5)%GLOSSARY.length;
   var g=GLOSSARY[idx];
   if(!g)return '';
-  return '<div class="dterm" onclick="glossaryView()"><div class="dterm-h"><span class="dterm-l">\uD83D\uDCD6 Term of the day</span><span class="dterm-cat">'+esc(g.cat)+'</span></div>'
-    +'<div class="dterm-t">'+esc(g.term)+'</div>'
-    +'<div class="dterm-d">'+esc(g.def)+'</div></div>';
+  return '<div class="dterm" onclick="glossaryView()"><div class="dterm-h"><span class="dterm-l">\uD83D\uDCD6 Term of the day</span><span class="dterm-cat" id="dterm-cat">'+esc(g.cat)+'</span> <button class="tip-more" onclick="shuffleTerm(event)">\uD83D\uDD00 Another</button></div>'
+    +'<div class="dterm-t" id="dterm-t">'+esc(g.term)+'</div>'
+    +'<div class="dterm-d" id="dterm-d">'+esc(g.def)+'</div></div>';
+}
+function shuffleTerm(e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  if(typeof GLOSSARY==='undefined'||!GLOSSARY.length)return;
+  var t=document.getElementById('dterm-t'); if(!t)return;
+  var cur=t.textContent, g=null, guard=0;
+  do{g=GLOSSARY[Math.floor(Math.random()*GLOSSARY.length)];guard++;}while(g&&g.term===cur&&guard<25);
+  if(!g)return;
+  t.textContent=g.term;
+  var d=document.getElementById('dterm-d'); if(d)d.textContent=g.def;
+  var c=document.getElementById('dterm-cat'); if(c)c.textContent=g.cat;
 }
 function _masteryStatHTML(){
   if(typeof MODULES==='undefined')return '';
