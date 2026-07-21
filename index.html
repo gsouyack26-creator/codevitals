@@ -116,6 +116,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .dcd-lb{font-size:.95rem;display:flex;flex-direction:column;gap:2px}
 .dcd-dt{font-size:.75rem;color:var(--tx2)}
 .dcd-pace{display:block;font-size:.72rem;color:var(--ac);margin-top:2px}
+.drec-ct{font-size:.72rem;color:var(--tx2);margin-left:4px}
 .drec-foot .ok{color:var(--ok);font-weight:700}
 .drec-foot .lo{color:var(--er);font-weight:700}
 .fctgbtn.on .fctg-star{color:#fff}
@@ -3628,8 +3629,9 @@ function _recentHTML(){
   var rows=log.map(function(r){
     var ic=icons[r.type]||'\u2705';
     var pcls=r.pct>=70?'ok':'lo';
-    return '<div class="drec-row"><span class="drec-ic">'+ic+'</span>'
-      +'<span class="drec-lb">'+esc(r.label||r.type)+'</span>'
+    var ct=(typeof r.c==='number'&&typeof r.t==='number')?(r.c+'/'+r.t+' correct'):'';
+    return '<div class="drec-row" title="'+esc(ct)+'"><span class="drec-ic">'+ic+'</span>'
+      +'<span class="drec-lb">'+esc(r.label||r.type)+(ct?' <span class="drec-ct">'+r.c+'/'+r.t+'</span>':'')+'</span>'
       +'<span class="drec-pc '+pcls+'">'+r.pct+'%</span>'
       +'<span class="drec-dt">'+(typeof _relDay==='function'?_relDay(r.ts):'')+'</span></div>';
   }).join('');
