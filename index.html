@@ -6382,21 +6382,31 @@ function copyGloss(term){
   var txt=g.term+': '+g.def;
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof mcToast==='function')mcToast('Copied','\uD83D\uDCCB');}).catch(function(){});}
 }
-function exportGloss(){
-  if(typeof GLOSSARY==='undefined')return;
+function _glossShownText(){
+  if(typeof GLOSSARY==='undefined')return {n:0,txt:''};
   var cat=(APP&&APP.gcat)||'All';
   var si=document.getElementById('gsrch'); var term=(si&&si.value||'').toLowerCase();
   var savedMode=(cat==='__saved__');
   var list=GLOSSARY.filter(function(g){return (cat==='All'||savedMode||g.cat===cat)&&(!savedMode||(typeof bmHasG==='function'&&bmHasG(g.term)))&&(!term||g.term.toLowerCase().indexOf(term)>=0||g.def.toLowerCase().indexOf(term)>=0);});
   list=list.slice().sort(function(a,b){return a.term.localeCompare(b.term);});
-  if(!list.length){if(typeof mcToast==='function')mcToast('No terms to export','\u26A0');return;}
   var txt='CodeVitals Glossary Terms\n\n'+list.map(function(g){return g.term+' ['+g.cat+']\n  '+g.def;}).join('\n\n')+'\n';
+  return {n:list.length,txt:txt};
+}
+function copyGlossShown(){
+  var r=_glossShownText();
+  if(!r.n){if(typeof mcToast==='function')mcToast('No terms to copy','\u26A0');return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(r.txt).then(function(){if(typeof mcToast==='function')mcToast(r.n+' terms copied','\uD83D\uDCCB');}).catch(function(){});}
+}
+function exportGloss(){
+  var r=_glossShownText();
+  if(!r.n){if(typeof mcToast==='function')mcToast('No terms to export','\u26A0');return;}
+  var txt=r.txt;
   var blob=new Blob([txt],{type:'text/plain'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a'); a.href=url; a.download='codevitals-glossary.txt';
   document.body.appendChild(a); a.click();
   setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},100);
-  if(typeof mcToast==='function')mcToast(list.length+' terms exported','\uD83D\uDCE4');
+  if(typeof mcToast==='function')mcToast(r.n+' terms exported','\uD83D\uDCE4');
 }
 function glossaryView(){
   if(typeof GLOSSARY==='undefined'){fullView('<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Glossary</h2><p class="eintro">Coming soon.</p><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>');return;}
@@ -6404,7 +6414,7 @@ function glossaryView(){
   const chips=cats.map(c=>`<button class="gchip${c==='All'?' on':''}" data-cat="${esc(c)}" onclick="glossaryFilter('${esc(c)}','')">${esc(c)}</button>`).join('');
   const _savedN=(typeof _bm==='function')?Object.keys(_bm().gloss||{}).length:0;
   const savedChip=_savedN?`<button class="gchip gchip-saved" data-cat="__saved__" onclick="glossaryFilter('__saved__','')">\u2605 Saved (${_savedN})</button>`:'';
-  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div style="margin:8px 0"><button class="qbtn sec sm" onclick="exportGloss()">\uD83D\uDCE4 Export shown terms</button></div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
+  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div style="margin:8px 0"><button class="qbtn sec sm" onclick="exportGloss()">\uD83D\uDCE4 Export shown terms</button> <button class="qbtn sec sm" onclick="copyGlossShown()">\uD83D\uDCCB Copy shown</button></div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
   APP.gcat='All';glossaryFilter('All','');
 }
 function glossaryFilter(cat,term){
