@@ -579,6 +579,9 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dstar-t{font-weight:700;font-size:.9rem}
 .dstar-s{font-size:.76rem;color:var(--tx2);margin-top:2px}
 .dstar-go{font-size:.8rem;color:#f59e0b;font-weight:600;white-space:nowrap}
+.dgreet{margin-bottom:14px}
+.dgreet-t{font-size:1.3rem;font-weight:800;color:var(--tx)}
+.dgreet-s{font-size:.85rem;color:var(--tx2);margin-top:3px}
 </style>
 <body>
 <div id="hdr">
@@ -3382,6 +3385,15 @@ function _notesHTML(){
   }).join('');
   return '<div class="dnotes"><div class="dnotes-hd"><span>\uD83D\uDCDD My Notes</span><span class="dnotes-hd-r"><span class="dnotes-n">'+items.length+' module'+(items.length===1?'':'s')+'</span><button class="dnotes-exp" onclick="event.stopPropagation();exportNotes()">\u2b07\ufe0f Export</button></span></div>'+rows+'</div>';
 }
+function _greetHTML(){
+  var h=new Date().getHours();
+  var part=h<12?'Good morning':(h<18?'Good afternoon':'Good evening');
+  var name='';
+  try{ if(typeof ceLearner==='function'){var nm=ceLearner(false); if(nm&&nm.trim())name=', '+nm.trim().split(/\s+/)[0];} }catch(e){}
+  var streak=((PROG.streak||{}).days)||0;
+  var sub=streak>0?('\uD83D\uDD25 '+streak+'-day streak \u2014 keep it going!'):'Ready for a productive study session?';
+  return '<div class="dgreet"><div class="dgreet-t">'+part+esc(name)+'</div><div class="dgreet-s">'+sub+'</div></div>';
+}
 function _masteryStatHTML(){
   if(typeof MODULES==='undefined')return '';
   var tot=MODULES.length;
@@ -5651,6 +5663,7 @@ function dashboard(){
   const ex=PROG.exams||{};
   const exRows=Object.keys(ex).map(k=>{const d=EXAM_DEFS.find(x=>x.id===k);return `<tr><td>${esc(d?d.name:k)}</td><td style="color:${ex[k].pass?'var(--ok)':'var(--er)'};font-weight:600">${ex[k].score}%</td><td>${ex[k].pass?'\u2713 Pass':'Fail'}</td></tr>`;}).join('')||'<tr><td colspan="3" style="color:var(--tx2)">No exams taken yet.</td></tr>';
   fullView(`<div class="dash">
+    ${(typeof _greetHTML==='function')?_greetHTML():''}
     ${(typeof _jumpBackHTML==='function')?_jumpBackHTML():''}
     ${(typeof _recommendHTML==='function')?_recommendHTML():''}
     ${(typeof _reviewNudgeHTML==='function')?_reviewNudgeHTML():''}
