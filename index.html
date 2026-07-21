@@ -5078,6 +5078,12 @@ function _recommendModule(){
     if(checked>0&&checked<total){started.push({m:m,reason:'Finish what you started \u2014 '+checked+'/'+total+' objectives done'});}
   }
   if(started.length)return {m:started[0].m,reason:started[0].reason};
+  for(i=0;i<MODULES.length;i++){
+    m=MODULES[i];pr=PROG[m.id]||{};
+    var lrd=pr.lread||{};var rdN=Object.keys(lrd).filter(function(k){return lrd[k];}).length;
+    var lTot=(m.lessons||[]).length;
+    if(rdN>0&&rdN<lTot&&!pr.done)return {m:m,reason:'Finish the lecture \u2014 '+rdN+'/'+lTot+' lessons read'};
+  }
   var weakest=null,weakAcc=1,a,tp,key;
   for(i=0;i<MODULES.length;i++){
     m=MODULES[i];key=m.title.split('&amp;').join('&');
