@@ -192,6 +192,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .dstats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media(max-width:560px){.dstats{grid-template-columns:repeat(2,1fr)}}
 .dstat{text-align:center}
+.dstat.tap{cursor:pointer}
+.dstat.tap:hover{border-color:var(--ac)}
 .dsn{font-size:1.3rem;font-weight:700}
 .dsl{font-size:.68rem;color:var(--tx2);margin-top:2px}
 .dcta{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 18px}
@@ -6236,7 +6238,7 @@ function dashboard(){
         <div class="dstat"><div class="dsn">${r.passed}/${r.ek.length||0}</div><div class="dsl">Exams passed</div></div>
         <div class="dstat"><div class="dsn">\uD83D\uDD25 ${streak}</div><div class="dsl">Day streak</div></div>
         <div class="dstat"><div class="dsn">${misses}</div><div class="dsl">In miss bank</div></div>
-        <div class="dstat"><div class="dsn">\u2605 ${(typeof _fcFavCount==='function')?_fcFavCount():0}</div><div class="dsl">Starred cards</div></div>
+        <div class="dstat${((typeof _fcFavCount==='function')&&_fcFavCount()>0)?' tap':''}" ${((typeof _fcFavCount==='function')&&_fcFavCount()>0)?'onclick="reviewStarred()"':''}><div class="dsn">\u2605 ${(typeof _fcFavCount==='function')?_fcFavCount():0}</div><div class="dsl">Starred cards</div></div>
         <div class="dstat"><div class="dsn">${(function(){var ex=PROG.exams||{};var ks=Object.keys(ex);if(!ks.length)return '\u2014';var b=0;ks.forEach(function(k){if(ex[k].score>b)b=ex[k].score;});return b+'%';})()}</div><div class="dsl">Best exam</div></div>
       </div>
     </div>
