@@ -3900,7 +3900,7 @@ function _termOfDayHTML(){
   var idx=Math.floor(Date.now()/864e5)%GLOSSARY.length;
   var g=GLOSSARY[idx];
   if(!g)return '';
-  return '<div class="dterm" onclick="glossaryView()"><div class="dterm-h"><span class="dterm-l">\uD83D\uDCD6 Term of the day</span><span class="dterm-cat" id="dterm-cat">'+esc(g.cat)+'</span> <button class="bm-star'+(bmHasG(g.term)?' on':'')+'" id="dterm-star" title="Save term" onclick="saveTerm(event)">'+(bmHasG(g.term)?'\u2605':'\u2606')+'</button> <button class="tip-more" onclick="shuffleTerm(event)">\uD83D\uDD00 Another</button> <button class="tip-more" onclick="copyTerm(event)">\uD83D\uDCCB Copy</button></div>'
+  return '<div class="dterm" onclick="glossaryView()"><div class="dterm-h"><span class="dterm-l">\uD83D\uDCD6 Term of the day</span><span class="dterm-cat" id="dterm-cat">'+esc(g.cat)+'</span> <button class="bm-star'+(bmHasG(g.term)?' on':'')+'" id="dterm-star" title="Save term" onclick="saveTerm(event)">'+(bmHasG(g.term)?'\u2605':'\u2606')+'</button> <button class="tip-more" onclick="shuffleTerm(event)">\uD83D\uDD00 Another</button> <button class="tip-more" onclick="copyTerm(event)">\uD83D\uDCCB Copy</button> <button class="tip-more" onclick="sayTerm(event)">\uD83D\uDD0A Hear</button></div>'
     +'<div class="dterm-t" id="dterm-t">'+esc(g.term)+'</div>'
     +'<div class="dterm-d" id="dterm-d">'+esc(g.def)+'</div>'+_savedTermsFoot()+'</div>';
 }
@@ -3922,6 +3922,12 @@ function copyTerm(e){
   if(!t||!d)return;
   var txt=t.textContent+': '+d.textContent;
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof mcToast==='function')mcToast('Term copied');}).catch(function(){});}
+}
+function sayTerm(e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  var t=document.getElementById('dterm-t'), d=document.getElementById('dterm-d');
+  if(!t||!d)return;
+  if(typeof speak==='function')speak(t.textContent+'. '+d.textContent);
 }
 function _refreshTermStar(term){
   var b=document.getElementById('dterm-star'); if(!b)return;
