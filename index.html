@@ -550,6 +550,13 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .rcrd.rc-done .rtit::after{content:" \2713";color:var(--ok)}
 .qpbar{height:5px;background:var(--bd);border-radius:4px;overflow:hidden;margin:6px 0 12px}
 .qpbar-fill{height:100%;background:var(--ac);border-radius:4px;transition:width .3s}
+.mnote{margin:8px 0 4px}
+.mnote-ta{width:100%;min-height:90px;box-sizing:border-box;background:var(--cd);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;font:inherit;font-size:.88rem;resize:vertical}
+.mnote-ta:focus{outline:none;border-color:var(--ac)}
+.mnote-bar{display:flex;justify-content:space-between;align-items:center;margin-top:7px}
+.mnote-ct{font-size:.72rem;color:var(--tx2)}
+.mnote-btn{background:var(--ac);color:#fff;border:0;border-radius:7px;padding:7px 15px;font-size:.82rem;cursor:pointer;margin-left:6px}
+.mnote-btn.sec{background:transparent;border:1px solid var(--bd);color:var(--tx2)}
 </style>
 <body>
 <div id="hdr">
@@ -2561,6 +2568,35 @@ function gotoModuleQuiz(){
   var tabs=document.querySelectorAll('.tabs .tab');
   for(var i=0;i<tabs.length;i++){ if(/Quiz/.test(tabs[i].textContent)){ stab(tabs[i],'qv'); tabs[i].scrollIntoView({behavior:'smooth',block:'nearest'}); return; } }
 }
+function _moduleNotesBox(m){
+  var note=((PROG[m.id]||{}).note)||'';
+  return '<div class="secttl">\uD83D\uDCDD My Notes</div>'
+    +'<div class="mnote"><textarea class="mnote-ta" id="mnote-'+m.id+'" placeholder="Jot down anything you want to remember from this module\u2026" oninput="mnoteCount(\''+m.id+'\')">'+esc(note)+'</textarea>'
+    +'<div class="mnote-bar"><span class="mnote-ct" id="mnote-ct-'+m.id+'"></span>'
+    +'<span class="mnote-btns"><button class="mnote-btn" onclick="saveModNote(\''+m.id+'\')">Save</button>'
+    +'<button class="mnote-btn sec" onclick="clearModNote(\''+m.id+'\')">Clear</button></span></div></div>';
+}
+function mnoteCount(mid){
+  var ta=document.getElementById('mnote-'+mid); if(!ta)return;
+  var el=document.getElementById('mnote-ct-'+mid); if(!el)return;
+  var n=ta.value.trim().length;
+  el.textContent=n?(n+' character'+(n===1?'':'s')):'';
+}
+function saveModNote(mid){
+  var ta=document.getElementById('mnote-'+mid); if(!ta)return;
+  if(!PROG[mid])PROG[mid]={};
+  PROG[mid].note=ta.value;
+  if(typeof saveProg==='function')saveProg();
+  if(typeof mcToast==='function')mcToast('Notes saved','\uD83D\uDCBE');
+}
+function clearModNote(mid){
+  var ta=document.getElementById('mnote-'+mid);
+  if(ta)ta.value='';
+  if(PROG[mid])PROG[mid].note='';
+  if(typeof saveProg==='function')saveProg();
+  mnoteCount(mid);
+  if(typeof mcToast==='function')mcToast('Notes cleared','\uD83D\uDDD1\uFE0F');
+}
 function renderLearn(m){
   const oc=(PROG[m.id]||{}).obj||{};
   const rc=m.recap;
@@ -2610,7 +2646,7 @@ function renderLearn(m){
         <button class="lab-hint-btn" onclick="spAll(this)">Flip all</button>
       </div>`:''}
       <button class="bridge-btn" onclick="gotoTab('qv')">❓ Prove it — take the Quiz →</button>
-    </div>`:'')+_nextModCTA(m);
+    </div>`:'')+_moduleNotesBox(m)+_nextModCTA(m);
 }
 
 function ckObj(mid,idx){
