@@ -548,6 +548,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .rc-chk{font-size:.72rem;color:var(--tx2);display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
 .rcrd.rc-done{border-color:var(--ok)}
 .rcrd.rc-done .rtit::after{content:" \2713";color:var(--ok)}
+.qpbar{height:5px;background:var(--bd);border-radius:4px;overflow:hidden;margin:6px 0 12px}
+.qpbar-fill{height:100%;background:var(--ac);border-radius:4px;transition:width .3s}
 </style>
 <body>
 <div id="hdr">
@@ -2727,6 +2729,7 @@ function renderQ(){
   const opts=q.opts.map((o,i)=>`<button class="opt" onclick="ckAns(${i})">${String.fromCharCode(65+i)}. ${esc(o)}</button>`).join('');
   el.innerHTML=`<div class="qwrap">
     <div class="qprog">Question ${APP.qi+1} of ${APP.qa.length} &bull; ${esc(m.title.split('&amp;').join('&'))}</div>
+    <div class="qpbar"><div class="qpbar-fill" style="width:${Math.round(APP.qi/APP.qa.length*100)}%"></div></div>
     <div class="qcard"><div class="qq">${bmStar(q)}${esc(q.q)}</div>${opts}
     <div class="exp" id="qexp">${esc(q.exp)}</div>${confRow()}</div>
     <div class="qnav"><button class="qbtn sec" onclick="initQuiz(APP.mod)">&#8635; Restart Quiz</button></div>
