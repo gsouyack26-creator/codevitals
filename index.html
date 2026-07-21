@@ -3458,6 +3458,7 @@ function examCenter(){
       <div class="etop"><div class="ename">${esc(d.name)}</div>${badge}</div>
       <div class="esub">${esc(d.sub)}</div>
       <div class="emeta">\uD83D\uDCDD ${n} questions &bull; \u23F1\uFE0F ${d.min} min &bull; \uD83C\uDFAF Pass ${Math.round(d.pass*100)}%</div>
+      ${(best&&best.attempts)?`<div class="emeta" style="opacity:.85">\uD83D\uDD01 ${best.attempts} attempt${best.attempts===1?'':'s'}${best.lastScore!=null?' &bull; last '+best.lastScore+'%':''}</div>`:''}
       <button class="qbtn" style="margin-top:10px;width:100%" onclick="examStart('${d.id}')">Start Exam</button>
     </div>`;
   }).join('');
@@ -3541,7 +3542,12 @@ function examSubmit(timeUp){
   const passed=pctv>=Math.round(ex.def.pass*100);
   PROG.exams=PROG.exams||{};
   const prev=PROG.exams[ex.def.id];
-  if(!prev||pctv>prev.score)PROG.exams[ex.def.id]={score:pctv,pass:passed,date:new Date().toISOString().slice(0,10)};
+  const _today=new Date().toISOString().slice(0,10);
+  const rec=prev||{score:0,pass:false,date:_today,attempts:0};
+  rec.attempts=(rec.attempts||0)+1;
+  rec.lastScore=pctv; rec.lastPass=passed; rec.lastDate=_today;
+  if(pctv>=rec.score){rec.score=pctv; rec.pass=passed; rec.date=_today;}
+  PROG.exams[ex.def.id]=rec;
   logRun('exam',ex.def.name,correct,ex.qs.length);
   saveProg();
   if(typeof checkAchievements==='function')checkAchievements();
