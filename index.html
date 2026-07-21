@@ -3404,6 +3404,7 @@ function examCenter(){
   }).join('');
   el.innerHTML=`<div class="ecenter">
     <h2 class="etitle">\uD83D\uDCDA Exam Center</h2>
+    ${(PROG.examDate&&typeof _countdownHTML==='function')?_countdownHTML():''}
     <p class="eintro">Timed, scored practice exams that simulate the real certification. Answer all questions (skip and come back using the palette), then submit to see your score, pass/fail, and a full answer review. Question pool: ${pool} vetted questions, freshly shuffled each attempt.</p>
     ${(typeof _resumeBannerHTML==='function')?_resumeBannerHTML():''}
     <div class="egrid">${cards}</div>
