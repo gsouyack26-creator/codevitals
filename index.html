@@ -33,6 +33,7 @@ a{color:var(--ac)}button{cursor:pointer;font-family:inherit}
 .mi.sel .mmet{color:rgba(255,255,255,.7)}.mpct{opacity:.85}.mbar{height:3px;border-radius:3px;background:rgba(255,255,255,.15);margin-top:4px;overflow:hidden}.mbar-fill{height:100%;border-radius:3px;background:var(--ac);transition:width .3s}.mbar-fill.full{background:var(--ok)}
 .mchip{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.02em;padding:1px 6px;border-radius:8px;margin-top:4px;text-transform:uppercase}.mchip.done{background:rgba(52,211,153,.22);color:#6ee7b7}.mchip.almost{background:rgba(96,165,250,.22);color:#93c5fd}.mchip.prog{background:rgba(251,191,36,.2);color:#fcd34d}
 .lread{margin:6px 0 14px;padding:10px 12px;background:var(--cardbg,rgba(127,127,127,.06));border:1px solid var(--bd);border-radius:10px}.lread-lbl{display:flex;justify-content:space-between;font-size:.75rem;font-weight:600;color:var(--tx2,#888);margin-bottom:5px}.lread-bar{height:5px;border-radius:5px;background:rgba(127,127,127,.2);overflow:hidden}.lread-fill{height:100%;border-radius:5px;background:var(--ac);transition:width .3s}.lread-fill.full{background:var(--ok)}
+.weekact{margin:6px 0 14px;padding:12px 14px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;background:var(--cardbg,rgba(127,127,127,.05))}.weekact.ok{border-left-color:var(--ok)}.weekact.wn{border-left-color:var(--wn)}.wa-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.wa-ttl{font-weight:700;font-size:.92rem}.wa-cnt{font-size:.8rem;font-weight:700;color:var(--tx2)}.wa-msg{font-size:.82rem;color:var(--tx2);line-height:1.4}.wa-pills{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px}.wa-pill{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:10px;background:rgba(127,127,127,.14);color:var(--tx2)}
 .mdot{width:9px;height:9px;border-radius:50%;border:2px solid var(--bd);flex-shrink:0;transition:all .25s;margin-top:5px}
 .mdot.done{background:var(--ok);border-color:var(--ok)}
 .minfo{flex:1;min-width:0}
@@ -5196,6 +5197,20 @@ function readiness(){
   let score=ek.length?(modPct*.35+acc*.30+examAvg*.35):(modPct*.5+acc*.5);
   return {pct:Math.round(score*100),modDone,modPct,acc,examAvg,ek,passed,st};
 }
+function _weekActivityHTML(){
+  if(typeof MODULES==='undefined')return '';
+  var now=Date.now(), wk=7*24*60*60*1000;
+  var studied=MODULES.filter(function(m){var ls=(PROG[m.id]||{}).lastStudied;return ls&&(now-ls)<wk;});
+  var n=studied.length, tot=MODULES.length;
+  var todayN=0, ds=new Date(); ds.setHours(0,0,0,0); var dayStart=ds.getTime();
+  MODULES.forEach(function(m){var ls=(PROG[m.id]||{}).lastStudied;if(ls&&ls>=dayStart)todayN++;});
+  var msg, cls;
+  if(todayN>0){cls='ok';msg='\u2705 You studied '+todayN+' module'+(todayN>1?'s':'')+' today. Nice work — keep the streak alive!';}
+  else if(n>0){cls='wn';msg='\uD83D\uDCDA You have touched '+n+' module'+(n>1?'s':'')+' this week, but none today. Open one to keep momentum.';}
+  else {cls='';msg='\uD83D\uDC4B Ready to learn? Open any module to start your week strong.';}
+  var pills=studied.slice(0,6).map(function(m){return '<span class="wa-pill">'+esc(m.title.split("&amp;").join("&"))+'</span>';}).join('');
+  return '<div class="weekact '+cls+'"><div class="wa-hd"><span class="wa-ttl">This Week in Modules</span><span class="wa-cnt">'+n+' / '+tot+'</span></div><div class="wa-msg">'+msg+'</div>'+(pills?'<div class="wa-pills">'+pills+'</div>':'')+'</div>';
+}
 function dashboard(){
   snapTrend();
   const r=readiness();
@@ -5212,6 +5227,7 @@ function dashboard(){
     ${(typeof _jumpBackHTML==='function')?_jumpBackHTML():''}
     ${(typeof _recommendHTML==='function')?_recommendHTML():''}
     ${(typeof _reviewNudgeHTML==='function')?_reviewNudgeHTML():''}
+    ${(typeof _weekActivityHTML==='function')?_weekActivityHTML():''}
     <h2 class="etitle">\uD83D\uDCCA Readiness Dashboard</h2>
     <div class="dgrid">
       <div class="dcard dring-card">
