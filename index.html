@@ -4397,6 +4397,9 @@ function bmStar(q){
   return `<button class="bm-star${on?' on':''}" title="Save to study later" onclick='bmToggleQ(${JSON.stringify({q:q.q,opts:q.opts,ans:q.ans,exp:q.exp,mod:q.mod||(APP.mod&&APP.mod.id)}).split("'").join("&#39;")},this)'>${on?'\u2605':'\u2606'}</button>`;
 }
 function _gweak(){ PROG.glossWeak=PROG.glossWeak||{}; return PROG.glossWeak; }
+function _gmaster(){ PROG.glossMastered=PROG.glossMastered||{}; return PROG.glossMastered; }
+var _glossUniqN=0;
+function _glossTotal(){ if(_glossUniqN)return _glossUniqN; if(typeof GLOSSARY==='undefined')return 0; var seen={},n=0; for(var i=0;i<GLOSSARY.length;i++){var t=GLOSSARY[i].term; if(!seen[t]){seen[t]=1;n++;}} _glossUniqN=n; return n; }
 function bmToggleQ(q,btn){
   const b=_bm(); const id=qid(q);
   if(b.q[id]){delete b.q[id];btn.classList.remove('on');btn.textContent='\u2606';}
@@ -6486,8 +6489,8 @@ function gqRender(){
   fullView(html);
 }
 function gqReveal(){ if(APP.gquiz){APP.gquiz.revealed=true;gqRender();} }
-function gqGot(){ var q=APP.gquiz; if(!q)return; q.got=(q.got||0)+1; var g=q.list[q.i]; if(g&&typeof _gweak==='function'&&_gweak()[g.term]){delete _gweak()[g.term]; if(typeof saveProg==='function')saveProg();} gqNext(); }
-function gqMissed(){ var q=APP.gquiz; if(!q)return; q.missed=(q.missed||0)+1; var g=q.list[q.i]; if(g){ if(!q.missedList)q.missedList=[]; if(q.missedList.indexOf(g.term)<0)q.missedList.push(g.term); if(typeof _gweak==='function'){_gweak()[g.term]={term:g.term,def:g.def,cat:g.cat}; if(typeof saveProg==='function')saveProg();} if(typeof _bm==='function'&&!_bm().gloss[g.term]){_bm().gloss[g.term]={term:g.term,def:g.def,cat:g.cat}; if(typeof saveProg==='function')saveProg();} } gqNext(); }
+function gqGot(){ var q=APP.gquiz; if(!q)return; q.got=(q.got||0)+1; var g=q.list[q.i]; if(g){ var ch=false; if(typeof _gweak==='function'&&_gweak()[g.term]){delete _gweak()[g.term];ch=true;} if(typeof _gmaster==='function'&&!_gmaster()[g.term]){_gmaster()[g.term]=1;ch=true;} if(ch&&typeof saveProg==='function')saveProg(); } gqNext(); }
+function gqMissed(){ var q=APP.gquiz; if(!q)return; q.missed=(q.missed||0)+1; var g=q.list[q.i]; if(g){ if(!q.missedList)q.missedList=[]; if(q.missedList.indexOf(g.term)<0)q.missedList.push(g.term); if(typeof _gweak==='function'){_gweak()[g.term]={term:g.term,def:g.def,cat:g.cat};} if(typeof _gmaster==='function'&&_gmaster()[g.term])delete _gmaster()[g.term]; if(typeof saveProg==='function')saveProg(); if(typeof _bm==='function'&&!_bm().gloss[g.term]){_bm().gloss[g.term]={term:g.term,def:g.def,cat:g.cat}; if(typeof saveProg==='function')saveProg();} } gqNext(); }
 function gqSave(){
   var q=APP.gquiz; if(!q)return; var g=q.list[q.i]; if(!g)return;
   var btn=document.getElementById('gq-star');
@@ -6529,7 +6532,7 @@ function glossaryView(){
   const savedChip=_savedN?`<button class="gchip gchip-saved" data-cat="__saved__" onclick="glossaryFilter('__saved__','')">\u2605 Saved (${_savedN})</button>`:'';
   const _weakN=(typeof _gweak==='function')?Object.keys(_gweak()||{}).length:0;
   const weakBtn=_weakN?` <button class="qbtn sec sm" onclick="glossaryQuizWeak()">\u26a0\uFE0F Weak terms (${_weakN})</button>`:'';
-  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div style="margin:8px 0"><button class="qbtn sec sm" onclick="exportGloss()">\uD83D\uDCE4 Export shown terms</button> <button class="qbtn sec sm" onclick="copyGlossShown()">\uD83D\uDCCB Copy shown</button> <button class="qbtn sec sm" onclick="glossaryRandom()">\uD83C\uDFB2 Random term</button> <button class="qbtn sec sm" onclick="glossaryQuiz()">\uD83E\uDDE0 Quiz me</button>${weakBtn}</div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
+  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p>${(function(){var m=(typeof _gmaster==='function')?Object.keys(_gmaster()||{}).length:0;var t=(typeof _glossTotal==='function')?_glossTotal():GLOSSARY.length;var pct=t?Math.round(m/t*100):0;return m>0?`<div style="max-width:420px;margin:0 auto 10px"><div style="display:flex;justify-content:space-between;font-size:.82rem;color:var(--tx2);margin-bottom:4px"><span>\uD83C\uDF93 Mastered ${m} of ${t}</span><span>${pct}%</span></div><div style="height:8px;background:var(--bd);border-radius:5px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--ok);transition:width .3s"></div></div></div>`:'';})()}<input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div style="margin:8px 0"><button class="qbtn sec sm" onclick="exportGloss()">\uD83D\uDCE4 Export shown terms</button> <button class="qbtn sec sm" onclick="copyGlossShown()">\uD83D\uDCCB Copy shown</button> <button class="qbtn sec sm" onclick="glossaryRandom()">\uD83C\uDFB2 Random term</button> <button class="qbtn sec sm" onclick="glossaryQuiz()">\uD83E\uDDE0 Quiz me</button>${weakBtn}</div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
   APP.gcat='All';glossaryFilter('All','');
 }
 function glossaryFilter(cat,term){
