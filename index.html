@@ -6445,6 +6445,14 @@ function copyGlossShown(){
   if(!r.n){if(typeof mcToast==='function')mcToast('No terms to copy','\u26A0');return;}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(r.txt).then(function(){if(typeof mcToast==='function')mcToast(r.n+' terms copied','\uD83D\uDCCB');}).catch(function(){});}
 }
+function glossaryRandom(){
+  if(typeof GLOSSARY==='undefined'||!GLOSSARY.length)return;
+  var g=GLOSSARY[Math.floor(Math.random()*GLOSSARY.length)];
+  var si=document.getElementById('gsrch');
+  if(si)si.value=g.term;
+  if(typeof glossaryFilter==='function')glossaryFilter('All',g.term);
+  if(typeof mcToast==='function')mcToast('Random: '+g.term,'\uD83C\uDFB2');
+}
 function exportGloss(){
   var r=_glossShownText();
   if(!r.n){if(typeof mcToast==='function')mcToast('No terms to export','\u26A0');return;}
@@ -6462,7 +6470,7 @@ function glossaryView(){
   const chips=cats.map(c=>`<button class="gchip${c==='All'?' on':''}" data-cat="${esc(c)}" onclick="glossaryFilter('${esc(c)}','')">${esc(c)}</button>`).join('');
   const _savedN=(typeof _bm==='function')?Object.keys(_bm().gloss||{}).length:0;
   const savedChip=_savedN?`<button class="gchip gchip-saved" data-cat="__saved__" onclick="glossaryFilter('__saved__','')">\u2605 Saved (${_savedN})</button>`:'';
-  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div style="margin:8px 0"><button class="qbtn sec sm" onclick="exportGloss()">\uD83D\uDCE4 Export shown terms</button> <button class="qbtn sec sm" onclick="copyGlossShown()">\uD83D\uDCCB Copy shown</button></div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
+  fullView(`<div class="ecenter"><h2 class="etitle">\uD83D\uDCD6 Terminology Glossary</h2><p class="eintro">${GLOSSARY.length} prefixes, suffixes, roots, abbreviations, and coding terms. Filter by category or search.</p><input id="gsrch" class="gsrch" type="search" placeholder="Search terms or definitions..." oninput="glossaryFilter(APP.gcat||'All',this.value)"><div class="gchips">${chips}${savedChip}</div><div style="margin:8px 0"><button class="qbtn sec sm" onclick="exportGloss()">\uD83D\uDCE4 Export shown terms</button> <button class="qbtn sec sm" onclick="copyGlossShown()">\uD83D\uDCCB Copy shown</button> <button class="qbtn sec sm" onclick="glossaryRandom()">\uD83C\uDFB2 Random term</button></div><div id="glist"></div><button class="qbtn sec" style="margin-top:16px" onclick="dashboard()">\u2190 Dashboard</button></div>`);
   APP.gcat='All';glossaryFilter('All','');
 }
 function glossaryFilter(cat,term){
