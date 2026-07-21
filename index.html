@@ -3782,6 +3782,15 @@ const MODIFIERS=[
   {m:"FA, F1\u2013F9",n:"Finger modifiers (FA = left thumb through F9 = right fifth finger)",ex:"A nail procedure on the left index finger uses F1."},
   {m:"TA, T1\u2013T9",n:"Toe modifiers (TA = left great toe through T9 = right fifth toe)",ex:"A matrixectomy of the right great toe uses T5."},
   {m:"LC, LD, RC, LM",n:"Coronary artery modifiers (left circumflex, left anterior descending, right coronary, left main)",ex:"A stent placed in the LAD is reported with modifier LD."}
+ ]},
+
+ {cat:"Preventive, Telehealth & Liability",items:[
+  {m:"33",n:"Preventive service \u2014 identifies a service furnished as preventive under the ACA, waiving patient cost-sharing",ex:"A screening colonoscopy on a commercial plan is reported with modifier 33 so the patient owes no coinsurance."},
+  {m:"PT",n:"Colorectal cancer screening test converted to a diagnostic or therapeutic procedure (Medicare)",ex:"A Medicare screening colonoscopy during which a polyp is removed appends PT to the therapeutic code."},
+  {m:"GA",n:"Waiver of liability statement (ABN) issued as required by payer policy",ex:"An item likely to be denied as not medically necessary, with a signed ABN on file, is billed with GA."},
+  {m:"GX",n:"Notice of liability issued voluntarily for a statutorily excluded/non-covered service",ex:"A service Medicare never covers, with a voluntary ABN given, is reported with GX."},
+  {m:"XE, XS, XP, XU",n:"NCCI 'X{EPSU}' subsets of modifier 59 \u2014 separate Encounter, Structure, Practitioner, or Unusual non-overlapping service",ex:"Two distinct services at separate encounters the same day may use XE instead of the broad modifier 59."},
+  {m:"GT / 95",n:"Telehealth delivery \u2014 GT (interactive audio-video, some payers) or 95 (synchronous telemedicine)",ex:"A real-time video visit is reported with modifier 95 and an appropriate telehealth place of service."}
  ]}
 ];
 const GUIDES=[
@@ -3818,6 +3827,13 @@ const GUIDES=[
   {t:"Principal vs first-listed diagnosis",d:"<b>Principal diagnosis</b> (inpatient) = the condition established after study chiefly responsible for the admission. <b>First-listed diagnosis</b> (outpatient) = the main reason for the encounter. They follow different rules \u2014 uncertain diagnoses may be coded as principal for inpatients but NOT for outpatients.",ex:"An outpatient 'rule-out MI' is coded by symptoms; an inpatient work-up documented as 'probable MI' at discharge may be coded as the principal diagnosis."},
   {t:"Two-midnight rule (inpatient vs observation)",d:"Medicare's two-midnight benchmark guides whether a stay is billed as inpatient (expected to span two midnights of medically necessary care) versus outpatient/observation. It affects the claim type (UB-04 inpatient vs outpatient) and payment system (IPPS vs OPPS).",ex:"A patient expected to need care spanning two midnights supports an inpatient admission order; a shorter expected stay is typically observation."},
   {t:"Sequencing of Z-codes",d:"Some Z-codes may only be first-listed (e.g., Z51.11 chemo encounter), some only secondary (e.g., many status/history Z-codes), and some either. Always check the guideline notes for a Z-code's permitted sequencing.",ex:"Z51.11 is first-listed for a chemo-administration visit, while Z85.- personal history codes are secondary."}
+ ]},
+
+ {cat:"Sequencing & Symptom Rules",items:[
+  {t:"Chemotherapy / therapy encounter sequencing",d:"When an encounter is solely for chemotherapy, immunotherapy, or radiation therapy, sequence the appropriate <b>Z51.-</b> code first (Z51.11 chemo, Z51.12 immunotherapy, Z51.0 radiation), then the malignancy being treated. If the patient is admitted for a complication of the therapy, the complication is sequenced first.",ex:"A visit only for IV chemo: Z51.11 first, then the neoplasm code. But if admitted for dehydration from chemo, the dehydration is first."},
+  {t:"Signs & symptoms integral to a disease",d:"Do not code signs and symptoms that are <b>routinely associated with (integral to)</b> a confirmed diagnosis. DO code additional symptoms that are not typically part of the disease process.",ex:"Do not separately code abdominal pain with appendicitis (integral); do code an unrelated symptom the disease would not normally cause."},
+  {t:"Acute vs chronic \u2014 same condition",d:"When the same condition is documented as both acute (subacute) and chronic, and separate subentries exist in the Alphabetic Index at the same indentation level, code <b>both</b> and sequence the <b>acute</b> code first.",ex:"Acute and chronic cholecystitis: assign both codes, listing the acute code first."},
+  {t:"Laterality \u2014 unspecified vs bilateral",d:"When ICD-10-CM provides laterality, code the documented side. If no bilateral code exists but both sides are affected, assign separate right and left codes. Use the unspecified-side code only when the record truly does not state the side.",ex:"Bilateral primary osteoarthritis of the knee has a specific bilateral code; if only 'right' is documented, use the right-side code, never unspecified."}
  ]}
 ];
 const HYCODES=[
