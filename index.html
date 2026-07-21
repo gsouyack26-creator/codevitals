@@ -536,6 +536,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .mstat-bg{height:8px;background:var(--bd);border-radius:5px;overflow:hidden}
 .mstat-bf{height:100%;background:var(--ac);border-radius:5px;transition:width .4s}
 .mstat-sub{display:flex;flex-wrap:wrap;gap:12px;font-size:.75rem;color:var(--tx2);margin-top:9px}
+.lread-left{color:var(--wn);font-weight:600}
 </style>
 <body>
 <div id="hdr">
@@ -2595,9 +2596,11 @@ function _lreadBar(m){
   const rd=Object.keys(lr).filter(function(k){return lr[k];}).length;
   const pct=Math.round(rd/tot*100);
   const totMin=(m.lessons||[]).reduce(function(a,l){return a+parseInt(_lesMin(l),10);},0);
+  const leftMin=(m.lessons||[]).reduce(function(a,l,i){return a+(lr[i]?0:parseInt(_lesMin(l),10));},0);
+  const leftTxt=(rd>0&&rd<tot)?` &middot; <span class="lread-left">~${leftMin} min left</span>`:'';
   const cont=(rd>0&&rd<tot)?`<button class="lread-cont" onclick="continueReading('${m.id}')">Continue reading &rarr;</button>`:'';
   const exp=(tot>1)?`<button class="lread-exp" onclick="toggleAllLessons('${m.id}',this)">Expand all</button>`:'';
-  return `<div class="lread" id="lread-${m.id}"><div class="lread-lbl"><span>${rd} of ${tot} lessons read &middot; ~${totMin} min total</span><span>${pct}%</span></div><div class="lread-bar"><div class="lread-fill${pct>=100?' full':''}" style="width:${pct}%"></div></div><div class="lread-btns">${cont}${exp}</div></div>`;
+  return `<div class="lread" id="lread-${m.id}"><div class="lread-lbl"><span>${rd} of ${tot} lessons read &middot; ~${totMin} min total${leftTxt}</span><span>${pct}%</span></div><div class="lread-bar"><div class="lread-fill${pct>=100?' full':''}" style="width:${pct}%"></div></div><div class="lread-btns">${cont}${exp}</div></div>`;
 }
 function toggleAllLessons(mid,btn){
   var lessons=document.querySelectorAll('#lv .les');
