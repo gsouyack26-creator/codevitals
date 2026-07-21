@@ -619,6 +619,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 
 .dstar-clr{margin-left:auto;background:transparent;border:1px solid var(--line,#ccc);color:var(--tx,#555);font-size:11px;font-weight:600;border-radius:7px;padding:3px 9px;cursor:pointer;opacity:.7}
 .dstar-clr:hover{opacity:1;border-color:#d1435b;color:#d1435b}
+
+.mnote-saved{font-size:11px;opacity:.55;margin-left:8px}
 </style>
 <body>
 <div id="hdr">
@@ -2635,25 +2637,39 @@ function gotoModuleQuiz(){
   var tabs=document.querySelectorAll('.tabs .tab');
   for(var i=0;i<tabs.length;i++){ if(/Quiz/.test(tabs[i].textContent)){ stab(tabs[i],'qv'); tabs[i].scrollIntoView({behavior:'smooth',block:'nearest'}); return; } }
 }
+function _noteSavedTxt(mid){
+  var ts=(PROG[mid]||{}).noteTs;
+  if(!ts)return '';
+  return 'saved '+(typeof _relDay==='function'?_relDay(ts):'');
+}
+function _refreshNoteTs(mid){
+  var el=document.getElementById('mnote-saved-'+mid);
+  if(el)el.textContent=_noteSavedTxt(mid);
+}
 function _moduleNotesBox(m){
   var note=((PROG[m.id]||{}).note)||'';
   return '<div class="secttl">\uD83D\uDCDD My Notes</div>'
     +'<div class="mnote"><textarea class="mnote-ta" id="mnote-'+m.id+'" placeholder="Jot down anything you want to remember from this module\u2026" oninput="mnoteCount(\''+m.id+'\')">'+esc(note)+'</textarea>'
     +'<div class="mnote-bar"><span class="mnote-ct" id="mnote-ct-'+m.id+'"></span>'
+    +'<span class="mnote-saved" id="mnote-saved-'+m.id+'">'+_noteSavedTxt(m.id)+'</span>'
     +'<span class="mnote-btns"><button class="mnote-btn" onclick="saveModNote(\''+m.id+'\')">Save</button>'
     +'<button class="mnote-btn sec" onclick="clearModNote(\''+m.id+'\')">Clear</button></span></div></div>';
 }
 function mnoteCount(mid){
   var ta=document.getElementById('mnote-'+mid); if(!ta)return;
   var el=document.getElementById('mnote-ct-'+mid); if(!el)return;
-  var n=ta.value.trim().length;
-  el.textContent=n?(n+' character'+(n===1?'':'s')):'';
+  var t=ta.value.trim();
+  var n=t.length;
+  var w=t?t.split(/\s+/).length:0;
+  el.textContent=n?(w+' word'+(w===1?'':'s')+' \u00b7 '+n+' char'+(n===1?'':'s')):'';
 }
 function saveModNote(mid){
   var ta=document.getElementById('mnote-'+mid); if(!ta)return;
   if(!PROG[mid])PROG[mid]={};
   PROG[mid].note=ta.value;
+  PROG[mid].noteTs=Date.now();
   if(typeof saveProg==='function')saveProg();
+  if(typeof _refreshNoteTs==='function')_refreshNoteTs(mid);
   if(typeof mcToast==='function')mcToast('Notes saved','\uD83D\uDCBE');
 }
 function clearModNote(mid){
