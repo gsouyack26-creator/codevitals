@@ -2808,6 +2808,7 @@ function renderFC(){
     <div class="fc-seenwrap"><div class="fc-seenbar"><div class="fc-seenfill" id="fc-seenfill"></div></div><div class="fc-seentxt" id="fc-seentxt"></div></div>
     <div style="text-align:center;margin-top:8px;display:flex;gap:8px;justify-content:center">
       <button class="fcbtn" onclick="shuffleFC()">&#128256; Shuffle</button>
+      <button class="fcbtn" onclick="nextUnseenFC()">&#128269; Next unseen</button>
       <button class="fcbtn" onclick="moveFC(-APP.fi)">&#9199; Reset</button>
       <button class="fcbtn" onclick="speakFC()" title="Read this card aloud">&#128266; Read</button>
       <button class="spk-btn" id="spk-tog" onclick="toggleSpeak()" title="Auto read-aloud on flip">Auto-read: <span id="spk-st">OFF</span></button>
@@ -2838,6 +2839,16 @@ function showFC(){
 
 function flipFC(){document.getElementById('fci').classList.toggle('fl');fcAutoRead();}
 
+function nextUnseenFC(){
+  if(!APP.fCards||!APP.fCards.length)return;
+  if(!APP.fcSeen)APP.fcSeen={};
+  var n=APP.fCards.length;
+  for(var step=1;step<=n;step++){
+    var i=(APP.fi+step)%n;
+    if(!APP.fcSeen[APP.fCards[i].front]){APP.fi=i;showFC();if(typeof fcAutoRead==='function')fcAutoRead();return;}
+  }
+  if(typeof mcToast==='function')mcToast('You have seen every card in this set!','\uD83C\uDCCF');
+}
 function moveFC(d){
   APP.fi=((APP.fi+d)%APP.fCards.length+APP.fCards.length)%APP.fCards.length;
   showFC();fcAutoRead();
