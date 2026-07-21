@@ -6303,10 +6303,11 @@ document.addEventListener('keydown',e=>{
   else if((e.key==='p'||e.key==='P')&&typeof printFC==='function'){printFC();e.preventDefault();}
   else if((e.key==='c'||e.key==='C')&&typeof copyFC==='function'){copyFC();e.preventDefault();}
   else if(e.key==='g'||e.key==='G'){var ji=document.getElementById('fc-jump');if(ji){ji.focus();ji.select();e.preventDefault();}}
+  else if((e.key==='r'||e.key==='R')&&typeof toggleReverse==='function'){toggleReverse();e.preventDefault();}
 });
 
 var _KBDHELP=[
-  {sec:'Flashcards',rows:[['\u2190 / \u2192','Previous / next card'],['Space','Flip card'],['S','Star / unstar card'],['/','Search cards'],['P','Print study sheet'],['C','Copy this card'],['G','Go to card number']]},
+  {sec:'Flashcards',rows:[['\u2190 / \u2192','Previous / next card'],['Space','Flip card'],['S','Star / unstar card'],['/','Search cards'],['P','Print study sheet'],['C','Copy this card'],['G','Go to card number'],['R','Reverse mode']]},
   {sec:'Quiz',rows:[['1 \u2013 9','Pick answer by number'],['A \u2013 I','Pick answer by letter']]},
   {sec:'Practice exam',rows:[['\u2190 / \u2192','Previous / next question'],['1 \u2013 9','Pick answer']]},
   {sec:'Anywhere',rows:[['?','Show / hide this help']]}
