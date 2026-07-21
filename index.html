@@ -2660,7 +2660,20 @@ function _moduleNotesBox(m){
     +'<div class="mnote-bar"><span class="mnote-ct" id="mnote-ct-'+m.id+'"></span>'
     +'<span class="mnote-saved" id="mnote-saved-'+m.id+'">'+_noteSavedTxt(m.id)+'</span>'
     +'<span class="mnote-btns"><button class="mnote-btn" onclick="saveModNote(\''+m.id+'\')">Save</button>'
+    +'<button class="mnote-btn sec" onclick="copyModNote(\''+m.id+'\')">Copy</button>'
     +'<button class="mnote-btn sec" onclick="clearModNote(\''+m.id+'\')">Clear</button></span></div></div>';
+}
+function copyModNote(mid){
+  var ta=document.getElementById('mnote-'+mid); if(!ta)return;
+  var txt=(ta.value||'').trim();
+  if(!txt){if(typeof mcToast==='function')mcToast('Nothing to copy yet','\uD83D\uDCDD');return;}
+  function done(){if(typeof mcToast==='function')mcToast('Notes copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done,function(){_fallbackCopy(txt);done();});
+  }else{_fallbackCopy(txt);done();}
+}
+function _fallbackCopy(txt){
+  try{var t=document.createElement('textarea');t.value=txt;t.style.position='fixed';t.style.left='-9999px';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);}catch(e){}
 }
 function mnoteCount(mid){
   var ta=document.getElementById('mnote-'+mid); if(!ta)return;
