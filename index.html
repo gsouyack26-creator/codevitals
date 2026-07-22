@@ -4856,6 +4856,9 @@ function _pbCards(){
   const _stMs=(PROG.analytics&&PROG.analytics.time&&PROG.analytics.time.sum)||0;
   const _stMin=Math.round(_stMs/60000);
   const _stLbl=_stMs<60000?'<1m':(_stMin>=60?Math.floor(_stMin/60)+'h '+(_stMin%60)+'m':_stMin+'m');
+  const _covSeen=(typeof PROG.sr==='object'&&PROG.sr)?Object.keys(PROG.sr).length:0;
+  const _covTot=(typeof examPool==='function')?examPool().length:0;
+  const _covPct=_covTot?Math.round(_covSeen/_covTot*100):0;
   const tiles=[
     {n:r.pct+'%',l:'Readiness',ic:'\uD83E\uDE7A'},
     {n:exBest+'%',l:'Best exam',ic:'\uD83D\uDCDA'},
@@ -4866,7 +4869,8 @@ function _pbCards(){
     {n:dLongest||'\u2014',l:'Longest daily',ic:'\uD83C\uDFC6'},
     {n:dDays||'\u2014',l:'Days completed',ic:'\uD83D\uDCC5'},
     {n:(PROG.streak||{}).days||0,l:'Study streak',ic:'\uD83D\uDCC6'},
-    {n:_stMs?_stLbl:'\u2014',l:'Study time',ic:'\u23F1\uFE0F'}
+    {n:_stMs?_stLbl:'\u2014',l:'Study time',ic:'\u23F1\uFE0F'},
+    {n:_covSeen?(_covPct+'%'):'\u2014',l:'Question coverage',ic:'\uD83D\uDDFA\uFE0F'}
   ];
   return `<div class="pbgrid">${tiles.map(t=>`<div class="pbtile"><div class="pbic">${t.ic}</div><div class="pbn">${t.n}</div><div class="pbl">${t.l}</div></div>`).join('')}</div>`;
 }
