@@ -5723,19 +5723,43 @@ function codeLookup(){
 function guidelinesRef(){
   var body=GUIDES.map(function(g){
     var rows=g.items.map(function(x){
-      return '<tr><td class="gd-cell"><div class="gd-t">'+esc(x.t)+'</div>'
+      var sv=(x.t+" "+x.d+" "+x.ex).toLowerCase();
+      return '<tr class="grow" data-cat="'+esc(g.cat)+'" data-s="'+esc(sv)+'"><td class="gd-cell"><div class="gd-t">'+esc(x.t)+'</div>'
         +'<div class="gd-d">'+esc(x.d)+'</div>'
         +'<div class="gd-ex"><b>Example:</b> '+esc(x.ex)+'</div></td></tr>';
     }).join("");
-    return '<div class="mod-cat">'+esc(g.cat)+'</div>'
-      +'<table class="mod-tbl gd-tbl"><tbody>'+rows+'</tbody></table>';
+    return '<div class="mod-cat gcat" data-cat="'+esc(g.cat)+'">'+esc(g.cat)+'</div>'
+      +'<table class="mod-tbl gd-tbl gtbl" data-cat="'+esc(g.cat)+'"><tbody>'+rows+'</tbody></table>';
   }).join("");
   fullView('<div class="ecenter">'
     +'<h2 class="etitle">\uD83D\uDCD0 Coding Guidelines Quick Reference</h2>'
     +'<p class="eintro">The ICD-10-CM conventions and CPT concepts that the CPC exam tests most \u2014 sequencing rules, 7th characters, combination codes, laterality, the surgical package, and 2021+ E/M. These are guideline summaries; always confirm against the current Official Guidelines for Coding and Reporting and CPT instructions.</p>'
+    +'<input class="hy-search" type="text" placeholder="\uD83D\uDD0D Search guideline or example\u2026" oninput="_gdFilter(this.value)">'
+    +'<div id="gd-count" class="hy-count" style="display:none"></div>'
     +body
+    +'<div id="gd-none" style="display:none;color:var(--tx2);padding:14px 4px">No matching guidelines.</div>'
     +'<div style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
     +'</div>');
+}
+function _gdFilter(v){
+  var q=(v||"").toLowerCase().trim();
+  var shown={};
+  var rows=document.querySelectorAll('.grow');
+  rows.forEach(function(r){
+    var hit=q===""||r.getAttribute('data-s').indexOf(q)>=0;
+    r.style.display=hit?"":"none";
+    if(hit)shown[r.getAttribute('data-cat')]=true;
+  });
+  document.querySelectorAll('.gcat,.gtbl').forEach(function(el){
+    el.style.display=(q===""||shown[el.getAttribute('data-cat')])?"":"none";
+  });
+  var none=document.getElementById('gd-none');
+  if(none)none.style.display=(Object.keys(shown).length>0||q==="")?"none":"block";
+  var cnt=document.getElementById('gd-count');
+  if(cnt){
+    if(q===""){cnt.style.display="none";}
+    else{var m=0;rows.forEach(function(r){if(r.style.display!=="none")m++;});cnt.textContent="Showing "+m+" of "+rows.length+" guidelines";cnt.style.display="block";}
+  }
 }
 
 
