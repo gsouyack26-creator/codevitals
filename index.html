@@ -6206,7 +6206,7 @@ function ceOpen(id){
 function ceAssess(id){
   var m=CE_MODULES.find(function(x){return x.id===id;}); if(!m)return;
   var qs=ceAssembleQs(m);
-  if(!qs.length){ alert('No assessment questions available for this track yet.'); return; }
+  if(!qs.length){ mcToast('No assessment questions available for this track yet.','\u26A0\uFE0F'); return; }
   APP.ce={id:id,m:m,qs:qs,ans:new Array(qs.length).fill(null),i:0,submitted:false};
   cerender();
 }
@@ -6297,7 +6297,7 @@ function ceReview(){
 function ceCert(id){
   var m=CE_MODULES.find(function(x){return x.id===id;}); if(!m)return;
   var rec=ceRec(id);
-  if(!rec||!rec.pass){ alert('Pass the assessment first to earn this certificate.'); return; }
+  if(!rec||!rec.pass){ mcToast('Pass the assessment first to earn this certificate.','\u26A0\uFE0F'); return; }
   var name=ceLearner(false);
   if(name===null||name===''){ name='(Your name)'; }
   var win=window.open('','_blank');
