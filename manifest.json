@@ -1,13 +1,13 @@
 {
-  "name": "CodeVitals — CPC Exam Prep",
+  "name": "CodeVitals \u2014 CPC Exam Prep",
   "short_name": "CodeVitals",
   "description": "Free offline study app for the AAPC CPC medical coding exam: 1265-question pool, timed practice exams, flashcards, chart abstraction, and code lookup.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#0284c7",
-  "theme_color": "#0284c7",
+  "background_color": "#f4f0fb",
+  "theme_color": "#7c5fc0",
   "categories": [
     "education",
     "medical",

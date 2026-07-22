@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="lavender">
 <head>
 <meta charset="UTF-8">
 <script>try{var _t=localStorage.getItem('mc_theme');if(_t)document.documentElement.setAttribute('data-theme',_t);}catch(e){}try{var _os=localStorage.setItem.bind(localStorage);localStorage.setItem=function(k,v){try{return _os(k,v);}catch(e){if(!window._mcStorageWarned){window._mcStorageWarned=true;if(typeof mcToast==='function')mcToast('Storage is full or blocked \u2014 changes may not save','\u26A0\uFE0F');}}};}catch(e){}</script>
@@ -707,7 +707,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible,input:focus-visibl
 <a class="skip-link" href="#main">Skip to main content</a>
 <div id="hdr">
 <button class="hbtn" id="hbg" onclick="toggleSb()" title="Menu" aria-label="Open menu" aria-expanded="false">☰</button>
-<div style="flex:1;min-width:0;line-height:1.12"><h1 style="flex:none">🩺 CodeVitals</h1><div style="font-size:.62rem;font-weight:500;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Monitor your readiness. Pass with confidence.</div></div>
+<div style="flex:1;min-width:0;line-height:1.12"><h1 style="flex:none">🩺 CodeVitals 🐱</h1><div style="font-size:.62rem;font-weight:500;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Monitor your readiness. Pass with confidence. 🐾</div></div>
 <div style="position:relative">
 <input id="srch" type="search" aria-label="Search topics" placeholder="Search topics..." oninput="doSearch(this.value)" autocomplete="off">
 <div id="srch-res"></div>
@@ -2630,7 +2630,7 @@ const PROG={};
 
 function init(){
   try{Object.assign(PROG,JSON.parse(localStorage.getItem('mc_prog')||'{}'));}catch(e){}
-  const th=localStorage.getItem('mc_theme')||'light';
+  const th=localStorage.getItem('mc_theme')||'lavender';
   document.documentElement.setAttribute('data-theme',th);syncThemeColor();
   buildSB();
   if(typeof checkAchievements==='function')checkAchievements(true);
@@ -3740,13 +3740,13 @@ function examSubmit(timeUp){
   logRun('exam',ex.def.name,correct,ex.qs.length);
   saveProg();
   if(typeof checkAchievements==='function')checkAchievements();
-  if(passed)setTimeout(function(){celebrate(pctv>=100?'Perfect Exam!':'Exam Passed!',ex.def.name+' \u2014 '+pctv+'%',pctv>=100);},250);
+  if(passed)setTimeout(function(){celebrate(pctv>=100?'\uD83D\uDC31 Perfect Exam!':'\uD83D\uDC31 Exam Passed!',ex.def.name+' \u2014 '+pctv+'%',pctv>=100);},250);
   const um=Math.max(0,Math.ceil((ex.def.min*60000-(ex.end-Date.now()))/60000));
   const rows=Object.keys(byMod).sort().map(m=>{const b=byMod[m];const p=Math.round(b.c/b.t*100);return `<tr><td>${esc(m)}</td><td>${b.c}/${b.t}</td><td style="color:${p>=70?'var(--ok)':'var(--er)'};font-weight:600">${p}%</td></tr>`;}).join('');
   const el=document.getElementById('all-quiz-view');
   el.innerHTML=`<div class="ewrap">
     <div class="sc" style="max-width:420px">
-      <h3>${passed?'\uD83C\uDF89 Passed!':'\uD83D\uDCAA Keep Studying'}</h3>
+      <h3>${passed?'\uD83C\uDF89 Passed! \uD83D\uDC31':'\uD83D\uDCAA Keep Studying'}</h3>
       <div class="scn ${passed?'pass':'fail'}">${pctv}%</div>
       <p style="font-size:.82rem;color:var(--tx2)">${correct} of ${ex.qs.length} correct &bull; need ${Math.round(ex.def.pass*100)}% to pass<br>${timeUp?'\u23F3 Time expired':'\u23F1\uFE0F Finished in ~'+um+' min'}</p>
       <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">
@@ -5485,7 +5485,7 @@ function showWelcome(){
   ov.id='welcome-ov'; ov.className='wc-ov';
   ov.innerHTML='<div class="wc-card">'
     +'<div class="wc-emoji">\uD83E\uDE7A</div>'
-    +'<h2 class="wc-title">Welcome to CodeVitals</h2>'
+    +'<h2 class="wc-title">Welcome to CodeVitals \uD83D\uDC31</h2>'
     +'<p class="wc-sub">Your personal medical-coding coach \u2014 16 modules, 300+ practice questions, real exams, flashcards, and boss battles. Study a little every day and watch your readiness climb.</p>'
     +(cloud
       ?'<div class="wc-sync"><div class="wc-synlab">\u2601\uFE0F Keep your progress on every device</div>'
@@ -6417,7 +6417,7 @@ function ceSubmit(){
   if(typeof checkAchievements==='function')checkAchievements();
   if(passed&&typeof celebrate==='function')setTimeout(function(){celebrate('Track Complete!',c.m.title+' \u2014 '+pctv+'%',pctv>=100);},250);
   fullView('<div class="ewrap"><div class="sc" style="max-width:440px">'
-    +'<h3>'+(passed?'\uD83C\uDF89 Track Passed!':'\uD83D\uDCAA Not Yet \u2014 Keep Studying')+'</h3>'
+    +'<h3>'+(passed?'\uD83C\uDF89 Track Passed! \uD83D\uDC31':'\uD83D\uDCAA Not Yet \u2014 Keep Studying')+'</h3>'
     +'<div class="scn '+(passed?'pass':'fail')+'">'+pctv+'%</div>'
     +'<p style="font-size:.82rem;color:var(--tx2)">'+correct+' of '+c.qs.length+' correct &bull; need '+Math.round(c.m.pass*100)+'% to pass</p>'
     +(passed?('<div class="tip" style="margin:12px 0;text-align:left"><b>\uD83D\uDCDC Certificate earned.</b> Serial '+esc(PROG.ce[c.id].serial)+'. This is a study record only \u2014 it awards no CEUs and is not AAPC/AHIMA affiliated.</div>'):'')
@@ -6773,7 +6773,7 @@ function _weekActivityHTML(){
   var todayN=0, ds=new Date(); ds.setHours(0,0,0,0); var dayStart=ds.getTime();
   MODULES.forEach(function(m){var ls=(PROG[m.id]||{}).lastStudied;if(ls&&ls>=dayStart)todayN++;});
   var msg, cls;
-  if(todayN>0){cls='ok';msg='\u2705 You studied '+todayN+' module'+(todayN>1?'s':'')+' today. Nice work — keep the streak alive!';}
+  if(todayN>0){cls='ok';msg='\u2705 You studied '+todayN+' module'+(todayN>1?'s':'')+' today. Nice work 🐱 keep the streak alive!';}
   else if(n>0){cls='wn';msg='\uD83D\uDCDA You have touched '+n+' module'+(n>1?'s':'')+' this week, but none today. Open one to keep momentum.';}
   else {cls='';msg='\uD83D\uDC4B Ready to learn? Open any module to start your week strong.';}
   var pills=studied.slice(0,6).map(function(m){return '<span class="wa-pill">'+esc(m.title.split("&amp;").join("&"))+'</span>';}).join('');
