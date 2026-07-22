@@ -6051,7 +6051,7 @@ function ceTracks(){
     return '<div class="ecard">'
       +'<div class="etop"><div class="ename">'+esc(m.title)+'</div>'+badge+'</div>'
       +'<div class="esub">'+esc(m.blurb)+'</div>'
-      +'<div class="emeta">\uD83D\uDCD8 '+m.objectives.length+' objectives &bull; \uD83D\uDCDD '+m.minQ+'-question assessment &bull; \uD83C\uDFAF Pass '+Math.round(m.pass*100)+'% &bull; \uD83D\uDDD3\uFE0F Current as of '+m.currentAs+'</div>'
+      +'<div class="emeta">\uD83D\uDCD8 '+m.objectives.length+' objectives &bull; \uD83D\uDCDD '+m.minQ+'-question assessment &bull; \uD83C\uDFAF Pass '+Math.round(m.pass*100)+'% &bull; \u23F1\uFE0F ~'+m.effort+'h &bull; \uD83D\uDDD3\uFE0F Current as of '+m.currentAs+'</div>'
       +'<button class="qbtn '+((rec&&rec.pass)?'sec':'')+'" style="margin-top:10px;width:100%" onclick="ceOpen(\''+m.id+'\')">'+((rec&&rec.pass)?'Review Track':'Open Track')+'</button>'
       +certBtn
       +'</div>';
