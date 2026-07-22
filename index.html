@@ -2560,7 +2560,7 @@ function buildSB(){
     else if(started)chip='<span class="mchip prog">In progress</span>';
     var hasNote=pr.note&&pr.note.trim().length;
     if(hasNote)chip+='<span class="mchip note" title="You have notes in this module">\uD83D\uDCDD Note</span>';
-    return `<div class="mi${isNext?' mi-next':''}" id="mi-${m.id}" onclick="showMod('${m.id}')">
+    return `<div class="mi${isNext?' mi-next':''}" id="mi-${m.id}" role="button" tabindex="0" onclick="showMod('${m.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showMod('${m.id}');}">
       <div class="mdot${isDone?' done':''}"></div>
       <div class="minfo"><div class="mtit">${esc(m.title.split('&amp;').join('&'))}${isNext?'<span class="mi-nextpill">Next</span>':''}</div>
       <div class="mmet">${m.time} &middot; <span>${m.level}</span> &middot; <span class="mpct">${mm.pct}%</span></div>
@@ -2576,7 +2576,7 @@ function showMod(id){
   if(typeof _rememberMod==='function')_rememberMod(id);
   try{ if(!PROG[id])PROG[id]={}; PROG[id].lastStudied=Date.now(); if(typeof saveProg==='function')saveProg(); }catch(e){}
   APP.mod=MODULES.find(m=>m.id===id);
-  document.querySelectorAll('.mi').forEach(el=>el.classList.toggle('sel',el.id==='mi-'+id));
+  document.querySelectorAll('.mi').forEach(el=>{var _on=el.id==='mi-'+id;el.classList.toggle('sel',_on);if(_on)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
   document.getElementById('all-quiz-view').style.display='none';
   const m=APP.mod;
   const mv=document.getElementById('mod-view');
