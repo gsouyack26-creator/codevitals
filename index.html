@@ -5056,15 +5056,39 @@ function chartSim(){
   const cards=CHARTS.map((c,i)=>{
     const best=((PROG.charts||{})[c.id])||null;
     const badge=best?`<div class="ebadge ${best.pct>=70?'pass':'fail'}">Best ${best.pct}%</div>`:'';
-    return `<div class="ecard"><div class="etop"><div class="ename">${esc(c.title)}</div>${badge}</div><div class="esub">${esc(c.setting)} &bull; ${c.tasks.length} coding steps</div><button class="qbtn" style="margin-top:10px;width:100%" onclick="chartCase(${i})">Open Chart</button></div>`;
+    const _cs=(c.title+' '+c.setting).toLowerCase();
+    return `<div class="ecard chart-card" data-s="${esc(_cs)}"><div class="etop"><div class="ename">${esc(c.title)}</div>${badge}</div><div class="esub">${esc(c.setting)} &bull; ${c.tasks.length} coding steps</div><button class="qbtn" style="margin-top:10px;width:100%" onclick="chartCase(${i})">Open Chart</button></div>`;
   }).join('');
+  var _chDone=Object.keys(PROG.charts||{}).length;
+  var _chVals=Object.keys(PROG.charts||{}).map(function(k){return (PROG.charts[k]||{}).pct;}).filter(function(v){return typeof v==='number';});
+  var _chAvg=_chVals.length?Math.round(_chVals.reduce(function(a,b){return a+b;},0)/_chVals.length):0;
+  var _chSummary=_chDone?('<div class="tip" style="margin:2px 0 10px"><b>'+_chDone+'</b> of '+CHARTS.length+' charts attempted &bull; avg best score <b>'+_chAvg+'%</b></div>'):'';
   fullView(`<div class="ecenter">
     <h2 class="etitle">\uD83E\uDDE9 Chart Abstraction Simulator</h2>
     <p class="eintro">Read a realistic patient chart, then code it step by step \u2014 principal diagnosis, procedures, modifiers, sequencing \u2014 exactly like real abstraction work. Each step explains the rule.</p>
+    ${_chSummary}
+    <input class="hy-search" id="chart-search" placeholder="\uD83D\uDD0D Search charts by title or setting\u2026" oninput="_chartFilter(this.value)">
+    <div class="hy-count" id="chart-count"></div>
     <div class="egrid">${cards}</div>
+    <div id="chart-none" style="display:none;color:var(--tx2);text-align:center;padding:20px">No charts match your search.</div>
     <div class="dcta"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>
   </div>`);
 }
+function _chartFilter(v){
+  var q=(v||'').toLowerCase().trim();
+  var cards=document.querySelectorAll('.chart-card');
+  var shown=0;
+  cards.forEach(function(c){
+    var hit=!q||(c.getAttribute('data-s')||'').indexOf(q)>=0;
+    c.style.display=hit?'':'none';
+    if(hit)shown++;
+  });
+  var none=document.getElementById('chart-none');
+  if(none)none.style.display=(shown===0)?'block':'none';
+  var cnt=document.getElementById('chart-count');
+  if(cnt)cnt.textContent=q?('Showing '+shown+' of '+cards.length+' charts'):'';
+}
+
 function chartCase(i){
   const c=CHARTS[i];
   APP.chart={c,i,answered:{},correct:0,total:c.tasks.length};
