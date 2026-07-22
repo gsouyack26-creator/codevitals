@@ -7000,7 +7000,7 @@ function toggleKbdHelp(force){
 document.addEventListener('keydown',function(e){
   if(/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||''))return;
   if(e.key==='?'||(e.key==='/'&&e.shiftKey)){toggleKbdHelp();e.preventDefault();}
-  else if(e.key==='Escape'){var ov=document.getElementById('kbdhelp-ov');if(ov&&ov.classList.contains('show')){toggleKbdHelp(false);e.preventDefault();}}
+  else if(e.key==='Escape'){var ov=document.getElementById('kbdhelp-ov');if(ov&&ov.classList.contains('show')){toggleKbdHelp(false);e.preventDefault();}else{var _app=document.getElementById('app');if(_app&&_app.classList.contains('sb-open')){closeSb();e.preventDefault();}}}
 });
 
 document.addEventListener('keydown',function(e){
