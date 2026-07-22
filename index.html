@@ -701,7 +701,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible,input:focus-visibl
 </style>
 <body>
 <div id="hdr">
-<button class="hbtn" id="hbg" onclick="toggleSb()" title="Menu" aria-label="Open menu">☰</button>
+<button class="hbtn" id="hbg" onclick="toggleSb()" title="Menu" aria-label="Open menu" aria-expanded="false">☰</button>
 <div style="flex:1;min-width:0;line-height:1.12"><h1 style="flex:none">🩺 CodeVitals</h1><div style="font-size:.62rem;font-weight:500;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Monitor your readiness. Pass with confidence.</div></div>
 <div style="position:relative">
 <input id="srch" type="search" aria-label="Search topics" placeholder="Search topics..." oninput="doSearch(this.value)" autocomplete="off">
@@ -6498,8 +6498,8 @@ function _jumpBackHTML(){
 }
 
 
-function toggleSb(){var a=document.getElementById('app');if(a)a.classList.toggle('sb-open');}
-function closeSb(){var a=document.getElementById('app');if(a)a.classList.remove('sb-open');}
+function toggleSb(){var a=document.getElementById('app');if(a)a.classList.toggle('sb-open');var h=document.getElementById('hbg');if(h)h.setAttribute('aria-expanded',(a&&a.classList.contains('sb-open'))?'true':'false');}
+function closeSb(){var a=document.getElementById('app');if(a)a.classList.remove('sb-open');var h=document.getElementById('hbg');if(h)h.setAttribute('aria-expanded','false');}
 (function(){var sb=document.getElementById('sb');if(sb)sb.addEventListener('click',function(e){var b=e.target.closest('button');if(b&&window.innerWidth<=760)closeSb();});})();
 
 function fullView(html){
