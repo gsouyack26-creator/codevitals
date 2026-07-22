@@ -4179,7 +4179,7 @@ function dailyChallenge(){
   fullView(`<div class="ecenter">
     <h2 class="etitle">\uD83C\uDF93 Daily Challenge <span class="dhint">${esc(_todayStr())}</span></h2>
     <p class="eintro">10 mixed questions, fresh every day. ${doneToday?'<b>You already logged today\u2019s run</b> \u2014 replay for practice (streak already counted).':'Finish to keep your daily streak alive.'}</p>
-    <div class="rush-hud"><div class="rush-stat">Streak <b>\uD83D\uDD25 ${d.streak||0}</b></div><div class="rush-stat">Best <b>${d.best||0}/10</b></div><div class="rush-stat"><b id="dc-cor">0</b>/${qs.length} correct</div><div class="rush-bar"><div class="rush-barf" id="dc-barf" style="width:0%"></div></div></div>
+    <div class="rush-hud"><div class="rush-stat">Streak <b>\uD83D\uDD25 ${d.streak||0}</b></div>${d.bestStreak?`<div class="rush-stat">Longest <b>\uD83C\uDFC6 ${d.bestStreak}</b></div>`:''}<div class="rush-stat">Best <b>${d.best||0}/10</b></div><div class="rush-stat"><b id="dc-cor">0</b>/${qs.length} correct</div><div class="rush-bar"><div class="rush-barf" id="dc-barf" style="width:0%"></div></div></div>
     <div class="dc-final" id="dc-final"></div>
     ${cards}
     <div class="dcta" style="margin-top:18px"><button class="qbtn sec" onclick="dashboard()">\uD83D\uDCCA Dashboard</button></div>
@@ -4205,6 +4205,8 @@ function dcAns(i,oi,ans,btn){
       const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
       PROG.daily.streak=(PROG.daily.last===y)?(PROG.daily.streak||0)+1:1;
       PROG.daily.last=today;
+      PROG.daily.days=(PROG.daily.days||0)+1;
+      if(PROG.daily.streak>(PROG.daily.bestStreak||0))PROG.daily.bestStreak=PROG.daily.streak;
     }
     if(D.correct>(PROG.daily.best||0))PROG.daily.best=D.correct;
     logRun('daily','Daily Challenge',D.correct,D.total);
