@@ -704,7 +704,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible,input:focus-visibl
 <button class="hbtn" id="hbg" onclick="toggleSb()" title="Menu" aria-label="Open menu">☰</button>
 <div style="flex:1;min-width:0;line-height:1.12"><h1 style="flex:none">🩺 CodeVitals</h1><div style="font-size:.62rem;font-weight:500;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Monitor your readiness. Pass with confidence.</div></div>
 <div style="position:relative">
-<input id="srch" type="search" placeholder="Search topics..." oninput="doSearch(this.value)" autocomplete="off">
+<input id="srch" type="search" aria-label="Search topics" placeholder="Search topics..." oninput="doSearch(this.value)" autocomplete="off">
 <div id="srch-res"></div>
 </div>
 <button class="hbtn syncpill off" id="syncpill" onclick="cloudSync(true)" title="Cloud sync status"><span id="syncpill-txt">☁️</span></button>
@@ -2726,7 +2726,7 @@ function _refreshNoteTs(mid){
 function _moduleNotesBox(m){
   var note=((PROG[m.id]||{}).note)||'';
   return '<div class="secttl">\uD83D\uDCDD My Notes</div>'
-    +'<div class="mnote"><textarea class="mnote-ta" id="mnote-'+m.id+'" placeholder="Jot down anything you want to remember from this module\u2026" oninput="mnoteCount(\''+m.id+'\')">'+esc(note)+'</textarea>'
+    +'<div class="mnote"><textarea class="mnote-ta" aria-label="Module notes" id="mnote-'+m.id+'" placeholder="Jot down anything you want to remember from this module\u2026" oninput="mnoteCount(\''+m.id+'\')">'+esc(note)+'</textarea>'
     +'<div class="mnote-bar"><span class="mnote-ct" id="mnote-ct-'+m.id+'"></span>'
     +'<span class="mnote-saved" id="mnote-saved-'+m.id+'">'+_noteSavedTxt(m.id)+'</span>'
     +'<span class="mnote-btns"><button class="mnote-btn" onclick="saveModNote(\''+m.id+'\')">Save</button>'
