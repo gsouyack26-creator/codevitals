@@ -4208,6 +4208,18 @@ function dailyChallenge(){
     <div class="dcta" style="margin-top:18px"><button class="qbtn sec" onclick="dashboard()">\uD83D\uDCCA Dashboard</button></div>
   </div>`);
 }
+function copyDaily(){
+  var d=PROG.daily||{};
+  var got=(APP.daily&&typeof APP.daily.correct==='number')?APP.daily.correct:(d.best||0);
+  var tot=(APP.daily&&APP.daily.total)||10;
+  var lines=['CodeVitals \u2014 Daily Challenge ('+_todayStr()+')',
+    got+'/'+tot+' correct',
+    'Streak \uD83D\uDD25 '+(d.streak||0)+(d.bestStreak?' (longest '+d.bestStreak+')':'')];
+  var txt=lines.join('\n');
+  function done(){if(typeof mcToast==='function')mcToast('Daily result copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
+}
 function dcAns(i,oi,ans,btn){
   const D=APP.daily;if(!D)return;
   if(D.answered[i]!==undefined)return;
@@ -4238,7 +4250,7 @@ function dcAns(i,oi,ans,btn){
     const f=document.getElementById('dc-final');
     const perfect=D.correct===D.total;
     f.className='dc-final show '+(perfect?'win':(D.correct>=D.total*.7?'ok':'lose'));
-    f.innerHTML=`<div class="rush-fn">${perfect?'\uD83C\uDFAF Perfect Day!':(D.correct>=D.total*.7?'\uD83D\uDC4D Nice run':'\uD83D\uDCDA Keep at it')}</div><div class="rush-fs">${D.correct}/${D.total} \u2014 streak \uD83D\uDD25 ${PROG.daily.streak}</div>`;
+    f.innerHTML=`<div class="rush-fn">${perfect?'\uD83C\uDFAF Perfect Day!':(D.correct>=D.total*.7?'\uD83D\uDC4D Nice run':'\uD83D\uDCDA Keep at it')}</div><div class="rush-fs">${D.correct}/${D.total} \u2014 streak \uD83D\uDD25 ${PROG.daily.streak}</div><button class="qbtn sec" style="margin-top:10px" onclick="copyDaily()">\uD83D\uDCCB Copy result</button>`;
     f.scrollIntoView({behavior:'smooth',block:'center'});
     if(perfect)celebrate('Perfect Daily Challenge!','10/10 \u2014 streak \uD83D\uDD25 '+PROG.daily.streak,true);
     else if(D.correct>=D.total*.7)celebrate('Daily Challenge done!',D.correct+'/'+D.total+' \u2014 streak \uD83D\uDD25 '+PROG.daily.streak);
