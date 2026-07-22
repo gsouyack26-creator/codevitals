@@ -6935,6 +6935,7 @@ document.addEventListener('keydown',e=>{
 
 var _KBDHELP=[
   {sec:'Flashcards',rows:[['\u2190 / \u2192','Previous / next card'],['Space','Flip card'],['S','Star / unstar card'],['/','Search cards'],['P','Print study sheet'],['C','Copy this card'],['G','Go to card number'],['R','Reverse mode'],['E','Export deck']]},
+  {sec:'Flash Drill',rows:[['Space','Reveal answer'],['\u2192 / G','Got it'],['\u2190 / R','Review again']]},
   {sec:'Quiz',rows:[['1 \u2013 9','Pick answer by number'],['A \u2013 I','Pick answer by letter']]},
   {sec:'Practice exam',rows:[['\u2190 / \u2192','Previous / next question'],['1 \u2013 9','Pick answer']]},
   {sec:'Anywhere',rows:[['?','Show / hide this help']]}
@@ -6964,6 +6965,21 @@ document.addEventListener('keydown',function(e){
   if(/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||''))return;
   if(e.key==='?'||(e.key==='/'&&e.shiftKey)){toggleKbdHelp();e.preventDefault();}
   else if(e.key==='Escape'){var ov=document.getElementById('kbdhelp-ov');if(ov&&ov.classList.contains('show')){toggleKbdHelp(false);e.preventDefault();}}
+});
+
+document.addEventListener('keydown',function(e){
+  if(typeof DRILL==='undefined'||!DRILL)return;
+  if(!document.querySelector('.drill-card'))return;
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||''))return;
+  var ov=document.getElementById('kbdhelp-ov');
+  if(ov&&ov.classList.contains('show'))return;
+  if(!DRILL.flip){
+    if(e.key===' '||e.key==='Enter'){drillFlip();e.preventDefault();}
+    return;
+  }
+  if(e.key==='ArrowRight'||e.key==='g'||e.key==='G'){drillGrade(true);e.preventDefault();}
+  else if(e.key==='ArrowLeft'||e.key==='r'||e.key==='R'){drillGrade(false);e.preventDefault();}
+  else if(e.key===' '||e.key==='Enter'){drillFlip();e.preventDefault();}
 });
 
 function _scrollMainTop(){var m=document.getElementById('main');if(m)m.scrollTo({top:0,behavior:'smooth'});}
