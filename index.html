@@ -5763,6 +5763,16 @@ function drillRender(){
 }
 
 
+function copyCodes(){
+  var rows=document.querySelectorAll('.hy-row');
+  var out=[];
+  rows.forEach(function(r){if(r.style.display!=='none'){var tds=r.querySelectorAll('td');out.push(tds[0].textContent+' \u2014 '+tds[1].textContent);}});
+  if(!out.length){if(typeof mcToast==='function')mcToast('No codes to copy');return;}
+  var txt='CodeVitals \u2014 Code Lookup ('+out.length+' codes)\n'+out.join('\n');
+  function done(){if(typeof mcToast==='function')mcToast(out.length+' codes copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
+}
 function codeLookup(){
   window._hySet='';
   var body=HYCODES.map(function(g){
@@ -5783,6 +5793,7 @@ function codeLookup(){
     +'<input class="hy-search" type="text" placeholder="\uD83D\uDD0D Search code or description\u2026" oninput="_hyFilter(this.value)">'
     +chips
     +'<div id="hy-count" class="hy-count" style="display:none"></div>'
+    +'<button class="qbtn sec" style="margin:0 0 12px;padding:6px 12px;font-size:.8rem" onclick="copyCodes()">\uD83D\uDCCB Copy list</button>'
     +body
     +'<div id="hy-none" style="display:none;color:var(--tx2);padding:14px 4px">No matching codes.</div>'
     +'<div style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
