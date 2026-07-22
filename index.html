@@ -6899,7 +6899,7 @@ function toggleTheme(){
   localStorage.setItem('mc_theme',nxt);syncThemeColor();
 }
 
-function saveProg(){PROG._ts=Date.now();localStorage.setItem('mc_prog',JSON.stringify(PROG));if(typeof cloudAutoPush==='function')cloudAutoPush();}
+function saveProg(){PROG._ts=Date.now();try{localStorage.setItem('mc_prog',JSON.stringify(PROG));}catch(e){if(!window._mcStorageWarned){window._mcStorageWarned=true;if(typeof mcToast==='function')mcToast('Storage is full or blocked \u2014 progress may not save','\u26A0\uFE0F');}}if(typeof cloudAutoPush==='function')cloudAutoPush();}
 
 function doSearch(q){
   const box=document.getElementById('srch-res');
