@@ -4367,6 +4367,7 @@ function studyCalendar(){
       <div class="dcard dstat"><div class="dsn">${activeDays}</div><div class="dsl">Active days (26 wk)</div></div>
       <div class="dcard dstat"><div class="dsn">${total}</div><div class="dsl">Questions answered</div></div>
     </div>
+    ${activeDays>0?`<p class="eintro" style="margin-top:6px">\uD83D\uDCC8 Averaging <b>${Math.round(total/activeDays)}</b> question${Math.round(total/activeDays)===1?'':'s'} per active day \u00b7 best day <b>${maxc}</b></p>`:''}
     <div class="cal-wrap"><div class="cal-grid">${cols}</div></div>
     <div class="cal-leg">Less <span class="cal-c cal-l0"></span><span class="cal-c cal-l1"></span><span class="cal-c cal-l2"></span><span class="cal-c cal-l3"></span><span class="cal-c cal-l4"></span> More</div>
     <div class="dcta" style="margin-top:14px"><button class="qbtn sec" onclick="dailyChallenge()">\uD83C\uDF93 Daily Challenge</button><button class="qbtn sec" onclick="dashboard()">\uD83D\uDCCA Dashboard</button></div>
