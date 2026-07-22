@@ -5487,6 +5487,7 @@ function showWelcome(){
     +'<div class="wc-emoji">\uD83E\uDE7A</div>'
     +'<h2 class="wc-title">Welcome to CodeVitals \uD83D\uDC31</h2>'
     +'<p class="wc-sub">Your personal medical-coding coach \u2014 16 modules, 300+ practice questions, real exams, flashcards, and boss battles. Study a little every day and watch your readiness climb.</p>'
+    +'<p style="font-size:.82rem;color:var(--ac);margin-top:7px;font-weight:600">\uD83D\uDC31 <i>Your study buddy is ready \u2014 let\u2019s pass this together!</i></p>'
     +(cloud
       ?'<div class="wc-sync"><div class="wc-synlab">\u2601\uFE0F Keep your progress on every device</div>'
         +'<div class="wc-synhint">Pick a private <b>Sync Code</b> and type the same one on your phone, tablet, and laptop. That\u2019s the only thing you need to remember.</div>'
@@ -6779,6 +6780,32 @@ function _weekActivityHTML(){
   var pills=studied.slice(0,6).map(function(m){return '<span class="wa-pill">'+esc(m.title.split("&amp;").join("&"))+'</span>';}).join('');
   return '<div class="weekact '+cls+'"><div class="wa-hd"><span class="wa-ttl">This Week in Modules</span><span class="wa-cnt">'+n+' / '+tot+'</span></div><div class="wa-msg">'+msg+'</div>'+(pills?'<div class="wa-pills">'+pills+'</div>':'')+'</div>';
 }
+function _catQuoteHTML(){
+  var qs=[
+    "Purr-fect timing to review a few codes today.",
+    "Every question you answer sharpens your claws. Keep going!",
+    "Slow and steady catches the mouse \u2014 a little study each day adds up.",
+    "You have got this. Even the sleepiest cat lands on its feet.",
+    "Curiosity coded the cat \u2014 go explore a new module today!",
+    "A calm mind codes best. Take a breath and dive in.",
+    "One paw in front of the other \u2014 you are closer than you think.",
+    "Meow-velous effort! Consistency beats cramming.",
+    "Stretch, focus, and pounce on a few practice questions.",
+    "Nine lives, unlimited practice attempts \u2014 give it another go!",
+    "The best coders, like cats, are patient and precise.",
+    "Warm up with a quick quiz \u2014 your future self will thank you.",
+    "Trust your training. You know more than you think.",
+    "Small steps today, a big leap on exam day.",
+    "Stay curious, stay pawsitive."
+  ];
+  var d=new Date();
+  var doy=Math.floor((d-new Date(d.getFullYear(),0,0))/86400000);
+  var m=qs[((doy%qs.length)+qs.length)%qs.length];
+  return '<div class="catq" style="display:flex;align-items:center;gap:11px;background:var(--sf);border:1px solid var(--bd);border-left:3px solid var(--ac);border-radius:var(--r);padding:10px 14px;margin-bottom:12px">'
+    +'<span aria-hidden="true" style="font-size:1.5rem;line-height:1">\uD83D\uDC31</span>'
+    +'<span style="font-size:.85rem;color:var(--tx);font-style:italic">'+m+'</span>'
+    +'</div>';
+}
 function dashboard(){
   snapTrend();
   const r=readiness();
@@ -6793,6 +6820,7 @@ function dashboard(){
   const exRows=Object.keys(ex).map(k=>{const d=EXAM_DEFS.find(x=>x.id===k);return `<tr><td>${esc(d?d.name:k)}</td><td style="color:${ex[k].pass?'var(--ok)':'var(--er)'};font-weight:600">${ex[k].score}%</td><td>${ex[k].pass?'\u2713 Pass':'Fail'}</td></tr>`;}).join('')||'<tr><td colspan="3" style="color:var(--tx2)">No exams taken yet.</td></tr>';
   fullView(`<div class="dash">
     ${(typeof _greetHTML==='function')?_greetHTML():''}
+    ${(typeof _catQuoteHTML==='function')?_catQuoteHTML():''}
     ${(typeof _countdownHTML==='function')?_countdownHTML():''}
     ${(typeof _jumpBackHTML==='function')?_jumpBackHTML():''}
     ${(typeof _recommendHTML==='function')?_recommendHTML():''}
