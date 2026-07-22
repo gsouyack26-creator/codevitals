@@ -153,6 +153,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .ecenter{max-width:720px}
 .etitle{font-size:1.3rem;margin-bottom:4px}
 .eintro{font-size:.82rem;color:var(--tx2);line-height:1.55;margin-bottom:6px;max-width:640px}
+.cesum{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin:0 0 14px}.cesum-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}.cesum-lbl{font-size:.78rem;font-weight:700;color:var(--tx)}.cesum-pct{font-size:.76rem;color:var(--tx2);font-variant-numeric:tabular-nums}.cesum-bar{height:9px;background:var(--bd);border-radius:6px;overflow:hidden}.cesum-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2,var(--ac)));border-radius:6px;transition:width .5s ease}.cesum-hrs{font-size:.74rem;color:var(--tx2);margin-top:8px}
 .egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:12px}
 .examsnap{background:var(--cardb);border:1px solid var(--bd);border-left:3px solid var(--ac);border-radius:8px;padding:9px 12px;margin:10px 0 2px;font-size:.9rem;color:var(--tx2)}
 .examsnap b{color:var(--tx)}
@@ -6056,9 +6057,18 @@ function ceTracks(){
       +'</div>';
   }).join('');
   var done=CE_MODULES.filter(function(m){var r=ceRec(m.id);return r&&r.pass;}).length;
+  var _cePct=CE_MODULES.length?Math.round(done/CE_MODULES.length*100):0;
+  var _ceHrsDone=0,_ceHrsAll=0;
+  CE_MODULES.forEach(function(m){var h=parseFloat(m.effort)||0;_ceHrsAll+=h;var r=ceRec(m.id);if(r&&r.pass)_ceHrsDone+=h;});
+  var _ceSum='<div class="cesum">'
+    +'<div class="cesum-top"><span class="cesum-lbl">Track completion</span><span class="cesum-pct">'+done+' / '+CE_MODULES.length+' &bull; '+_cePct+'%</span></div>'
+    +'<div class="cesum-bar"><div class="cesum-fill" style="width:'+_cePct+'%"></div></div>'
+    +'<div class="cesum-hrs">\u23F1\uFE0F Est. study time earned: <b>'+(Math.round(_ceHrsDone*10)/10)+'</b> of '+(Math.round(_ceHrsAll*10)/10)+' hours'+(done===CE_MODULES.length?' &bull; \uD83C\uDF89 all tracks complete!':'')+'</div>'
+    +'</div>';
   fullView('<div class="ecenter">'
     +'<h2 class="etitle">\uD83C\uDF93 Certified Learning Tracks</h2>'
     +'<p class="eintro">Structured, titled study tracks \u2014 each with clear learning objectives, a content overview, and a locked assessment you must pass to earn a dated completion certificate with a unique serial number. Progress is saved and synced across your devices. '+done+' of '+CE_MODULES.length+' tracks completed.</p>'
+    +_ceSum
     +'<div class="tip ce-disc" style="margin-bottom:14px"><b>\u2139\uFE0F Important \u2014 please read:</b> These tracks are a <b>study and self-assessment</b> tool. Completing one earns a <b>Certificate of Completion</b> for your own records. CodeVitals is <b>not affiliated with, approved by, or endorsed by AAPC or AHIMA</b>, and these certificates <b>do not award CEUs</b>. CEU eligibility requires prior approval by AAPC or AHIMA, which this program has not obtained. Per AAPC\u2019s own rules, even approval would not constitute endorsement.</div>'
     +'<div class="egrid">'+cards+'</div>'
     +'<div class="dcta" style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
