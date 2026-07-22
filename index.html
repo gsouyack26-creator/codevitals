@@ -3608,7 +3608,7 @@ function examSubmit(timeUp){
   ex.qs.forEach((q,i)=>{
     const ok=ex.ans[i]===q.ans;if(ok)correct++;
     logAnswer(q,ok,q.mod);
-    const m=q.mod||'General';byMod[m]=byMod[m]||{c:0,t:0};byMod[m].t++;if(ok)byMod[m].c++;
+    const m=(ex.def.id==='blueprint'&&typeof _cpcDomain==='function')?_cpcDomain(q.mod):(q.mod||'General');byMod[m]=byMod[m]||{c:0,t:0};byMod[m].t++;if(ok)byMod[m].c++;
   });
   bumpStreak();
   const pctv=Math.round(correct/ex.qs.length*100);
@@ -3641,7 +3641,7 @@ function examSubmit(timeUp){
         <button class="qbtn sec" onclick="copyExam()">&#128203; Copy result</button>
       </div>
     </div>
-    <h4 style="max-width:420px;margin:18px auto 6px">Performance by Topic</h4>
+    <h4 style="max-width:420px;margin:18px auto 6px">Performance by ${ex.def.id==='blueprint'?'CPC Domain':'Topic'}</h4>
     <table class="ebreak" style="max-width:420px;margin:0 auto"><tr><th>Topic</th><th>Score</th><th>%</th></tr>${rows}</table>
   </div>`;
   document.getElementById('main').scrollTop=0;
