@@ -3561,6 +3561,7 @@ function examSubmit(timeUp){
   rec.lastScore=pctv; rec.lastPass=passed; rec.lastDate=_today;
   if(pctv>=rec.score){rec.score=pctv; rec.pass=passed; rec.date=_today;}
   PROG.exams[ex.def.id]=rec;
+  APP.lastExamResult={name:ex.def.name,pct:pctv,correct:correct,total:ex.qs.length,passed:passed,date:_today};
   logRun('exam',ex.def.name,correct,ex.qs.length);
   saveProg();
   if(typeof checkAchievements==='function')checkAchievements();
@@ -3577,6 +3578,7 @@ function examSubmit(timeUp){
         <button class="qbtn" onclick="examReview()">&#128269; Review Answers</button>
         <button class="qbtn sec" onclick="examStart('${ex.def.id}')">&#8635; Retake</button>
         <button class="qbtn sec" onclick="examCenter()">&#128218; Exam Center</button>
+        <button class="qbtn sec" onclick="copyExam()">&#128203; Copy result</button>
       </div>
     </div>
     <h4 style="max-width:420px;margin:18px auto 6px">Performance by Topic</h4>
@@ -4207,6 +4209,16 @@ function dailyChallenge(){
     ${cards}
     <div class="dcta" style="margin-top:18px"><button class="qbtn sec" onclick="dashboard()">\uD83D\uDCCA Dashboard</button></div>
   </div>`);
+}
+function copyExam(){
+  var r=APP.lastExamResult;if(!r)return;
+  var lines=['CodeVitals \u2014 '+r.name+' ('+r.date+')',
+    r.pct+'% \u2014 '+r.correct+'/'+r.total+' correct',
+    r.passed?'\u2713 Passed':'Not yet passing'];
+  var txt=lines.join('\n');
+  function done(){if(typeof mcToast==='function')mcToast('Exam result copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
 }
 function copyRush(){
   var r=APP.rush||{};
