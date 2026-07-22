@@ -6987,16 +6987,33 @@ function _kbdHelpHTML(){
   });
   return h;
 }
+var _kbdPrevFocus=null;
 function toggleKbdHelp(force){
   var ov=document.getElementById('kbdhelp-ov');
   if(!ov){
     ov=document.createElement('div');ov.id='kbdhelp-ov';
     ov.innerHTML='<div id="kbdhelp-card" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts"><h3>Keyboard shortcuts</h3><div class="khsub">Study faster without the mouse.</div>'+_kbdHelpHTML()+'<button class="khclose" onclick="toggleKbdHelp(false)">Got it</button></div>';
     ov.addEventListener('click',function(e){if(e.target===ov)toggleKbdHelp(false);});
+    ov.addEventListener('keydown',function(e){
+      if(e.key!=='Tab')return;
+      var card=document.getElementById('kbdhelp-card');if(!card)return;
+      var f=card.querySelectorAll('button,a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+      if(!f.length)return;
+      var first=f[0],last=f[f.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    });
     document.body.appendChild(ov);
   }
   var show=(typeof force==='boolean')?force:!ov.classList.contains('show');
   ov.classList.toggle('show',show);
+  if(show){
+    _kbdPrevFocus=document.activeElement;
+    var btn=ov.querySelector('.khclose');if(btn)setTimeout(function(){btn.focus();},0);
+  }else{
+    if(_kbdPrevFocus&&typeof _kbdPrevFocus.focus==='function')_kbdPrevFocus.focus();
+    _kbdPrevFocus=null;
+  }
 }
 document.addEventListener('keydown',function(e){
   if(/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||''))return;
