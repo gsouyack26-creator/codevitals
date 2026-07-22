@@ -4778,13 +4778,27 @@ function srDueList(){
   return Object.keys(b).filter(id=>b[id].due&&b[id].due<=t&&b[id].q).map(id=>({id,e:b[id]})).sort((a,x)=>(a.e.due<x.e.due?-1:1));
 }
 function srDueCount(){ return srDueList().length; }
+function _srBoxDist(){
+  var b=_sr(); var keys=Object.keys(b); if(!keys.length)return '';
+  var boxes=[0,0,0,0,0];
+  keys.forEach(function(id){var bx=(b[id]||{}).box||1; if(bx<1)bx=1; if(bx>5)bx=5; boxes[bx-1]++;});
+  var lbl=['1 (1d)','2 (2d)','3 (4d)','4 (7d)','5 (15d)'];
+  var chips=boxes.map(function(c,i){
+    var pct=keys.length?Math.round(c/keys.length*100):0;
+    return '<div style="flex:1;min-width:0;text-align:center"><div style="font-size:.66rem;color:var(--tx2);margin-bottom:3px">box '+lbl[i]+'</div>'
+      +'<div style="height:6px;background:var(--bd);border-radius:4px;overflow:hidden;margin-bottom:3px"><div style="height:100%;width:'+pct+'%;background:var(--ac);border-radius:4px"></div></div>'
+      +'<div style="font-size:.78rem;font-weight:700;color:var(--tx)">'+c+'</div></div>';
+  }).join('');
+  return '<div style="margin-top:14px"><div style="font-size:.72rem;color:var(--tx2);margin-bottom:6px;text-align:left">Review-box distribution <span style="opacity:.7">(higher box = better retained)</span></div>'
+    +'<div style="display:flex;gap:8px;align-items:flex-end">'+chips+'</div></div>';
+}
 function srReview(){
   const due=srDueList();
   if(!due.length){
     fullView(`<div class="ecenter"><h2 class="etitle">\uD83E\uDDE0 Spaced Review</h2>
     <div class="sr-empty"><div style="font-size:2.4rem">\u2705</div><p style="font-size:1.05rem;color:var(--tx);margin:10px 0 4px">Nothing due right now!</p>
     <p style="color:var(--tx2);font-size:.85rem">Every question you answer is scheduled for review at growing intervals (1, 2, 4, 7, 15 days). Come back later and the ones you need to reinforce will surface here.</p>
-    <p style="color:var(--tx2);font-size:.82rem;margin-top:10px">Tracked items: ${Object.keys(_sr()).length}</p></div>
+    <p style="color:var(--tx2);font-size:.82rem;margin-top:10px">Tracked items: ${Object.keys(_sr()).length}</p>${_srBoxDist()}</div>
     <div class="dcta"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div></div>`);
     return;
   }
