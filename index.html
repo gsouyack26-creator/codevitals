@@ -4780,6 +4780,9 @@ function _pbCards(){
   const dl=PROG.daily||{}; const dBest=dl.best||0; const dStreak=dl.streak||0;
   const dDays=dl.days||0; const dLongest=dl.bestStreak||0;
   const r=readiness();
+  const _stMs=(PROG.analytics&&PROG.analytics.time&&PROG.analytics.time.sum)||0;
+  const _stMin=Math.round(_stMs/60000);
+  const _stLbl=_stMs<60000?'<1m':(_stMin>=60?Math.floor(_stMin/60)+'h '+(_stMin%60)+'m':_stMin+'m');
   const tiles=[
     {n:r.pct+'%',l:'Readiness',ic:'\uD83E\uDE7A'},
     {n:exBest+'%',l:'Best exam',ic:'\uD83D\uDCDA'},
@@ -4789,7 +4792,8 @@ function _pbCards(){
     {n:dStreak,l:'Daily streak',ic:'\u26A1'},
     {n:dLongest||'\u2014',l:'Longest daily',ic:'\uD83C\uDFC6'},
     {n:dDays||'\u2014',l:'Days completed',ic:'\uD83D\uDCC5'},
-    {n:(PROG.streak||{}).days||0,l:'Study streak',ic:'\uD83D\uDCC6'}
+    {n:(PROG.streak||{}).days||0,l:'Study streak',ic:'\uD83D\uDCC6'},
+    {n:_stMs?_stLbl:'\u2014',l:'Study time',ic:'\u23F1\uFE0F'}
   ];
   return `<div class="pbgrid">${tiles.map(t=>`<div class="pbtile"><div class="pbic">${t.ic}</div><div class="pbn">${t.n}</div><div class="pbl">${t.l}</div></div>`).join('')}</div>`;
 }
