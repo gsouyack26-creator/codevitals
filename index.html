@@ -3449,7 +3449,8 @@ const EXAM_DEFS=[
 {id:"quick",name:"Quick Diagnostic",sub:"Warm-up · gauge your baseline",n:25,min:30,pass:.70},
 {id:"cca",name:"CCA-Style Practice Exam",sub:"AHIMA entry-level (CCA) simulation",n:50,min:90,pass:.70},
 {id:"cpc",name:"CPC-Style Practice Exam",sub:"AAPC professional coder (CPC) simulation",n:60,min:100,pass:.70},
-{id:"final",name:"Comprehensive Final",sub:"Everything · exam-day rehearsal",n:100,min:120,pass:.75}
+{id:"final",name:"Comprehensive Final",sub:"Everything · exam-day rehearsal",n:100,min:120,pass:.75},
+{id:"blueprint",name:"CPC Blueprint Mock",sub:"100 Q balanced across every CPC domain",n:100,min:120,pass:.70}
 ];
 
 MORE_FC.forEach(x=>FLASHCARDS.push(x));
@@ -3511,11 +3512,45 @@ function examCenter(){
   document.getElementById('main').scrollTop=0;
 }
 
+function _cpcDomain(mod){
+  var m=(mod||'').toLowerCase();
+  if(m.indexOf('anesthesia')>=0)return 'Anesthesia';
+  if(m.indexOf('radiolog')>=0)return 'Radiology';
+  if(m.indexOf('modifier')>=0)return 'Modifiers';
+  if(m.indexOf('e/m')>=0||m.indexOf('e&m')>=0||m.indexOf('evaluation')>=0)return 'E/M';
+  if(m.indexOf('hcpcs')>=0)return 'HCPCS';
+  if(m.indexOf('pcs')>=0||m.indexOf('drg')>=0||m.indexOf('inpatient')>=0)return 'Inpatient/PCS';
+  if(m.indexOf('icd-10-cm')>=0||m.indexOf('diagnosis')>=0)return 'ICD-10-CM';
+  if(m.indexOf('anatomy')>=0||m.indexOf('terminolog')>=0||m.indexOf('physiolog')>=0||m.indexOf('pharmacolog')>=0)return 'Anatomy & Terminology';
+  if(m.indexOf('compliance')>=0||m.indexOf('regulat')>=0||m.indexOf('guideline')>=0||m.indexOf('audit')>=0||m.indexOf('denial')>=0||m.indexOf('ncci')>=0||m.indexOf('bundling')>=0)return 'Compliance & Guidelines';
+  if(m.indexOf('billing')>=0||m.indexOf('reimburs')>=0||m.indexOf('revenue')>=0||m.indexOf('claim')>=0||m.indexOf('payer')>=0||m.indexOf('risk adjust')>=0||m.indexOf('hcc')>=0||m.indexOf('place of service')>=0)return 'Billing & Reimbursement';
+  return 'CPT & Surgery';
+}
+var _CPC_W={'CPT & Surgery':.22,'ICD-10-CM':.15,'Anatomy & Terminology':.10,'E/M':.10,'Compliance & Guidelines':.10,'Modifiers':.08,'Billing & Reimbursement':.08,'HCPCS':.07,'Inpatient/PCS':.04,'Anesthesia':.03,'Radiology':.03};
+function _blueprintQs(n){
+  var pool=examPool();
+  var buckets={};
+  pool.forEach(function(q){var d=_cpcDomain(q.mod);(buckets[d]=buckets[d]||[]).push(q);});
+  Object.keys(buckets).forEach(function(d){buckets[d].sort(function(){return Math.random()-.5;});});
+  var picked=[],used={},countByDom={};
+  Object.keys(_CPC_W).forEach(function(d){
+    var target=Math.round(_CPC_W[d]*n);var arr=buckets[d]||[];countByDom[d]=0;
+    for(var i=0;i<arr.length && picked.length<n && countByDom[d]<target;i++){
+      var q=arr[i],k=qid(q);if(used[k])continue;used[k]=1;picked.push(q);countByDom[d]++;
+    }
+  });
+  if(picked.length<n){
+    var rest=pool.slice().sort(function(){return Math.random()-.5;});
+    for(var j=0;j<rest.length && picked.length<n;j++){var qq=rest[j],kk=qid(qq);if(used[kk])continue;used[kk]=1;picked.push(qq);}
+  }
+  return picked.sort(function(){return Math.random()-.5;});
+}
 function examStart(id){
   const def=EXAM_DEFS.find(d=>d.id===id);
-  const pool=examPool().sort(()=>Math.random()-.5);
-  const n=Math.min(def.n,pool.length);
-  const qs=pool.slice(0,n);
+  let qs;
+  if(id==='blueprint'){ qs=_blueprintQs(def.n); }
+  else { const pool=examPool().sort(()=>Math.random()-.5); qs=pool.slice(0,Math.min(def.n,pool.length)); }
+  const n=qs.length;
   APP.exam={def,qs,ans:new Array(n).fill(null),flags:new Array(n).fill(false),i:0,submitted:false,end:Date.now()+def.min*60000,timer:null};
   APP.exam.timer=setInterval(examTick,1000);
   examRender();
