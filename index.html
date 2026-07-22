@@ -4762,6 +4762,7 @@ function _pbCards(){
   const exTaken=Object.keys(ex).reduce((m,k)=>m+(ex[k].attempts||0),0);
   const br=PROG.bossRush||{}; const brBest=br.best||0; const brTot=br.total||0;
   const dl=PROG.daily||{}; const dBest=dl.best||0; const dStreak=dl.streak||0;
+  const dDays=dl.days||0; const dLongest=dl.bestStreak||0;
   const r=readiness();
   const tiles=[
     {n:r.pct+'%',l:'Readiness',ic:'\uD83E\uDE7A'},
@@ -4770,6 +4771,8 @@ function _pbCards(){
     {n:brTot?(brBest+'/'+brTot):'\u2014',l:'Boss Rush best',ic:'\uD83D\uDD25'},
     {n:dBest?(dBest+'/10'):'\u2014',l:'Daily best',ic:'\uD83C\uDF93'},
     {n:dStreak,l:'Daily streak',ic:'\u26A1'},
+    {n:dLongest||'\u2014',l:'Longest daily',ic:'\uD83C\uDFC6'},
+    {n:dDays||'\u2014',l:'Days completed',ic:'\uD83D\uDCC5'},
     {n:(PROG.streak||{}).days||0,l:'Study streak',ic:'\uD83D\uDCC6'}
   ];
   return `<div class="pbgrid">${tiles.map(t=>`<div class="pbtile"><div class="pbic">${t.ic}</div><div class="pbn">${t.n}</div><div class="pbl">${t.l}</div></div>`).join('')}</div>`;
