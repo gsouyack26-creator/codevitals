@@ -306,6 +306,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .achbarf{height:100%;background:linear-gradient(90deg,#7c3aed,#a855f7);transition:width .5s}
 .achnext{background:var(--cardb);border:1px solid var(--bd);border-left:3px solid var(--ac);border-radius:8px;padding:10px 12px;margin:0 0 16px;font-size:14px}
 .achnext.done{border-left-color:#22c55e}
+.achchips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .achgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
 .achc{display:flex;gap:12px;align-items:center;background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px}
 .achc.got{border-color:#a855f7;box-shadow:0 3px 12px rgba(124,58,237,.14)}
@@ -3648,6 +3649,7 @@ function checkAchievements(silent){
   if(fresh.length){saveProg();if(!silent)fresh.forEach(a=>mcToast('Badge unlocked: <b>'+a.n+'</b>',a.ic));}
   return fresh;
 }
+function _achFilter(f){window._achFlt=f;achievementsView();}
 function achievementsView(){
   checkAchievements(true);
   const got=PROG.ach||{};
@@ -3655,18 +3657,24 @@ function achievementsView(){
   const pct=Math.round(earned/ACH.length*100);
   const nextUp=ACH.find(a=>!got[a.id]);
   const nextHtml=nextUp?`<div class="achnext">\uD83C\uDFAF Next up: <b>${esc(nextUp.n)}</b> \u2014 ${esc(nextUp.d)}</div>`:`<div class="achnext done">\uD83C\uDF89 All achievements unlocked \u2014 amazing work!</div>`;
-  const cards=ACH.map(a=>{
+  const flt=window._achFlt||'all';
+  const cards=ACH.filter(a=>flt==='all'||(flt==='earned'?got[a.id]:!got[a.id])).map(a=>{
     const has=!!got[a.id];
     return `<div class="achc ${has?'got':'locked'}">
       <div class="achic">${has?a.ic:'\uD83D\uDD12'}</div>
       <div class="achb"><div class="achn">${esc(a.n)}</div><div class="achd">${esc(a.d)}</div>${has?`<div class="acht">Earned ${new Date(got[a.id]).toLocaleDateString()}</div>`:'<div class="acht">Locked</div>'}</div>
     </div>`;
   }).join('');
+  const _achChip=(f,lbl,n)=>`<button class="gchip${flt===f?' on':''}" onclick="_achFilter('${f}')">${lbl} (${n})</button>`;
+  const achChips=`<div class="achchips">${_achChip('all','All',ACH.length)}${_achChip('earned','Earned',earned)}${_achChip('locked','Locked',ACH.length-earned)}</div>`;
+  const achEmpty=cards?'':`<p style="color:var(--tx2);padding:14px 4px">No ${flt} achievements.</p>`;
   fullView(`<div class="ecenter">
     <h2 class="etitle">\uD83C\uDFC5 Achievements</h2>
     <p class="eintro">Earn badges as you study, defeat bosses, and pass exams. ${earned} of ${ACH.length} unlocked (${pct}%).</p>
     <div class="achbar"><div class="achbarf" style="width:${pct}%"></div></div>
     ${nextHtml}
+    ${achChips}
+    ${achEmpty}
     <div class="achgrid">${cards}</div>
     <div class="dcta"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>
   </div>`);
