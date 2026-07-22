@@ -4134,7 +4134,7 @@ function brAns(mid,pi,oi,ans,btn){
     const perfect=R.correct===R.total;
     const grade=R.correct/R.total>=.9?'\uD83C\uDF1F Elite':(R.correct/R.total>=.75?'\uD83D\uDCAA Strong':(R.correct/R.total>=.6?'\uD83D\uDC4D Solid':'\uD83D\uDCDA Keep training'));
     f.className='rush-final show '+(perfect?'win':(R.correct/R.total>=.6?'ok':'lose'));
-    f.innerHTML=`<div class="rush-fn">${perfect?'\uD83D\uDC51 FLAWLESS GAUNTLET!':grade}</div><div class="rush-fs">${R.correct}/${R.total} correct \u2014 ${R.bossOK}/${R.nBoss} bosses cleared</div>`;
+    f.innerHTML=`<div class="rush-fn">${perfect?'\uD83D\uDC51 FLAWLESS GAUNTLET!':grade}</div><div class="rush-fs">${R.correct}/${R.total} correct \u2014 ${R.bossOK}/${R.nBoss} bosses cleared</div><button class="qbtn sec" style="margin-top:10px" onclick="copyRush()">\uD83D\uDCCB Copy result</button>`;
     f.scrollIntoView({behavior:'smooth',block:'center'});
     checkAchievements();
     var _pf=R.correct===R.total;setTimeout(function(){celebrate(_pf?'FLAWLESS GAUNTLET!':'Boss Rush Complete!',R.correct+'/'+R.total+' \u2014 '+R.bossOK+'/'+R.nBoss+' bosses cleared',true);},250);
@@ -4207,6 +4207,19 @@ function dailyChallenge(){
     ${cards}
     <div class="dcta" style="margin-top:18px"><button class="qbtn sec" onclick="dashboard()">\uD83D\uDCCA Dashboard</button></div>
   </div>`);
+}
+function copyRush(){
+  var r=APP.rush||{};
+  var br=PROG.bossRush||{};
+  var got=(typeof r.correct==='number')?r.correct:(br.best||0);
+  var tot=r.total||br.total||0;
+  var lines=['CodeVitals \u2014 Boss Rush ('+_todayStr()+')', got+'/'+tot+' correct'];
+  if(typeof r.bossOK==='number'&&r.nBoss)lines.push(r.bossOK+'/'+r.nBoss+' bosses cleared');
+  if(br.best)lines.push('Best: '+br.best+'/'+(br.total||tot));
+  var txt=lines.join('\n');
+  function done(){if(typeof mcToast==='function')mcToast('Boss Rush result copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
 }
 function copyDaily(){
   var d=PROG.daily||{};
