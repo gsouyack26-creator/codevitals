@@ -155,7 +155,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .eintro{font-size:.82rem;color:var(--tx2);line-height:1.55;margin-bottom:6px;max-width:640px}
 .cesum{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin:0 0 14px}.cesum-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}.cesum-lbl{font-size:.78rem;font-weight:700;color:var(--tx)}.cesum-pct{font-size:.76rem;color:var(--tx2);font-variant-numeric:tabular-nums}.cesum-bar{height:9px;background:var(--bd);border-radius:6px;overflow:hidden}.cesum-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2,var(--ac)));border-radius:6px;transition:width .5s ease}.cesum-hrs{font-size:.74rem;color:var(--tx2);margin-top:8px}
 .egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:12px}
-.examsnap{background:var(--cardb);border:1px solid var(--bd);border-left:3px solid var(--ac);border-radius:8px;padding:9px 12px;margin:10px 0 2px;font-size:.9rem;color:var(--tx2)}
+.examsnap{background:var(--cardb);border:1px solid var(--bd);border-left:3px solid var(--ac);border-radius:8px;padding:9px 12px;margin:10px 0 2px;font-size:.9rem;color:var(--tx2)}.examrec{background:var(--cardb);border:1px solid var(--bd);border-left:3px solid var(--wn,var(--ac));border-radius:8px;padding:9px 12px;font-size:.82rem;color:var(--tx2);margin:0 0 10px}.examrec b{color:var(--tx)}
 .examsnap b{color:var(--tx)}
 .ecard{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px}
 .etop{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
@@ -3476,12 +3476,21 @@ function examCenter(){
   const _exVals=Object.keys(PROG.exams||{}).map(k=>(PROG.exams[k]||{}).score).filter(v=>typeof v==='number');
   const _exAvg=_exVals.length?Math.round(_exVals.reduce((a,b)=>a+b,0)/_exVals.length):0;
   const _exPassed=Object.keys(PROG.exams||{}).filter(k=>(PROG.exams[k]||{}).pass).length;
+  var _exRecDef=null,_exRecWhy='';
+  var _exUnattempted=EXAM_DEFS.filter(function(d){return !(PROG.exams&&PROG.exams[d.id]);});
+  if(_exUnattempted.length){_exRecDef=_exUnattempted[0];_exRecWhy='you haven\u2019t tried it yet';}
+  else{
+    var _exFail=EXAM_DEFS.filter(function(d){return PROG.exams[d.id]&&!PROG.exams[d.id].pass;}).sort(function(a,b){return (PROG.exams[a.id].score||0)-(PROG.exams[b.id].score||0);});
+    if(_exFail.length){_exRecDef=_exFail[0];_exRecWhy='your lowest score so far ('+(PROG.exams[_exRecDef.id].score||0)+'%)';}
+  }
+  var _exRec=_exRecDef?('<div class="examrec">\uD83D\uDC49 Recommended next: <b>'+esc(_exRecDef.name)+'</b> \u2014 '+_exRecWhy+'<div style="margin-top:8px"><button class="qbtn sec sm" onclick="examStart(\''+_exRecDef.id+'\')">Start this exam</button></div></div>'):(Object.keys(PROG.exams||{}).length?'<div class="examrec">\uD83C\uDF89 You\u2019ve passed every exam \u2014 keep them sharp with retakes!</div>':'');
   el.innerHTML=`<div class="ecenter">
     <h2 class="etitle">\uD83D\uDCDA Exam Center</h2>
     ${(PROG.examDate&&typeof _countdownHTML==='function')?_countdownHTML():''}
     <p class="eintro">Timed, scored practice exams that simulate the real certification. Answer all questions (skip and come back using the palette), then submit to see your score, pass/fail, and a full answer review. Question pool: ${pool} vetted questions, freshly shuffled each attempt.</p>
     ${(typeof _resumeBannerHTML==='function')?_resumeBannerHTML():''}
     ${_exVals.length?`<div class="examsnap">\uD83D\uDCCA You\u2019ve attempted <b>${_exVals.length}</b> of ${EXAM_DEFS.length} exams \u00b7 average best <b>${_exAvg}%</b> \u00b7 <b>${_exPassed}</b> passed</div>`:''}
+    ${_exRec}
     <div class="egrid">${cards}</div>
     <button class="qbtn sec" style="margin-top:16px" onclick="showMod(MODULES[0].id)">\uD83C\uDFE0 Back to Modules</button>
   </div>`;
