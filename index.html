@@ -485,6 +485,8 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .gsn{font-size:1.15rem;font-weight:800;color:var(--tx)}
 .gsl{font-size:.68rem;color:var(--tx2);margin-top:2px;text-transform:uppercase}
 .goalset{text-align:center;margin:6px 0}
+.goalweek{text-align:center;color:var(--tx2);font-size:.9rem;margin:10px 0 2px}
+.goalweek b{color:var(--tx)}
 .gtbtn{cursor:pointer;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:8px;padding:6px 13px;font-weight:700;margin:0 3px}
 .gtbtn.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .conf-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd)}
@@ -4893,6 +4895,7 @@ function dailyGoal(){
   const g=_goal(); const done=todayCount(); const tgt=g.target;
   const pct=Math.min(100,Math.round(done/tgt*100));
   const met=done>=tgt;
+  const _wk=(function(){var n=0;var d=new Date();for(var i=0;i<7;i++){var k=new Date(d.getTime()-i*86400000).toISOString().slice(0,10);if(((PROG.activity&&PROG.activity[k])||0)>=tgt)n++;}return n;})();
   const st=PROG.streak||{days:0,freezes:0};
   const freezes=(typeof st.freezes==='number')?st.freezes:1;
   const ring=met?'var(--ok)':'var(--ac)';
@@ -4911,6 +4914,7 @@ function dailyGoal(){
       <span style="color:var(--tx2);font-size:.85rem">Set your daily target:</span>
       ${[5,10,15,20,30].map(n=>`<button class="gtbtn${tgt===n?' on':''}" onclick="setGoal(${n})">${n}</button>`).join('')}
     </div>
+    <div class="goalweek">\uD83D\uDCC5 This week: goal met on <b>${_wk}</b> of 7 day${_wk===1?'':'s'}</div>
     <div class="dcta" style="margin-top:16px"><button class="qbtn" onclick="adaptiveQuiz()">\uD83C\uDFAF Practice now</button><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>
   </div>`);
 }
