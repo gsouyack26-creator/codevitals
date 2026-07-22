@@ -5844,6 +5844,15 @@ function _gdFilter(v){
 }
 
 
+function copyMods(){
+  var rows=document.querySelectorAll('.mrow');var out=[];
+  rows.forEach(function(r){if(r.style.display!=='none'){var code=r.querySelector('.mod-code').textContent;var b=r.querySelector('.mod-mean b');out.push(code+' \u2014 '+(b?b.textContent:''));}});
+  if(!out.length){if(typeof mcToast==='function')mcToast('No modifiers to copy');return;}
+  var txt='CodeVitals \u2014 Modifiers ('+out.length+')\n'+out.join('\n');
+  function done(){if(typeof mcToast==='function')mcToast(out.length+' modifiers copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
+}
 function modifierRef(){
   var body=MODIFIERS.map(function(g){
     var rows=g.items.map(function(x){
@@ -5859,6 +5868,7 @@ function modifierRef(){
     +'<p class="eintro">Modifiers are two-character codes appended to a CPT/HCPCS code to add detail without changing the code\'s core meaning. They are heavily tested on the CPC exam. Below are the most common ones grouped by purpose, each with a plain-English meaning and a real example. Always verify against current CPT guidelines and payer policy \u2014 rules and accepted modifiers change annually.</p>'
     +'<input class="hy-search" type="text" placeholder="\uD83D\uDD0D Search modifier meaning or example\u2026" oninput="_modFilter(this.value)">'
     +'<div id="mod-count" class="hy-count" style="display:none"></div>'
+    +'<button class="qbtn sec" style="margin:0 0 12px;padding:6px 12px;font-size:.8rem" onclick="copyMods()">\uD83D\uDCCB Copy list</button>'
     +body
     +'<div id="mod-none" style="display:none;color:var(--tx2);padding:14px 4px">No matching modifiers.</div>'
     +'<div style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
