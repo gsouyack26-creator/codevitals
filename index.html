@@ -389,6 +389,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .qb-row{display:flex;align-items:center;gap:10px;margin:8px 0;flex-wrap:wrap;font-size:.9rem}
 .qb-chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin:8px 0 14px}
 .qb-chip{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;font-size:.82rem;cursor:pointer}
+.qb-cnt{margin-left:auto;font-size:.7rem;font-weight:700;color:var(--tx2);background:var(--bg2);border-radius:10px;padding:1px 7px;flex-shrink:0}.qb-avail{font-size:.76rem;color:var(--tx2);margin:8px 0 2px}
 .qb-chip input{accent-color:#7c3aed;width:15px;height:15px}
 .qb-mini{background:var(--bg);border:1px solid var(--bd);border-radius:7px;padding:3px 11px;font-size:.78rem;cursor:pointer;color:var(--tx)}
 .qb-mini:hover{border-color:#7c3aed}
@@ -4330,13 +4331,18 @@ function bossRushHistory(){
 
 /* ===== CUSTOM QUIZ BUILDER ===== */
 function quizBuilder(){
-  const chips=MODULES.map(m=>`<label class="qb-chip"><input type="checkbox" value="${m.id}" checked> ${esc(m.title.split('&amp;').join('&'))}</label>`).join('');
+  const _qbCnt={};
+  const _qbEP=examPool();
+  MODULES.forEach(m=>{ _qbCnt[m.id]=(m.questions?m.questions.length:0); });
+  _qbEP.forEach(q=>{ if(q.mod&&_qbCnt[q.mod]!=null)_qbCnt[q.mod]++; });
+  const chips=MODULES.map(m=>`<label class="qb-chip"><input type="checkbox" value="${m.id}" data-cnt="${_qbCnt[m.id]||0}" checked onchange="qbCount()"> ${esc(m.title.split('&amp;').join('&'))} <span class="qb-cnt">${_qbCnt[m.id]||0}</span></label>`).join('');
   fullView(`<div class="ecenter">
     <h2 class="etitle">\uD83D\uDD00 Custom Quiz Builder</h2>
     <p class="eintro">Pick the modules you want to drill, choose how many questions, and generate a targeted set pulled from the full ${examPool().length}-question pool.</p>
     <div class="qb-panel">
       <div class="qb-row"><b>Modules</b> <button class="qb-mini" onclick="qbAll(true)">All</button><button class="qb-mini" onclick="qbAll(false)">None</button></div>
       <div class="qb-chips" id="qb-chips">${chips}</div>
+      <div class="qb-avail" id="qb-avail"></div>
       <div class="qb-row"><b>Questions:</b>
         <select id="qb-n" class="qb-sel"><option>5</option><option selected>10</option><option>15</option><option>20</option><option>30</option><option>50</option></select>
       </div>
@@ -4345,8 +4351,10 @@ function quizBuilder(){
     <div id="qb-out"></div>
     <div class="dcta" style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\uD83D\uDCCA Dashboard</button></div>
   </div>`);
+  qbCount();
 }
-function qbAll(v){ document.querySelectorAll('#qb-chips input').forEach(c=>c.checked=v); }
+function qbAll(v){ document.querySelectorAll('#qb-chips input').forEach(c=>c.checked=v); qbCount(); }
+function qbCount(){ var el=document.getElementById('qb-avail'); if(!el)return; var sum=0,n=0; document.querySelectorAll('#qb-chips input:checked').forEach(function(c){ sum+=parseInt(c.getAttribute('data-cnt'),10)||0; n++; }); el.innerHTML=n?('\uD83D\uDCDA <b>'+sum+'</b> question'+(sum===1?'':'s')+' available across '+n+' selected module'+(n===1?'':'s')):'<span style="color:var(--er)">No modules selected</span>'; }
 function qbGenerate(){
   const sel=new Set([...document.querySelectorAll('#qb-chips input:checked')].map(c=>c.value));
   if(!sel.size){ document.getElementById('qb-out').innerHTML='<p style="color:var(--er)">Pick at least one module.</p>'; return; }
