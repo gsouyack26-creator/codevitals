@@ -5048,8 +5048,25 @@ function analyticsView(){
     <div class="dsec"><h3>\uD83C\uDFAF Accuracy by topic (weakest first)</h3>${accInsight}${accBars}</div>
     <div class="dsec"><h3>\u23F1\uFE0F Pace by topic (slowest first)</h3>${bars}</div>
     <div class="dsec"><h3>\uD83E\uDDED Confidence calibration</h3><table class="pbtbl"><thead><tr><th>Felt</th><th>Correct</th><th>Accuracy</th></tr></thead><tbody>${calRows}</tbody></table>${insight}</div>
-    <div class="dcta" style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>
+    <div class="dcta" style="margin-top:16px"><button class="qbtn sec" onclick="copyAnalytics()">\uD83D\uDCCB Copy report</button> <button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>
   </div>`);
+}
+function copyAnalytics(){
+  var tps=PROG.topics||{};
+  var acc=Object.keys(tps).map(function(k){var a=tps[k].t||0,c=tps[k].c||0;return {k:k,a:a,c:c,pct:a?Math.round(c/a*100):0};}).filter(function(x){return x.a>=1;}).sort(function(x,y){return x.pct-y.pct;});
+  var an=(typeof _an==='function')?_an():{time:{n:0,sum:0},calib:{guess:{c:0,t:0},unsure:{c:0,t:0},confident:{c:0,t:0}}};
+  var avg=an.time.n?an.time.sum/an.time.n:0;
+  var lines=['CodeVitals \u2014 Question Analytics Report'];
+  lines.push('Avg time per question: '+(an.time.n?_fmtT(avg):'\u2014')+' ('+an.time.n+' timed)');
+  lines.push('');
+  lines.push('Accuracy by topic (weakest first):');
+  if(acc.length){acc.forEach(function(t){lines.push('  \u2022 '+t.k+': '+t.c+'/'+t.a+' ('+t.pct+'%)');});}else{lines.push('  (no data yet)');}
+  lines.push('');
+  lines.push('Confidence calibration:');
+  var cal=an.calib;[['confident','Confident'],['unsure','Unsure'],['guess','Guessed']].forEach(function(p){var c=cal[p[0]];var a=c.t?Math.round(c.c/c.t*100):null;lines.push('  \u2022 '+p[1]+': '+(c.t?c.c+'/'+c.t+' ('+a+'%)':'\u2014'));});
+  var txt=lines.join('\n');
+  function d(){if(typeof mcToast==='function')mcToast('Analytics copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(d,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);d();});}else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);d();}
 }
 function confRow(){
   return `<div class="conf-row" id="conf-row"><span class="conf-lbl">How sure?</span><button class="conf-chip" onclick="setConf('guess',this)">\uD83D\uDE30 Guess</button><button class="conf-chip" onclick="setConf('unsure',this)">\uD83E\uDD14 Unsure</button><button class="conf-chip" onclick="setConf('confident',this)">\uD83D\uDE0E Confident</button></div>`;
