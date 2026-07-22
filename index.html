@@ -3225,7 +3225,7 @@ function printFC(){
   var rows=cards.map(function(c,i){
     return '<tr><td class="n">'+(i+1)+'</td><td class="q">'+esc(c.front)+'</td><td class="a">'+esc(c.back)+'</td></tr>';
   }).join('');
-  var win=window.open('','_blank');
+  var win=window.open('','_blank'); if(!win){if(typeof mcToast==='function')mcToast('Please allow pop-ups to open the printable page','\u26A0\uFE0F');return;}
   if(!win){if(typeof mcToast==='function')mcToast('Pop-up blocked \u2014 allow pop-ups to print','\uD83D\uDDA8\uFE0F');return;}
   var html='<html><head><title>CodeVitals Flashcards</title><style>'
     +'body{font-family:system-ui,Arial,sans-serif;color:#1e293b;max-width:820px;margin:24px auto;padding:0 18px}'
@@ -4648,7 +4648,7 @@ function cheatSheet(){
     }).join('');
     return '<h3>'+esc(g.set)+'</h3><table>'+rows+'</table>';
   }).join(''):'';
-  var win=window.open('','_blank');
+  var win=window.open('','_blank'); if(!win){if(typeof mcToast==='function')mcToast('Please allow pop-ups to open the printable page','\u26A0\uFE0F');return;}
   var html='<html><head><title>CodeVitals Cheat Sheet</title><style>'
     +'body{font-family:system-ui,Arial,sans-serif;color:#1e293b;max-width:1000px;margin:20px auto;padding:0 16px}'
     +'h1{color:#0284c7;margin-bottom:2px}.sub{color:#64748b;margin-top:0;font-size:.85rem}'
@@ -4682,7 +4682,7 @@ function printReport(){
   const got=PROG.ach||{}; const badges=ACH.filter(a=>got[a.id]).map(a=>a.n).join(', ')||'None yet';
   const tps=PROG.topics||{};
   const weak=Object.keys(tps).filter(k=>tps[k].t>=2).map(k=>({k,p:tps[k].c/tps[k].t})).sort((a,b)=>a.p-b.p).slice(0,6).map(w=>esc(w.k)+' ('+Math.round(w.p*100)+'%)').join(', ')||'Not enough data';
-  const win=window.open('','_blank');
+  const win=window.open('','_blank'); if(!win){if(typeof mcToast==='function')mcToast('Please allow pop-ups to open the printable page','\u26A0\uFE0F');return;}
   const html=`<html><head><title>CodeVitals Report</title><style>
     body{font-family:system-ui,Arial,sans-serif;color:#1e293b;max-width:800px;margin:24px auto;padding:0 18px}
     h1{color:#0284c7;margin-bottom:2px}.sub{color:#64748b;margin-top:0}
@@ -6301,7 +6301,7 @@ function ceCert(id){
   if(!rec||!rec.pass){ mcToast('Pass the assessment first to earn this certificate.','\u26A0\uFE0F'); return; }
   var name=ceLearner(false);
   if(name===null||name===''){ name='(Your name)'; }
-  var win=window.open('','_blank');
+  var win=window.open('','_blank'); if(!win){if(typeof mcToast==='function')mcToast('Please allow pop-ups to open the printable page','\u26A0\uFE0F');return;}
   var dateStr=new Date(rec.passDate||rec.date).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
   var objList=m.objectives.map(function(o){return '<li>'+esc(o)+'</li>';}).join('');
   var html='<html><head><title>Certificate \u2014 '+esc(m.title)+'</title><style>'
