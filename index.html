@@ -5801,6 +5801,15 @@ function codeLookup(){
 }
 
 
+function copyGuides(){
+  var rows=document.querySelectorAll('.grow');var out=[];
+  rows.forEach(function(r){if(r.style.display!=='none'){var t=r.querySelector('.gd-t');var d=r.querySelector('.gd-d');out.push((t?t.textContent:'')+' \u2014 '+(d?d.textContent:''));}});
+  if(!out.length){if(typeof mcToast==='function')mcToast('No guidelines to copy');return;}
+  var txt='CodeVitals \u2014 Coding Guidelines ('+out.length+')\n'+out.join('\n');
+  function done(){if(typeof mcToast==='function')mcToast(out.length+' guidelines copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done();}
+}
 function guidelinesRef(){
   var body=GUIDES.map(function(g){
     var rows=g.items.map(function(x){
@@ -5817,6 +5826,7 @@ function guidelinesRef(){
     +'<p class="eintro">The ICD-10-CM conventions and CPT concepts that the CPC exam tests most \u2014 sequencing rules, 7th characters, combination codes, laterality, the surgical package, and 2021+ E/M. These are guideline summaries; always confirm against the current Official Guidelines for Coding and Reporting and CPT instructions.</p>'
     +'<input class="hy-search" type="text" placeholder="\uD83D\uDD0D Search guideline or example\u2026" oninput="_gdFilter(this.value)">'
     +'<div id="gd-count" class="hy-count" style="display:none"></div>'
+    +'<button class="qbtn sec" style="margin:0 0 12px;padding:6px 12px;font-size:.8rem" onclick="copyGuides()">\uD83D\uDCCB Copy list</button>'
     +body
     +'<div id="gd-none" style="display:none;color:var(--tx2);padding:14px 4px">No matching guidelines.</div>'
     +'<div style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
