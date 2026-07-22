@@ -4757,12 +4757,14 @@ function personalBests(){
 }
 function _pbCards(){
   const ex=PROG.exams||{}; const exBest=Object.keys(ex).reduce((m,k)=>Math.max(m,ex[k].score),0);
+  const exTaken=Object.keys(ex).reduce((m,k)=>m+(ex[k].attempts||0),0);
   const br=PROG.bossRush||{}; const brBest=br.best||0; const brTot=br.total||0;
   const dl=PROG.daily||{}; const dBest=dl.best||0; const dStreak=dl.streak||0;
   const r=readiness();
   const tiles=[
     {n:r.pct+'%',l:'Readiness',ic:'\uD83E\uDE7A'},
     {n:exBest+'%',l:'Best exam',ic:'\uD83D\uDCDA'},
+    {n:exTaken||'\u2014',l:'Exams taken',ic:'\uD83D\uDCDD'},
     {n:brTot?(brBest+'/'+brTot):'\u2014',l:'Boss Rush best',ic:'\uD83D\uDD25'},
     {n:dBest?(dBest+'/10'):'\u2014',l:'Daily best',ic:'\uD83C\uDF93'},
     {n:dStreak,l:'Daily streak',ic:'\u26A1'},
