@@ -2512,7 +2512,7 @@ const PROG={};
 function init(){
   try{Object.assign(PROG,JSON.parse(localStorage.getItem('mc_prog')||'{}'));}catch(e){}
   const th=localStorage.getItem('mc_theme')||'light';
-  document.documentElement.setAttribute('data-theme',th);
+  document.documentElement.setAttribute('data-theme',th);syncThemeColor();
   buildSB();
   if(typeof checkAchievements==='function')checkAchievements(true);
   if(typeof _initSoundBtn==='function')_initSoundBtn();
@@ -4981,8 +4981,9 @@ const THEMES=[
   {id:'contrast',name:'High Contrast',sw:'#ffd400'},
   {id:'cb',name:'Colorblind-safe',sw:'#005ab5'}
 ];
+function syncThemeColor(){try{var _sf=getComputedStyle(document.documentElement).getPropertyValue('--sf').trim();var _mt=document.querySelector('meta[name="theme-color"]');if(_mt&&_sf)_mt.setAttribute('content',_sf);}catch(e){}}
 function setTheme(id){
-  document.documentElement.setAttribute('data-theme',id);
+  document.documentElement.setAttribute('data-theme',id);syncThemeColor();
   localStorage.setItem('mc_theme',id);
   const box=document.getElementById('thm-picker');
   if(box)box.querySelectorAll('.thm-sw').forEach(b=>b.classList.toggle('on',b.dataset.t===id));
@@ -6895,7 +6896,7 @@ function toggleTheme(){
   const cur=document.documentElement.getAttribute('data-theme');
   const nxt=cur==='dark'?'light':'dark';
   document.documentElement.setAttribute('data-theme',nxt);
-  localStorage.setItem('mc_theme',nxt);
+  localStorage.setItem('mc_theme',nxt);syncThemeColor();
 }
 
 function saveProg(){PROG._ts=Date.now();localStorage.setItem('mc_prog',JSON.stringify(PROG));if(typeof cloudAutoPush==='function')cloudAutoPush();}
