@@ -392,7 +392,7 @@ mark{background:rgba(250,204,21,.45);border-radius:2px;padding:0 2px}
 .cal-grid{display:flex;gap:4px;min-width:max-content}
 .cal-col{display:flex;flex-direction:column;gap:4px}
 .cal-c{width:15px;height:15px;border-radius:3px;background:var(--bd)}
-.cal-fut{background:transparent}
+.cal-fut{background:transparent}.cal-today{outline:2px solid var(--ac);outline-offset:1px}
 .cal-l0{background:var(--bd)}
 .cal-l1{background:#c4b5fd}
 .cal-l2{background:#a78bfa}
@@ -4346,6 +4346,7 @@ function studyCalendar(){
     cells.push({key,c,future:d>today,day:d.getDate(),mo:d.getMonth()});
   }
   const lvl=c=>c===0?0:(c>=15?4:(c>=8?3:(c>=3?2:1)));
+  const _todayKey=today.toISOString().slice(0,10);
   // build columns (weeks)
   let cols='';
   for(let w=0;w<WEEKS+1;w++){
@@ -4354,7 +4355,7 @@ function studyCalendar(){
       const idx=w*7+dow; if(idx>=cells.length)break;
       const cell=cells[idx]; if(!cell)continue;
       if(cell.future){ col+='<div class="cal-c cal-fut"></div>'; continue; }
-      col+=`<div class="cal-c cal-l${lvl(cell.c)}" title="${cell.key}: ${cell.c} answered"></div>`;
+      col+=`<div class="cal-c cal-l${lvl(cell.c)}${cell.key===_todayKey?' cal-today':''}" title="${cell.key}: ${cell.c} answered${cell.key===_todayKey?' (today)':''}"></div>`;
     }
     cols+=`<div class="cal-col">${col}</div>`;
   }
