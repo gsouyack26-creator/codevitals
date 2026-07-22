@@ -6990,7 +6990,7 @@ function toggleKbdHelp(force){
   var ov=document.getElementById('kbdhelp-ov');
   if(!ov){
     ov=document.createElement('div');ov.id='kbdhelp-ov';
-    ov.innerHTML='<div id="kbdhelp-card"><h3>Keyboard shortcuts</h3><div class="khsub">Study faster without the mouse.</div>'+_kbdHelpHTML()+'<button class="khclose" onclick="toggleKbdHelp(false)">Got it</button></div>';
+    ov.innerHTML='<div id="kbdhelp-card" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts"><h3>Keyboard shortcuts</h3><div class="khsub">Study faster without the mouse.</div>'+_kbdHelpHTML()+'<button class="khclose" onclick="toggleKbdHelp(false)">Got it</button></div>';
     ov.addEventListener('click',function(e){if(e.target===ov)toggleKbdHelp(false);});
     document.body.appendChild(ov);
   }
