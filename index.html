@@ -6064,6 +6064,7 @@ function ceTracks(){
     +'<div class="cesum-top"><span class="cesum-lbl">Track completion</span><span class="cesum-pct">'+done+' / '+CE_MODULES.length+' &bull; '+_cePct+'%</span></div>'
     +'<div class="cesum-bar"><div class="cesum-fill" style="width:'+_cePct+'%"></div></div>'
     +'<div class="cesum-hrs">\u23F1\uFE0F Est. study time earned: <b>'+(Math.round(_ceHrsDone*10)/10)+'</b> of '+(Math.round(_ceHrsAll*10)/10)+' hours'+(done===CE_MODULES.length?' &bull; \uD83C\uDF89 all tracks complete!':'')+'</div>'
+    +'<button class="qbtn sec" style="margin-top:9px;width:100%" onclick="copyCE()">\uD83D\uDCCB Copy CE progress</button>'
     +'</div>';
   fullView('<div class="ecenter">'
     +'<h2 class="etitle">\uD83C\uDF93 Certified Learning Tracks</h2>'
@@ -6073,6 +6074,26 @@ function ceTracks(){
     +'<div class="egrid">'+cards+'</div>'
     +'<div class="dcta" style="margin-top:16px"><button class="qbtn sec" onclick="dashboard()">\u2190 Dashboard</button></div>'
     +'</div>');
+}
+
+function copyCE(){
+  var done=CE_MODULES.filter(function(m){var r=ceRec(m.id);return r&&r.pass;}).length;
+  var pct=CE_MODULES.length?Math.round(done/CE_MODULES.length*100):0;
+  var hd=0,ha=0;
+  CE_MODULES.forEach(function(m){var h=parseFloat(m.effort)||0;ha+=h;var r=ceRec(m.id);if(r&&r.pass)hd+=h;});
+  var lines=['CodeVitals \u2014 Certified Learning Track Progress',
+    'Tracks completed: '+done+' of '+CE_MODULES.length+' ('+pct+'%)',
+    'Est. study time earned: '+(Math.round(hd*10)/10)+' of '+(Math.round(ha*10)/10)+' hours',
+    ''];
+  CE_MODULES.forEach(function(m){
+    var r=ceRec(m.id);
+    var st=(r&&r.pass)?('\u2713 completed \u2014 best '+r.best+'%'):(r?('in progress \u2014 best '+r.best+'%'):'not started');
+    lines.push('\u2022 '+m.title+': '+st);
+  });
+  var txt=lines.join('\n');
+  function done2(){if(typeof mcToast==='function')mcToast('CE progress copied','\uD83D\uDCCB');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done2,function(){if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done2();});}
+  else{if(typeof _fallbackCopy==='function')_fallbackCopy(txt);done2();}
 }
 
 function ceOpen(id){
