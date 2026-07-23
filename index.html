@@ -3090,6 +3090,21 @@ const FLASHCARDS=[
 ,{tag:"ICD-10-CM",front:"Poisoning vs adverse effect sequencing?",back:"Poisoning: T code (drug + intent) FIRST, then manifestations. Adverse effect (drug taken correctly): manifestation FIRST, then the T code."}
 ,{tag:"ICD-10-CM",front:"Can external cause codes be principal?",back:"No. V-Y external cause codes are always SECONDARY - never the first-listed/principal diagnosis."}
 ,{tag:"ICD-10-CM",front:"Default diabetes type when undocumented?",back:"Type 2 (E11). Type 1 (E10) must be specifically documented. ESRD (N18.6) requires documented chronic dialysis or transplant."}
+,{tag:"Modifiers",front:"Modifier 26 vs TC",back:"26 is the professional component (physician interpretation). TC is the technical component (equipment, supplies, technician). No modifier equals the global service."}
+,{tag:"Modifiers",front:"Modifier 79",back:"Unrelated procedure or service by the same physician during a postoperative global period."}
+,{tag:"Modifiers",front:"Modifier 24",back:"Unrelated E/M service by the same physician during a postoperative global period."}
+,{tag:"Modifiers",front:"Modifier PT",back:"Colorectal cancer screening test converted to a diagnostic or therapeutic procedure (Medicare)."}
+,{tag:"Modifiers",front:"Modifier 33",back:"Identifies a preventive service for non-Medicare payers, waiving patient cost sharing under the ACA."}
+,{tag:"Modifiers",front:"X modifiers XE XS XP XU",back:"XE separate encounter, XS separate structure, XP separate practitioner, XU unusual non-overlapping service. More specific alternatives to modifier 59."}
+,{tag:"Anesthesia",front:"ASA physical status P1 to P6",back:"P1 normal healthy, P2 mild systemic disease, P3 severe systemic disease, P4 severe disease constant threat to life, P5 moribund, P6 brain-dead organ donor."}
+,{tag:"Reimbursement",front:"Global surgery periods",back:"000 minor no follow-up, 010 minor 10-day, 090 major surgery with 1 preop day plus 90 postop days."}
+,{tag:"Reimbursement",front:"RVU components",back:"Physician work, practice expense, and malpractice RVUs. Each adjusted by GPCI then multiplied by the conversion factor for payment."}
+,{tag:"Reimbursement",front:"ABN modifiers GA vs GZ",back:"GA a signed ABN is on file (waiver of liability). GZ no ABN obtained and denial expected."}
+,{tag:"Reimbursement",front:"NCD vs LCD",back:"NCD is a national coverage policy set by CMS. LCD is regional, set by a Medicare Administrative Contractor."}
+,{tag:"E/M",front:"Critical care 99291 and 99292",back:"99291 covers first 30 to 74 minutes. 99292 add-on starts at 75 minutes for each additional 30 minutes."}
+,{tag:"E/M",front:"CCM code 99490",back:"Chronic Care Management, at least 20 minutes of clinical staff time per calendar month for a patient with two or more chronic conditions."}
+,{tag:"ICD-10-CM",front:"Fracture 7th characters A D S",back:"A initial encounter active treatment, D subsequent routine healing, G subsequent delayed healing, S sequela (residual)."}
+,{tag:"ICD-10-CM",front:"Neoplasm Table columns",back:"Malignant primary, malignant secondary (metastatic), Ca in situ, benign, uncertain behavior, unspecified behavior."}
 ];
 const APP={mod:null,qi:0,qa:[],fi:0,fCards:FLASHCARDS,srRes:[],allQuiz:false,exam:null};
 const PROG={};
